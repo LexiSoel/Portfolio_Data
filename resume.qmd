@@ -1,9 +1,9 @@
 ---
 layout: cv
-title: Isaac Newtons's CV
+title: Lexi Soelberg's CV
 ---
-# Isaac Newton
-Physicist, Mathematician, Cambridge professor.
+# Lexi Soelberg
+Psychology (Health) Student, Statistics Student
 
 <div id="webaddress">
 <a href="isaac@applesdofall.org">isaac@applesdofall.org</a>
@@ -13,75 +13,44 @@ Physicist, Mathematician, Cambridge professor.
 
 ## Currently
 
-Standing on the shoulders of giants
+Attending Brigham Young University - Idaho
 
 ### Specialized in
 
-Laws of motion, gravitation, minting coins, disliking [Robert Hooke](http://en.wikipedia.org/wiki/Robert_Hooke)
+Research, Psychology, Social Psychology, Health Psychology, data visualizations, graphing data, cleaning data, presenting research
 
 
 ### Research interests
 
-Cooling, power series, optics, alchemy, planetary motions, apples.
+Women health & mental health, hormones & behavior, biopsychosocial model of behavior, theories of behavior, systems theories
 
 
 ## Education
 
-`1654-1660`
-__The King's School, Grantham.__
-
-`June 1661 - now`
-__Trinity College, Cambridge__
-
-- Sizar
-
-`1667 - death`
-__Trinity College, Cambridge__
-
-- Fellow
-
+`Sept 2021 - now`
+__Brigham Young University - Idaho__
 
 
 ## Awards
 
-`2012`
-President, *Royal Society*, London, UK
-
-Associate, *French Academy of Science*, Paris, France
+`2025-2026`
+President, *Health Psych Society*, Rexburg, ID
 
 
 
 ## Publications
 
-<!-- A list is also available [online](http://scholar.google.co.uk/citations?user=LTOTl0YAAAAJ) -->
-
 ### Journals
 
-`1669`
-Newton Sir I, De analysi per æquationes numero terminorum infinitas. 
-
-`1669`
-Lectiones opticæ.
-
-etc. etc. etc.
-
-### Patents
-
-`2012`
-Infinitesimal calculus for solutions to physics problems, [SMBC](http://www.techdirt.com/articles/20121011/09312820678/if-patents-had-been-around-time-newton.shtml) patent 001
+`2026`
+College Student Influenza and COVID-19 Vaccination Attitudes and Uptake Behavior: Prevalence, Correlates, and Promoting Improvement
+[COVID](https://www.mdpi.com/journal/covid/sections/COVID_Public_Health_and_Epidemiology)
 
 
 ## Occupation
 
-`1600`
-__Royal Mint__, London
-
-- Warden
-- Minted coins
-
-`1600`
-__Lucasian professor of Mathematics__, Cambridge University
-
+`2025-2026`
+__Health Psych Teaching Assistant__, Rexburg, ID
 
 
 <!-- ### Footer

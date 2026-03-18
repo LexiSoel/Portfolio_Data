@@ -3,7 +3,7 @@ project:
   output-dir: docs
 
 website:
-  title: "Your_Name - Data Science Portfolio"
+  title: "Lexi Soelberg - Data Science Portfolio"
   favicon: Images/favicon.png
   back-to-top-navigation: true
   repo-url: https://github.com/username/username.github.io
@@ -11,7 +11,7 @@ website:
 
   page-footer: 
     border: true
-    left: "Your_Name 2024©"
+    left: "Lexi Soelberg  2026©"
     right: 
       - icon: linkedin
         href: Your_LinkedIn_URL
@@ -22,7 +22,7 @@ website:
     right:
       - text: "Home"
         file: index.qmd
-      - text: "My Resume"
+      - text: "Lexi's Resume"
         file: resume.qmd
       - text: "Data Cleansing"
         file: cleansing.qmd
