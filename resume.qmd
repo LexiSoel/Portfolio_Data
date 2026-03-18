@@ -6,9 +6,8 @@ title: Lexi Soelberg's CV
 Psychology (Health) Student, Statistics Student
 
 <div id="webaddress">
-<a href="isaac@applesdofall.org">isaac@applesdofall.org</a>
-| <a href="http://en.wikipedia.org/wiki/Isaac_Newton">My wikipedia page</a>
-</div>
+<a href="soe21001@byui.edu">soe21001@byui.edu</a>
+| This is my website
 
 
 ## Currently
@@ -44,7 +43,8 @@ President, *Health Psych Society*, Rexburg, ID
 
 `2026`
 College Student Influenza and COVID-19 Vaccination Attitudes and Uptake Behavior: Prevalence, Correlates, and Promoting Improvement
-[COVID](https://www.mdpi.com/journal/covid/sections/COVID_Public_Health_and_Epidemiology)
+
+[COVID](https://www.mdpi.com/journal/covid/sections/COVID_Public_Health_and_Epidemiology)  |  [Article](https://www.preprints.org/manuscript/202603.0059)
 
 
 ## Occupation
