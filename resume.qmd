@@ -7,7 +7,7 @@ Psychology (Health) Student, Statistics Student
 
 <div id="webaddress">
 <a href="soe21001@byui.edu">soe21001@byui.edu</a>
-| This is my website
+| [LinkedIn](https://www.linkedin.com/in/lexi-soelberg-5494363a5/)
 
 
 ## Currently
@@ -21,7 +21,7 @@ Research, Psychology, Social Psychology, Health Psychology, data visualizations,
 
 ### Research interests
 
-Women health & mental health, hormones & behavior, biopsychosocial model of behavior, theories of behavior, systems theories
+Women's health & mental health, hormones & behavior, biopsychosocial model of behavior, theories of behavior, systems theories,  social psychology, gender differences. 
 
 
 ## Education
@@ -32,7 +32,7 @@ __Brigham Young University - Idaho__
 
 ## Awards
 
-`2025-2026`
+`2025 - Now`
 President, *Health Psych Society*, Rexburg, ID
 
 
@@ -49,10 +49,26 @@ College Student Influenza and COVID-19 Vaccination Attitudes and Uptake Behavior
 
 ## Occupation
 
-`2025-2026`
-__Health Psych Teaching Assistant__, Rexburg, ID
+`2024 - 2025` 
+__Research Methods Teaching Assistant__, _Brigham Young University - Idaho_, Rexburg, ID
+
+`2025`
+__For the Strength of Youth Counselor__, _For The Strength of Youth Conferences_, Provo, UT
+[About FSY](https://www.churchofjesuschrist.org/events/fsy/?lang=eng) | [FSY Counselor](https://fsyemployment.byu.edu/us)
+
+`2025 - Now`
+__Health Psych Teaching Assistant__, _Brigham Young University - Idaho_, Rexburg, ID
+
+`2025 - Now`
+__Psychology Research Assistant__, _Brigham Young University - Idaho_, Rexburg, ID
+
+
+## Voluntary Service
+
+`Sept 2022 - March 2024`
+__Full-Time Missionary__, _The Church of Jesus Christ of Latter-day Saints_, Bakersfield, CA
 
 
 <!-- ### Footer
 
-Last updated: May 2013 -->
+Last updated: May 2026 -->
