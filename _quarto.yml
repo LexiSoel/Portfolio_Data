@@ -3,7 +3,7 @@ project:
   output-dir: docs
 
 website:
-  title: "Lexi Soelberg - Data Science Portfolio"
+  title: "Lexi Soelberg - Quantitative Research & Statistics Portfolio"
   favicon: Images/favicon.png
   back-to-top-navigation: true
   repo-url: https://github.com/username/username.github.io
@@ -21,23 +21,23 @@ website:
     search: true   
     right:
       - text: "Home"
-        file: index.qmd
-      - text: "Lexi's Resume"
-        file: resume.qmd
+        href: index.qmd
+      - text: "Resume"
+        href: resume.qmd
       - text: "Statistics Projects"
-        file: Statistics_Projects.qmd
+        href: Statistics_Projects.qmd
       - text: "Research Papers"
-        file: Research_Papers.qmd
+        href: Research_Papers.qmd
       - text: "Temporal Envy"
-        file: Temporal_Envy.qmd
+        href: Temporal_Envy.qmd
       - text: "Married_Differences"
-        file: Married_Differnces.qmd
+        href: Married_Differences.qmd
       - text: "Industrial-Organizational Data"
-        file: Industrial_Organizational_Data.qmd
+        href: Industrial_Organizational_Data.qmd
       - text: "Conferences"
-        file: Conferences.qmd
+        href: Conferences.qmd
   
-  # learn more about navication here https://quarto.org/docs/websites/website-navigation.html
+  # learn more about navigation here https://quarto.org/docs/websites/website-navigation.html
   # comment out any of the sections below to turn off the sidebar
 
   sidebar: 
@@ -45,106 +45,225 @@ website:
       style: "docked"
       background: light
       contents:
-        - text: "Statistics Projects"
-          file: Statistics_Projects.qmd
+        - text: "Overview & Skills"
+          href: Statistics_Projects.qmd
         - text: "---"
-        - text: "Project 1"
-          file: Statistics_Projects/project1.qmd
+        
+        # --- SECTION 1: INTERMEDIATE STATS ---
+        - section: "Intermediate Stats"
+          id: "intermediate-stats"
+          collapsed: true
+          contents:
+            - text: "Project 1: Descriptive Analysis"
+              href: Statistics_Projects/Intermediate_Stats/project1.qmd
+            - text: "Project 2: Hypothesis Testing"
+              href: Statistics_Projects/Intermediate_Stats/project2.qmd
+            - text: "Project 3"
+              href: Statistics_Projects/Intermediate_Stats/project3.qmd
+        #     - text: "Project 4"
+        #       href: Statistics_Projects/Intermediate_Stats/project4.qmd
+        #     - text: "Project 5"
+        #       href: Statistics_Projects/Intermediate_Stats/project5.qmd
+        #     - text: "Project 6"
+        #       href: Statistics_Projects/Intermediate_Stats/project6.qmd
+        #     - text: "Project 7"
+        #       href: Statistics_Projects/Intermediate_Stats/project7.qmd
+        #     - text: "Project 8"
+        #       href: Statistics_Projects/Intermediate_Stats/project8.qmd
+        #     - text: "Project 9"
+        #       href: Statistics_Projects/Intermediate_Stats/project9.qmd
+        #     - text: "Project 10"
+        #       href: Statistics_Projects/Intermediate_Stats/project10.qmd
+        #     - text: "Project 11"
+        #       href: Statistics_Projects/Intermediate_Stats/project11.qmd
+        #     - text: "Project 12"
+        #       href: Statistics_Projects/Intermediate_Stats/project12.qmd
+            
         - text: "---"
-        - text: "Project 2"
-          file: Statistics_Projects/project2.qmd
+        
+        # --- SECTION 2: EXPERIMENTAL DESIGN ---
+        - section: "Experimental Design"
+          id: "experimental-design"
+          collapsed: true
+          contents:
+        #     - text: "Project 1: Randomized Blocks"
+        #       href: Statistics_Projects/Experimental_Design/project1.qmd
+        #     - text: "Project 2: Factorial ANOVA"
+        #       href: Statistics_Projects/Experimental_Design/project2.qmd
+        #     - text: "Project 3"
+        #       href: Statistics_Projects/Experimental_Design/project3.qmd
+        #     - text: "Project 4"
+        #       href: Statistics_Projects/Experimental_Design/project4.qmd
+        #     - text: "Project 5"
+        #       href: Statistics_Projects/Experimental_Design/project5.qmd
+        #     - text: "Project 6"
+        #       href: Statistics_Projects/Experimental_Design/project6.qmd
+        #     - text: "Project 7"
+        #       href: Statistics_Projects/Experimental_Design/project7.qmd
+        #     - text: "Project 8"
+        #       href: Statistics_Projects/Experimental_Design/project8.qmd
+        #     - text: "Project 9"
+        #       href: Statistics_Projects/Experimental_Design/project9.qmd
+        #     - text: "Project 10"
+        #       href: Statistics_Projects/Experimental_Design/project10.qmd
+        #     - text: "Project 11"
+        #       href: Statistics_Projects/Experimental_Design/project11.qmd
+        #     - text: "Project 12"
+        #       href: Statistics_Projects/Experimental_Design/project12.qmd
+            pass
+            
         - text: "---"
-        - text: "Project 3"
-          file: Statistics_Projects/project3.qmd
+        
+        # --- SECTION 3: APPLIED LINEAR REGRESSION ---
+        - section: "Applied Linear Regression"
+          id: "linear-regression"
+          collapsed: true
+          contents:
+        #     - text: "Project 1: Simple Linear Models"
+        #       href: Statistics_Projects/Linear_Regression/project1.qmd
+        #     - text: "Project 2: Multiple Regression"
+        #       href: Statistics_Projects/Linear_Regression/project2.qmd
+        #     - text: "Project 3"
+        #       href: Statistics_Projects/Linear_Regression/project3.qmd
+        #     - text: "Project 4"
+        #       href: Statistics_Projects/Linear_Regression/project4.qmd
+        #     - text: "Project 5"
+        #       href: Statistics_Projects/Linear_Regression/project5.qmd
+        #     - text: "Project 6"
+        #       href: Statistics_Projects/Linear_Regression/project6.qmd
+        #     - text: "Project 7"
+        #       href: Statistics_Projects/Linear_Regression/project7.qmd
+        #     - text: "Project 8"
+        #       href: Statistics_Projects/Linear_Regression/project8.qmd
+        #     - text: "Project 9"
+        #       href: Statistics_Projects/Linear_Regression/project9.qmd
+        #     - text: "Project 10"
+        #       href: Statistics_Projects/Linear_Regression/project10.qmd
+        #     - text: "Project 11"
+        #       href: Statistics_Projects/Linear_Regression/project11.qmd
+        #     - text: "Project 12"
+        #       href: Statistics_Projects/Linear_Regression/project12.qmd
+            pass
+            
         - text: "---"
+        
+        # --- SECTION 4: DATA WRANGLING & VISUALIZATION ---
+        - section: "Data Wrangling & Visualizations"
+          id: "data-wrangling"
+          collapsed: true
+          contents:
+        #     - text: "Project 1: Tidyverse Cleaning"
+        #       href: Statistics_Projects/Data_Wrangling/project1.qmd
+        #     - text: "Project 2: ggplot2 Dashboards"
+        #       href: Statistics_Projects/Data_Wrangling/project2.qmd
+        #     - text: "Project 3"
+        #       href: Statistics_Projects/Data_Wrangling/project3.qmd
+        #     - text: "Project 4"
+        #       href: Statistics_Projects/Data_Wrangling/project4.qmd
+        #     - text: "Project 5"
+        #       href: Statistics_Projects/Data_Wrangling/project5.qmd
+        #     - text: "Project 6"
+        #       href: Statistics_Projects/Data_Wrangling/project6.qmd
+        #     - text: "Project 7"
+        #       href: Statistics_Projects/Data_Wrangling/project7.qmd
+        #     - text: "Project 8"
+        #       href: Statistics_Projects/Data_Wrangling/project8.qmd
+        #     - text: "Project 9"
+        #       href: Statistics_Projects/Data_Wrangling/project9.qmd
+        #     - text: "Project 10"
+        #       href: Statistics_Projects/Data_Wrangling/project10.qmd
+        #     - text: "Project 11"
+        #       href: Statistics_Projects/Data_Wrangling/project11.qmd
+        #     - text: "Project 12"
+        #       href: Statistics_Projects/Data_Wrangling/project12.qmd
+            pass
+              
     - title: "Research Papers"
       style: "docked"
       background: light
       contents:
         - text: "Research Papers"
-          file: Research_Papers.qmd
+          href: Research_Papers.qmd
         - text: "---"
         - text: "Project 1"
-          file: Research_Papers/project1.qmd
+          href: Research_Papers/project1.qmd
         - text: "---"
         - text: "Project 2"
-          file: Research_Papers/project2.qmd
+          href: Research_Papers/project2.qmd
         - text: "---"
         - text: "Project 3"
-          file: Research_Papers/project3.qmd
+          href: Research_Papers/project3.qmd
         - text: "---"
+
     - title: "Temporal Envy"
       style: "docked"
       background: light
       contents:
         - text: "Temporal Envy"
-          file: Temporal_Envy.qmd
+          href: Temporal_Envy.qmd
         - text: "---"
-        - text: "Project 1"
-          file: Temporal_Envy/project1.qmd
+        - text: "Poster Presentation"
+          href: Temporal_Envy/poster1.qmd
         - text: "---"
-        - text: "Project 2"
-          file: Temporal_Envy/project2.qmd
+        - text: "Abstract"
+          href: Temporal_Envy/abstract1.qmd
         - text: "---"
-        - text: "Project 3"
-          file: Temporal_Envy/project3.qmd
+        - text: "Index"
+          href: Temporal_Envy/index1.qmd
         - text: "---"
-    - title: "Married Differnces"
+
+    - title: "Married Differences"
       style: "docked"
       background: light
       contents:
-        - text: "Married Differnces"
-          file: Married_Differnces.qmd
+        - text: "Married Differences"
+          href: Married_Differences.qmd
         - text: "---"
-        - text: "Project 1"
-          file: Married_Differnces/project1.qmd
+        - text: "Poster Presentation"
+          href: Married_Differences/poster2.qmd
         - text: "---"
-        - text: "Project 2"
-          file: Married_Differnces/project2.qmd
+        - text: "Abstract"
+          href: Married_Differences/abstract2.qmd
         - text: "---"
-        - text: "Project 3"
-          file: Married_Differnces/project3.qmd
+        - text: "Index"
+          href: Married_Differences/index2.qmd
         - text: "---"
+
     - title: "Industrial-Organizational Data"
       style: "docked"
       background: light
       contents:
         - text: "Industrial-Organizational Data"
-          file: Industrial_Organizational_Data.qmd
+          href: Industrial_Organizational_Data.qmd
         - text: "---"
         - text: "Project 1"
-          file: Industrial_Organizational_Data/project1.qmd
+          href: Industrial_Organizational_Data/project1.qmd
         - text: "---"
         - text: "Project 2"
-          file: Industrial_Organizational_Data/project2.qmd
+          href: Industrial_Organizational_Data/project2.qmd
         - text: "---"
+
     - title: "Conferences"
       style: "docked"
       background: light
       contents:
         - text: "Conferences"
-          file: Conferences.qmd
+          href: Conferences.qmd
         - text: "---"
-        - text: "Project 1"
-          file: Conferences/project1.qmd
+        - text: "Research & Creative Works"
+          href: Conferences/RCW.qmd
         - text: "---"
-        - text: "Project 2"
-          file: Conferences/project2.qmd
+        - text: "Rocky Mountain Psychological Association - 2026"
+          href: Conferences/RMPA2026.qmd
         - text: "---"
-        - text: "Project 3"
-          file: Conferences/project3.qmd
+        - text: "Rocky Mountain Psychological Association - 2027"
+          href: Conferences/RMPA2027.qmd
         - text: "---"
 
-  
 format:  
   html:
-    theme: #see this link to customize the theme with css (https://quarto.org/docs/output-formats/html-themes.html#dark-mode)
-      light: flatly # more themes can be found [here](https://quarto.org/docs/output-formats/html-themes.html)
+    theme: 
+      light: flatly 
       dark: darkly
-      #light: cosmo
-      #dark: [cosmo, theme-dark.scss]
     css: styles.css
     toc: true
-
-
-
