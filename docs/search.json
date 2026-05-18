@@ -1,132 +1,187 @@
 [
   {
-    "objectID": "competition.html",
-    "href": "competition.html",
-    "title": "about me",
-    "section": "",
-    "text": "MarkDown Basics",
-    "crumbs": [
-      "Competitions",
-      "Competition"
-    ]
-  },
-  {
-    "objectID": "competition.html#title-2-header",
-    "href": "competition.html#title-2-header",
-    "title": "about me",
-    "section": "",
-    "text": "MarkDown Basics",
-    "crumbs": [
-      "Competitions",
-      "Competition"
-    ]
-  },
-  {
-    "objectID": "Cleansing_Projects/project3.html",
-    "href": "Cleansing_Projects/project3.html",
+    "objectID": "Statistics_Projects/Intermediate_Stats/project3.html",
+    "href": "Statistics_Projects/Intermediate_Stats/project3.html",
     "title": "Client Report - [Insert Project Title]",
     "section": "",
     "text": "Paste in a template\n\n\n\n\n Back to top",
     "crumbs": [
-      "Data Cleansing",
+      "Statistics Projects",
+      "Intermediate Stats",
       "Project 3"
     ]
   },
   {
-    "objectID": "Cleansing_Projects/project1.html",
-    "href": "Cleansing_Projects/project1.html",
+    "objectID": "Statistics_Projects/Intermediate_Stats/project1.html",
+    "href": "Statistics_Projects/Intermediate_Stats/project1.html",
     "title": "Client Report - [Insert Project Title]",
     "section": "",
     "text": "Paste in a template\n\n\n\n\n Back to top",
     "crumbs": [
-      "Data Cleansing",
-      "Project 1"
+      "Statistics Projects",
+      "Intermediate Stats",
+      "Project 1: Descriptive Analysis"
     ]
   },
   {
-    "objectID": "Full_Stack/project1.html",
-    "href": "Full_Stack/project1.html",
+    "objectID": "Industrial_Organizational_Data/project2.html",
+    "href": "Industrial_Organizational_Data/project2.html",
     "title": "Client Report - [Insert Project Title]",
     "section": "",
     "text": "Paste in a template\n\n\n\n\n Back to top",
     "crumbs": [
-      "Full Stack",
-      "Project 1"
-    ]
-  },
-  {
-    "objectID": "Competition/project2.html",
-    "href": "Competition/project2.html",
-    "title": "Client Report - [Insert Project Title]",
-    "section": "",
-    "text": "Paste in a template\n\n\n\n\n Back to top",
-    "crumbs": [
-      "Competitions",
+      "Industrial-Organizational Data",
       "Project 2"
     ]
   },
   {
-    "objectID": "Cleansing_Exploration/project3.html",
-    "href": "Cleansing_Exploration/project3.html",
+    "objectID": "Conferences/RCW.html",
+    "href": "Conferences/RCW.html",
     "title": "Client Report - [Insert Project Title]",
     "section": "",
     "text": "Paste in a template\n\n\n\n\n Back to top",
     "crumbs": [
-      "Data Exploration",
-      "Project 3"
+      "Conferences",
+      "Research & Creative Works"
     ]
   },
   {
-    "objectID": "Cleansing_Exploration/project1.html",
-    "href": "Cleansing_Exploration/project1.html",
+    "objectID": "Conferences/RMPA2027.html",
+    "href": "Conferences/RMPA2027.html",
     "title": "Client Report - [Insert Project Title]",
     "section": "",
     "text": "Paste in a template\n\n\n\n\n Back to top",
     "crumbs": [
-      "Data Exploration",
-      "Project 1"
+      "Conferences",
+      "Rocky Mountain Psychological Association - 2027"
     ]
   },
   {
-    "objectID": "ml.html",
-    "href": "ml.html",
+    "objectID": "Research_Papers/project2.html",
+    "href": "Research_Papers/project2.html",
+    "title": "Client Report - [Insert Project Title]",
+    "section": "",
+    "text": "Paste in a template\n\n\n\n\n Back to top",
+    "crumbs": [
+      "Research Papers",
+      "Project 2"
+    ]
+  },
+  {
+    "objectID": "Married_Differences.html",
+    "href": "Married_Differences.html",
     "title": "about me",
     "section": "",
     "text": "MarkDown Basics",
     "crumbs": [
-      "Machine Learning"
+      "Married_Differences",
+      "Married Differences"
     ]
   },
   {
-    "objectID": "ml.html#title-2-header",
-    "href": "ml.html#title-2-header",
+    "objectID": "Married_Differences.html#title-2-header",
+    "href": "Married_Differences.html#title-2-header",
     "title": "about me",
     "section": "",
     "text": "MarkDown Basics",
     "crumbs": [
-      "Machine Learning"
+      "Married_Differences",
+      "Married Differences"
     ]
   },
   {
-    "objectID": "Machine_Learning/project3.html",
-    "href": "Machine_Learning/project3.html",
+    "objectID": "Conferences.html",
+    "href": "Conferences.html",
+    "title": "about me",
+    "section": "",
+    "text": "MarkDown Basics",
+    "crumbs": [
+      "Conferences"
+    ]
+  },
+  {
+    "objectID": "Conferences.html#title-2-header",
+    "href": "Conferences.html#title-2-header",
+    "title": "about me",
+    "section": "",
+    "text": "MarkDown Basics",
+    "crumbs": [
+      "Conferences"
+    ]
+  },
+  {
+    "objectID": "Temporal_Envy/abstract1.html",
+    "href": "Temporal_Envy/abstract1.html",
     "title": "Client Report - [Insert Project Title]",
     "section": "",
     "text": "Paste in a template\n\n\n\n\n Back to top",
     "crumbs": [
-      "Machine Learning",
-      "Project 3"
+      "Temporal Envy",
+      "Abstract"
     ]
   },
   {
-    "objectID": "Machine_Learning/project1.html",
-    "href": "Machine_Learning/project1.html",
+    "objectID": "Statistics_Projects.html",
+    "href": "Statistics_Projects.html",
+    "title": "about me",
+    "section": "",
+    "text": "MarkDown Basics",
+    "crumbs": [
+      "Statistics Projects",
+      "Overview & Skills"
+    ]
+  },
+  {
+    "objectID": "Statistics_Projects.html#title-2-header",
+    "href": "Statistics_Projects.html#title-2-header",
+    "title": "about me",
+    "section": "",
+    "text": "MarkDown Basics",
+    "crumbs": [
+      "Statistics Projects",
+      "Overview & Skills"
+    ]
+  },
+  {
+    "objectID": "Married_Differences/poster2.html",
+    "href": "Married_Differences/poster2.html",
     "title": "Client Report - [Insert Project Title]",
     "section": "",
     "text": "Paste in a template\n\n\n\n\n Back to top",
     "crumbs": [
-      "Machine Learning",
-      "Project 1"
+      "Married_Differences",
+      "Poster Presentation"
+    ]
+  },
+  {
+    "objectID": "Married_Differences/index2.html",
+    "href": "Married_Differences/index2.html",
+    "title": "Client Report - [Insert Project Title]",
+    "section": "",
+    "text": "Paste in a template\n\n\n\n\n Back to top",
+    "crumbs": [
+      "Married_Differences",
+      "Index"
+    ]
+  },
+  {
+    "objectID": "Industrial_Organizational_Data.html",
+    "href": "Industrial_Organizational_Data.html",
+    "title": "about me",
+    "section": "",
+    "text": "MarkDown Basics",
+    "crumbs": [
+      "Industrial-Organizational Data"
+    ]
+  },
+  {
+    "objectID": "Industrial_Organizational_Data.html#title-2-header",
+    "href": "Industrial_Organizational_Data.html#title-2-header",
+    "title": "about me",
+    "section": "",
+    "text": "MarkDown Basics",
+    "crumbs": [
+      "Industrial-Organizational Data"
     ]
   },
   {
@@ -134,7 +189,7 @@
     "href": "resume.html",
     "title": "Lexi Soelberg’s CV",
     "section": "",
-    "text": "Psychology (Health) Student, Statistics Student\n\nsoe21001@byui.edu | LinkedIn\n\n\nAttending Brigham Young University - Idaho\n\n\nResearch, Psychology, Social Psychology, Health Psychology, data visualizations, graphing data, cleaning data, presenting research\n\n\n\nWomen’s health & mental health, hormones & behavior, biopsychosocial model of behavior, theories of behavior, systems theories, social psychology, gender differences.\n\n\n\n\nSept 2021 - now Brigham Young University - Idaho\n\n\n\n2025 - Now President, Health Psych Society, Rexburg, ID\n\n\n\n\n\n2026 College Student Influenza and COVID-19 Vaccination Attitudes and Uptake Behavior: Prevalence, Correlates, and Promoting Improvement\nCOVID | Article\n\n\n\n\n2024 - 2025 Research Methods Teaching Assistant, Brigham Young University - Idaho, Rexburg, ID\n2025 For the Strength of Youth Counselor, For The Strength of Youth Conferences, Provo, UT About FSY | FSY Counselor\n2025 - Now Health Psych Teaching Assistant, Brigham Young University - Idaho, Rexburg, ID\n2025 - Now Psychology Research Assistant, Brigham Young University - Idaho, Rexburg, ID\n\n\n\nSept 2022 - March 2024 Full-Time Missionary, The Church of Jesus Christ of Latter-day Saints, Bakersfield, CA"
+    "text": "Psychology (Health) Student, Statistics Student\n\nsoe21001@byui.edu | LinkedIn\n\n\n\nAttending Brigham Young University - Idaho\n\n\nResearch, Psychology, Social Psychology, Health Psychology, data visualizations, graphing data, cleaning data, presenting research\n\n\n\nWomen’s health & mental health, hormones & behavior, biopsychosocial model of behavior, theories of behavior, systems theories, social psychology, gender differences.\n\n\n\n\nSept 2021 - now Brigham Young University - Idaho\n\n\n\n2025 - Now President, Health Psych Society, Rexburg, ID\n\n\n\n\n\n2026 College Student Influenza and COVID-19 Vaccination Attitudes and Uptake Behavior: Prevalence, Correlates, and Promoting Improvement\nCOVID | Article\n\n\n\n\n2024 - 2025 Research Methods Teaching Assistant, Brigham Young University - Idaho, Rexburg, ID\n2025 For the Strength of Youth Counselor, For The Strength of Youth Conferences, Provo, UT About FSY | FSY Counselor\n2025 - Now Health Psych Teaching Assistant, Brigham Young University - Idaho, Rexburg, ID\n2025 - Now Psychology Research Assistant, Brigham Young University - Idaho, Rexburg, ID\n\n\n\nSept 2022 - March 2024 Full-Time Missionary, The Church of Jesus Christ of Latter-day Saints, Bakersfield, CA"
   },
   {
     "objectID": "resume.html#currently",
@@ -172,87 +227,63 @@
     "text": "2024 - 2025 Research Methods Teaching Assistant, Brigham Young University - Idaho, Rexburg, ID\n2025 For the Strength of Youth Counselor, For The Strength of Youth Conferences, Provo, UT About FSY | FSY Counselor\n2025 - Now Health Psych Teaching Assistant, Brigham Young University - Idaho, Rexburg, ID\n2025 - Now Psychology Research Assistant, Brigham Young University - Idaho, Rexburg, ID"
   },
   {
-    "objectID": "Story_Telling/project3.html",
-    "href": "Story_Telling/project3.html",
+    "objectID": "resume.html#voluntary-service",
+    "href": "resume.html#voluntary-service",
+    "title": "Lexi Soelberg’s CV",
+    "section": "",
+    "text": "Sept 2022 - March 2024 Full-Time Missionary, The Church of Jesus Christ of Latter-day Saints, Bakersfield, CA"
+  },
+  {
+    "objectID": "Married_Differences/abstract2.html",
+    "href": "Married_Differences/abstract2.html",
     "title": "Client Report - [Insert Project Title]",
     "section": "",
     "text": "Paste in a template\n\n\n\n\n Back to top",
     "crumbs": [
-      "Story Telling",
-      "Project 3"
+      "Married_Differences",
+      "Abstract"
     ]
   },
   {
-    "objectID": "Story_Telling/project1.html",
-    "href": "Story_Telling/project1.html",
+    "objectID": "Research_Papers.html",
+    "href": "Research_Papers.html",
+    "title": "about me",
+    "section": "",
+    "text": "MarkDown Basics",
+    "crumbs": [
+      "Research Papers"
+    ]
+  },
+  {
+    "objectID": "Research_Papers.html#title-2-header",
+    "href": "Research_Papers.html#title-2-header",
+    "title": "about me",
+    "section": "",
+    "text": "MarkDown Basics",
+    "crumbs": [
+      "Research Papers"
+    ]
+  },
+  {
+    "objectID": "Temporal_Envy/index1.html",
+    "href": "Temporal_Envy/index1.html",
     "title": "Client Report - [Insert Project Title]",
     "section": "",
     "text": "Paste in a template\n\n\n\n\n Back to top",
     "crumbs": [
-      "Story Telling",
-      "Project 1"
+      "Temporal Envy",
+      "Index"
     ]
   },
   {
-    "objectID": "Story_Telling/project2.html",
-    "href": "Story_Telling/project2.html",
+    "objectID": "Temporal_Envy/poster1.html",
+    "href": "Temporal_Envy/poster1.html",
     "title": "Client Report - [Insert Project Title]",
     "section": "",
     "text": "Paste in a template\n\n\n\n\n Back to top",
     "crumbs": [
-      "Story Telling",
-      "Project 2"
-    ]
-  },
-  {
-    "objectID": "exploration.html",
-    "href": "exploration.html",
-    "title": "about me",
-    "section": "",
-    "text": "MarkDown Basics",
-    "crumbs": [
-      "Data Exploration"
-    ]
-  },
-  {
-    "objectID": "exploration.html#title-2-header",
-    "href": "exploration.html#title-2-header",
-    "title": "about me",
-    "section": "",
-    "text": "MarkDown Basics",
-    "crumbs": [
-      "Data Exploration"
-    ]
-  },
-  {
-    "objectID": "cleansing.html",
-    "href": "cleansing.html",
-    "title": "about me",
-    "section": "",
-    "text": "MarkDown Basics",
-    "crumbs": [
-      "Data Cleansing"
-    ]
-  },
-  {
-    "objectID": "cleansing.html#title-2-header",
-    "href": "cleansing.html#title-2-header",
-    "title": "about me",
-    "section": "",
-    "text": "MarkDown Basics",
-    "crumbs": [
-      "Data Cleansing"
-    ]
-  },
-  {
-    "objectID": "Machine_Learning/project2.html",
-    "href": "Machine_Learning/project2.html",
-    "title": "Client Report - [Insert Project Title]",
-    "section": "",
-    "text": "Paste in a template\n\n\n\n\n Back to top",
-    "crumbs": [
-      "Machine Learning",
-      "Project 2"
+      "Temporal Envy",
+      "Poster Presentation"
     ]
   },
   {
@@ -270,105 +301,79 @@
     "text": "MarkDown Basics"
   },
   {
-    "objectID": "story_telling.html",
-    "href": "story_telling.html",
-    "title": "about me",
-    "section": "",
-    "text": "MarkDown Basics",
-    "crumbs": [
-      "Story Telling"
-    ]
-  },
-  {
-    "objectID": "story_telling.html#title-2-header",
-    "href": "story_telling.html#title-2-header",
-    "title": "about me",
-    "section": "",
-    "text": "MarkDown Basics",
-    "crumbs": [
-      "Story Telling"
-    ]
-  },
-  {
-    "objectID": "Cleansing_Exploration/project2.html",
-    "href": "Cleansing_Exploration/project2.html",
+    "objectID": "Research_Papers/project1.html",
+    "href": "Research_Papers/project1.html",
     "title": "Client Report - [Insert Project Title]",
     "section": "",
     "text": "Paste in a template\n\n\n\n\n Back to top",
     "crumbs": [
-      "Data Exploration",
-      "Project 2"
-    ]
-  },
-  {
-    "objectID": "Competition/project1.html",
-    "href": "Competition/project1.html",
-    "title": "Client Report - [Insert Project Title]",
-    "section": "",
-    "text": "Paste in a template\n\n\n\n\n Back to top",
-    "crumbs": [
-      "Competitions",
+      "Research Papers",
       "Project 1"
     ]
   },
   {
-    "objectID": "Competition/project3.html",
-    "href": "Competition/project3.html",
+    "objectID": "Research_Papers/project3.html",
+    "href": "Research_Papers/project3.html",
     "title": "Client Report - [Insert Project Title]",
     "section": "",
     "text": "Paste in a template\n\n\n\n\n Back to top",
     "crumbs": [
-      "Competitions",
+      "Research Papers",
       "Project 3"
     ]
   },
   {
-    "objectID": "Full_Stack/project2.html",
-    "href": "Full_Stack/project2.html",
+    "objectID": "Conferences/RMPA2026.html",
+    "href": "Conferences/RMPA2026.html",
     "title": "Client Report - [Insert Project Title]",
     "section": "",
     "text": "Paste in a template\n\n\n\n\n Back to top",
     "crumbs": [
-      "Full Stack",
-      "Project 2"
+      "Conferences",
+      "Rocky Mountain Psychological Association - 2026"
     ]
   },
   {
-    "objectID": "Cleansing_Projects/project2.html",
-    "href": "Cleansing_Projects/project2.html",
+    "objectID": "Industrial_Organizational_Data/project1.html",
+    "href": "Industrial_Organizational_Data/project1.html",
     "title": "Client Report - [Insert Project Title]",
     "section": "",
     "text": "Paste in a template\n\n\n\n\n Back to top",
     "crumbs": [
-      "Data Cleansing",
-      "Project 2"
+      "Industrial-Organizational Data",
+      "Project 1"
     ]
   },
   {
-    "objectID": "full_stack.html",
-    "href": "full_stack.html",
+    "objectID": "Temporal_Envy.html",
+    "href": "Temporal_Envy.html",
     "title": "about me",
     "section": "",
     "text": "MarkDown Basics",
     "crumbs": [
-      "Full Stack"
+      "Temporal Envy"
     ]
   },
   {
-    "objectID": "full_stack.html#title-2-header",
-    "href": "full_stack.html#title-2-header",
+    "objectID": "Temporal_Envy.html#title-2-header",
+    "href": "Temporal_Envy.html#title-2-header",
     "title": "about me",
     "section": "",
     "text": "MarkDown Basics",
     "crumbs": [
-      "Full Stack"
+      "Temporal Envy"
     ]
   },
   {
-    "objectID": "resume.html#voluntary-service",
-    "href": "resume.html#voluntary-service",
-    "title": "Lexi Soelberg’s CV",
+    "objectID": "Statistics_Projects/Intermediate_Stats/project2.html",
+    "href": "Statistics_Projects/Intermediate_Stats/project2.html",
+    "title": "Client Report - [Insert Project Title]",
     "section": "",
-    "text": "Sept 2022 - March 2024 Full-Time Missionary, The Church of Jesus Christ of Latter-day Saints, Bakersfield, CA"
+    "text": "Paste in a template\n\n\n\n\n Back to top",
+    "crumbs": [
+      "Statistics Projects",
+      "Intermediate Stats",
+      "Project 2: Hypothesis Testing"
+    ]
   }
 ]

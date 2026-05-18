@@ -6,9 +6,9 @@ title: Lexi Soelberg's CV
 Psychology (Health) Student, Statistics Student
 
 <div id="webaddress">
-<a href="soe21001@byui.edu">soe21001@byui.edu</a>
-| [LinkedIn](https://www.linkedin.com/in/lexi-soelberg-5494363a5/)
-
+<a href="mailto:soe21001@byui.edu">soe21001@byui.edu</a> | 
+[LinkedIn](https://www.linkedin.com/in/lexi-soelberg-5494363a5/)
+</div>
 
 ## Currently
 
@@ -18,24 +18,19 @@ Attending Brigham Young University - Idaho
 
 Research, Psychology, Social Psychology, Health Psychology, data visualizations, graphing data, cleaning data, presenting research
 
-
 ### Research interests
 
-Women's health & mental health, hormones & behavior, biopsychosocial model of behavior, theories of behavior, systems theories,  social psychology, gender differences. 
-
+Women's health & mental health, hormones & behavior, biopsychosocial model of behavior, theories of behavior, systems theories, social psychology, gender differences. 
 
 ## Education
 
 `Sept 2021 - now`
 __Brigham Young University - Idaho__
 
-
 ## Awards
 
 `2025 - Now`
 President, *Health Psych Society*, Rexburg, ID
-
-
 
 ## Publications
 
@@ -44,8 +39,7 @@ President, *Health Psych Society*, Rexburg, ID
 `2026`
 College Student Influenza and COVID-19 Vaccination Attitudes and Uptake Behavior: Prevalence, Correlates, and Promoting Improvement
 
-[COVID](https://www.mdpi.com/journal/covid/sections/COVID_Public_Health_and_Epidemiology)  |  [Article](https://www.preprints.org/manuscript/202603.0059)
-
+[COVID](https://www.mdpi.com/journal/covid/sections/COVID_Public_Health_and_Epidemiology) | [Article](https://www.preprints.org/manuscript/202603.0059)
 
 ## Occupation
 
@@ -62,13 +56,7 @@ __Health Psych Teaching Assistant__, _Brigham Young University - Idaho_, Rexburg
 `2025 - Now`
 __Psychology Research Assistant__, _Brigham Young University - Idaho_, Rexburg, ID
 
-
 ## Voluntary Service
 
 `Sept 2022 - March 2024`
 __Full-Time Missionary__, _The Church of Jesus Christ of Latter-day Saints_, Bakersfield, CA
-
-
-<!-- ### Footer
-
-Last updated: May 2026 -->
