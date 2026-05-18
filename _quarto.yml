@@ -14,7 +14,7 @@ website:
     left: "Lexi Soelberg  2026©"
     right: 
       - icon: linkedin
-        href: Your_LinkedIn_URL
+        href: https://www.linkedin.com/in/lexi-soelberg-5494363a5/
 
   navbar:
     background: primary
@@ -24,115 +24,115 @@ website:
         file: index.qmd
       - text: "Lexi's Resume"
         file: resume.qmd
-      - text: "Data Cleansing"
-        file: cleansing.qmd
-      - text: "Data Exploration"
-        file: exploration.qmd
-      - text: "Story Telling"
-        file: story_telling.qmd
-      - text: "Machine Learning"
-        file: ml.qmd
-      - text: "Full Stack"
-        file: full_stack.qmd
-      - text: "Competitions"
-        file: competition.qmd
+      - text: "Statistics Projects"
+        file: Statistics_Projects.qmd
+      - text: "Research Papers"
+        file: Research_Papers.qmd
+      - text: "Temporal Envy"
+        file: Temporal_Envy.qmd
+      - text: "Married_Differences"
+        file: Married_Differnces.qmd
+      - text: "Industrial-Organizational Data"
+        file: Industrial_Organizational_Data.qmd
+      - text: "Conferences"
+        file: Conferences.qmd
   
   # learn more about navication here https://quarto.org/docs/websites/website-navigation.html
   # comment out any of the sections below to turn off the sidebar
 
   sidebar: 
-    - title: "Data Cleansing"
+    - title: "Statistics Projects"
       style: "docked"
       background: light
       contents:
-        - text: "Data Cleansing"
-          file: cleansing.qmd
+        - text: "Statistics Projects"
+          file: Statistics_Projects.qmd
         - text: "---"
         - text: "Project 1"
-          file: Cleansing_Projects/project1.qmd
+          file: Statistics_Projects/project1.qmd
         - text: "---"
         - text: "Project 2"
-          file: Cleansing_Projects/project2.qmd
+          file: Statistics_Projects/project2.qmd
         - text: "---"
         - text: "Project 3"
-          file: Cleansing_Projects/project3.qmd
+          file: Statistics_Projects/project3.qmd
         - text: "---"
-    - title: "Data Exploration"
+    - title: "Research Papers"
       style: "docked"
       background: light
       contents:
-        - text: "Data Exploration"
-          file: exploration.qmd
+        - text: "Research Papers"
+          file: Research_Papers.qmd
         - text: "---"
         - text: "Project 1"
-          file: Cleansing_Exploration/project1.qmd
+          file: Research_Papers/project1.qmd
         - text: "---"
         - text: "Project 2"
-          file: Cleansing_Exploration/project2.qmd
+          file: Research_Papers/project2.qmd
         - text: "---"
         - text: "Project 3"
-          file: Cleansing_Exploration/project3.qmd
+          file: Research_Papers/project3.qmd
         - text: "---"
-    - title: "Story Telling"
+    - title: "Temporal Envy"
       style: "docked"
       background: light
       contents:
-        - text: "Story Telling"
-          file: story_telling.qmd
+        - text: "Temporal Envy"
+          file: Temporal_Envy.qmd
         - text: "---"
         - text: "Project 1"
-          file: Story_Telling/project1.qmd
+          file: Temporal_Envy/project1.qmd
         - text: "---"
         - text: "Project 2"
-          file: Story_Telling/project2.qmd
+          file: Temporal_Envy/project2.qmd
         - text: "---"
         - text: "Project 3"
-          file: Story_Telling/project3.qmd
+          file: Temporal_Envy/project3.qmd
         - text: "---"
-    - title: "Machine Learning"
+    - title: "Married Differnces"
       style: "docked"
       background: light
       contents:
-        - text: "Machine Learning"
-          file: ml.qmd
+        - text: "Married Differnces"
+          file: Married_Differnces.qmd
         - text: "---"
         - text: "Project 1"
-          file: Machine_Learning/project1.qmd
+          file: Married_Differnces/project1.qmd
         - text: "---"
         - text: "Project 2"
-          file: Machine_Learning/project2.qmd
+          file: Married_Differnces/project2.qmd
         - text: "---"
         - text: "Project 3"
-          file: Machine_Learning/project3.qmd
+          file: Married_Differnces/project3.qmd
         - text: "---"
-    - title: "Full Stack"
+    - title: "Industrial-Organizational Data"
       style: "docked"
       background: light
       contents:
-        - text: "Full Stack"
-          file: full_stack.qmd
+        - text: "Industrial-Organizational Data"
+          file: Industrial_Organizational_Data.qmd
         - text: "---"
         - text: "Project 1"
-          file: Full_Stack/project1.qmd
+          file: Industrial_Organizational_Data/project1.qmd
         - text: "---"
         - text: "Project 2"
-          file: Full_Stack/project2.qmd
+          file: Industrial_Organizational_Data/project2.qmd
         - text: "---"
-    - title: "Competition"
+    - title: "Conferences"
       style: "docked"
       background: light
       contents:
-        - text: "Competition"
-          file: competition.qmd
+        - text: "Conferences"
+          file: Conferences.qmd
         - text: "---"
         - text: "Project 1"
-          file: Competition/project1.qmd
+          file: Conferences/project1.qmd
         - text: "---"
         - text: "Project 2"
-          file: Competition/project2.qmd
+          file: Conferences/project2.qmd
         - text: "---"
         - text: "Project 3"
-          file: Competition/project3.qmd
+          file: Conferences/project3.qmd
         - text: "---"
 
   
