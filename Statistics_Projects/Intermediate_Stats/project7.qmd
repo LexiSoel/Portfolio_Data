@@ -1,0 +1,221 @@
+---
+title: "Christian Attitudes - Chi-Squared Test"
+subtitle: "Course MATH 325"
+author: "Lexi Soelberg"
+format:
+  html:
+    self-contained: true
+    page-layout: full
+    title-block-banner: true
+    toc: true
+    toc-depth: 3
+    toc-location: body
+    number-sections: false
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: wrap
+    code-copy: hover
+    code-tools:
+        source: false
+        toggle: true
+        caption: See code
+execute: 
+  warning: false
+    
+---
+
+
+```{r message=FALSE, warning=FALSE}
+library(ggplot2)
+library(plotly)
+library(mosaic)
+library(car)
+library(tidyverse)
+library(pander)
+library(DT)
+library(dplyr)
+library(readr)
+library(haven)
+
+gss2021 <- read_sas("../../data/gss2021.sas7bdat", NULL)
+```
+
+
+<!-- Directions
+
+Come up with a chi squared test analysis of your own creation. 
+
+* Write the Background and clearly state your question. Then collect data and perform the chi-squared test analysis in order to answer your question. Use the proper order of first, ask the question, then second, figure out the answer.
+
+* You can use data from 
+    - An R data set
+    - the internet (like weather data, Facebook data, or sports data) 
+    - your own experiment 
+    - your own observational study
+* However,     
+    - Do not violate the "Human Subjects Rules" of the university: http://www.byui.edu/executive-strategy-and-planning/institutional-research/research-and-assessments/research-and-surveys
+
+* You need a sample size large enough to meet the requirements of the chi squared test. Unfortunately, the sample size is completely dependent on the situation you select. A good rule of thumb is 10 observations per "combination-group" in your data.
+
+-->
+
+
+# Background {.tabset}
+
+The 2021 GSS survey sent to Americans had two different questions: [Have you ever had a 'born again' experience?](https://gssdataexplorer.norc.org/variables/1077/vshow) and [Do you try to convince others to accept Jesus?](https://gssdataexplorer.norc.org/variables/1078/vshow) I found these questions with just two responses each `Yes` or `No` to be quite interesting and I wanted to see how they correlated to each other. 
+
+Is there a statistically significant relationship between individuals who report having had a "born again" experience and those who actively try to convince others to accept Jesus?
+
+-----
+
+As a recently returned missionary, I had always loved bringing along my recent converts --those you could say had a `born again` experience-- to my lessons with other friends. There was always such passion in the testimonies of those recent converts. The same was said with all members that we brought to lessons.
+
+I also feel that this goes along well with the verse in the New Testament: [Matthew 28:19-20](https://www.churchofjesuschrist.org/study/scriptures/nt/matt/28?lang=eng#title_number1)
+
+19 ¶ Go ye therefore, and teach all nations, baptizing them in the name of the Father, and of the Son, and of the Holy Ghost:
+
+20 Teaching them to observe all things whatsoever I have commanded you: and, lo, I am with you alway, even unto the end of the world. Amen.
+
+
+------
+
+
+## Counts & Hypothesis
+
+```{r}
+
+table(gss2021$REBORN) %>% 
+  setNames(c("Yes", "No")) %>% 
+  pander("Responses for Reborn")
+
+table(gss2021$SAVESOUL) %>% 
+  setNames(c("Yes", "No")) %>% 
+  pander("Responses for SaveSoul")
+
+table(gss2021$REBORN, gss2021$SAVESOUL) %>%
+  `rownames<-`(c("Yes", "No")) %>%
+  `colnames<-`(c("Yes", "No")) %>%
+  pander("Cross-tabulation of Reborn and SaveSoul")
+
+```
+
+As we can see here the counts are almost equal for the Yes and No groups in the `Reborn` and `SaveSoul` respondents. Just over 1400 people who said Yes to being reborn in Christ and near-equal counts for those who are willing to convince others of Christ. 
+
+In the 3rd table we can see who answered yes to both, yes and no to one, no and yes to another and no to both. 
+
+
+---------
+
+### Hypothesis
+
+$$
+  H_0: \text{Having a Born Again experience is not associated (or independent) with trying to convince others of Jesus Christ}
+$$
+
+
+$$ 
+  H_a: \text{Having a Born Again experience is associated with trying to convince others of Jesus Christ}
+$$
+
+<center>
+
+$\alpha$ = 0.5
+
+</center>
+
+----------
+
+
+## Table & Chart
+
+```{r}
+Jesustable <- table(gss2021$REBORN, gss2021$SAVESOUL)
+
+rownames(Jesustable) <- c("BORN AGAIN", "NOT BORN AGAIN") #these replace the 1, 2, and 3
+
+colnames(Jesustable) <- c("CONVINCE OF CHRIST", "DON'T CONVINCE CHRIST") #these replace the 1 and 2\
+
+Jesustable %>%
+  pander(caption="2021 General Social Survey Results", split.table=Inf)
+```
+
+
+```{r}
+barplot(
+  t(Jesustable), 
+  beside = TRUE, 
+  legend.text = TRUE, 
+  args.legend = list(
+    title = "Religiosity", 
+    x = "top", 
+    inset = 0.05,   
+    cex = 0.8,      
+    bty = 'n',      
+    horiz = FALSE   
+  ), 
+  col = c("goldenrod1", "chartreuse4"),
+  main = "Born Again on Convincing of Christ",
+  ylab = "Counts of Respondants"
+)
+
+```
+
+
+In the graph above we might be tempted to observe a correlation of those who are `Born Again` on their willingness to `Convince of Christ`. Let's run a $X^2$ test statistic to see if the findings are significant enough to reject our $H_0$ hypothesis. 
+
+---------
+
+## $X^2$ Test
+
+We will start by looking at our expected and observed counts. 
+
+```{r}
+
+
+Jesustest <- chisq.test(Jesustable)
+
+Jesustest$expected %>% pander()
+
+```
+
+To make sure these counts are valid and that we can move on to tunning the test statistic we make sure all counts are above 5, which they are.
+
+We are expecting to see more people spread out, what we are actually seeing is the extremes being represented more. The `Born Again` and `Convince of Christ` and the `Not Born Again` and `Don't Convince of Christ` group are the largest with the other two being the outliers. 
+
+```{r}
+Jesustest$observed %>% pander()
+```
+Now we will run our test to see how significant these observed counts are from the expected. 
+
+```{r}
+
+Jesustest <- chisq.test(Jesustable)
+Jesustest %>% pander()
+
+```
+The test statistic is decently big and the $p$-value is minuscule. This test gives us enough evidence to reject our $H_0$ and conclude that those who are born again are much more willing to preach of Christ and those who are not born again are not willing to preach of Christ. 
+
+--------
+
+
+# Interpretation
+
+Because we know we found significance with a $X^2$ test statistic of 1227 and a $p$-value of 9.388e-269, which is incredibly low, we know that Having a born again experience and convincing others of Christ are highly correlated. To see which observed counts are affecting this test statistic we will run a Pearson residuals
+
+```{r}
+
+Jesustest$residuals %>% pander
+
+```
+
+We can see from this chart there were more `Born Again` folks who were also in the `Convince of Christ`. Due to this being the largest number **22.25** we can assume a strong relationship. This is where our members and converts are at. This is our group of Pauls. 1030 strong. 
+
+However not everything is looking good for the `Born Again`-ers because in the `Don't Convince of Christ` group there are some notable deviators. **-17.02** the smallest group at 384 people. 
+
+If not equally surprising we are seeing some `Not Born Again` who are looking to spread some Gospel goodness. **-16.75** in the `Not Born Again` and `Convince of Christ`. We were not expecting them to show up to the church potluck and yet here they are, all 413 of them. 
+
+Finally we see the `Not Born Again` and `Don't Convince of Christ` group. They were our largest group with 2084 members. This is a postivie trending relationship, it's closer to what we expected. It can be hard to want to speak of Christ if you don't know what it's like to be made a new creature in Him. 
+
+
+

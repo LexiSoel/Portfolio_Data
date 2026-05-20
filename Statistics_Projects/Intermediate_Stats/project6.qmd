@@ -1,0 +1,188 @@
+---
+title: "BYU Win/Lose Based on Passing Yards - Simple Logistic Regression"
+subtitle: "Course MATH 325"
+author: "Lexi Soelberg"
+format:
+  html:
+    self-contained: true
+    page-layout: full
+    title-block-banner: true
+    toc: true
+    toc-depth: 3
+    toc-location: body
+    number-sections: false
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: wrap
+    code-copy: hover
+    code-tools:
+        source: false
+        toggle: true
+        caption: See code
+execute: 
+  warning: false
+    
+---
+
+<!-- Find some data of interest to you that can be analyzed with a logistic regression. Complete your Logistic Regression Analysis using this file. 
+
+Hint, run the command 
+
+> data() 
+
+in your Console to see available datasets in R that you could use for this Analysis. You are also welcome to collect data yourself, or find other available datasets online for this Analysis. Just be careful to not use anyone else's "analysis" for this Analysis. Also, no conducting surveys unless you have IRB approval to do so. -->
+
+```{r, include=FALSE}
+library(mosaic)
+library(ResourceSelection)
+library(readr)
+library(pander)
+library(ggplot2)
+library(plotly)
+library(dplyr)
+library(car)
+library(colorspace)
+library(RColorBrewer)
+library(gt)
+library(data.table)
+library(DT)
+
+BYU <- read_csv("../../data/BYU football data.csv")
+spec(BYU)
+```
+
+<div style="text-align: center;">
+  <img src="https://www.deseret.com/resizer/v2/DZOYEJTJ4BBURGRQX4WJ6SQVDQ.jpg?auth=2cd2834372a78a62a482a614f51cdc9a6d6bfadb8a212be5e9e9539162fc80b8&focal=0%2C0&width=800&height=533" alt="COSMO" style="width: 75%;">
+</div>
+
+
+## Background
+
+BYU's 2024 season has been really good so far (a 10/2 season!) For the sake of this analysis, I'm only looking at the data since Nov 16th 2024. 
+
+I wanted to compare the wins and passing yards from the past 3 years. I went to the BYU schedules on [ESPN](https://www.espn.com/college-football/team/schedule/_/id/252) and the season statistics from [BYU's football website](https://byucougars.com/sports/football/roster). 
+
+The wins and passing yards from the last 3 years are represented in the data table below.
+
+### Data
+
+```{r}
+BYUdt <- select(BYU, Opponent, Year, Win, PassYds)
+datatable(BYUdt, 
+          options=list(scrollX= TRUE, 
+          lengthMenu = c(5, 10, 15)), 
+          extensions="Responsive")
+```
+
+
+## Hypothesis
+
+$$
+  P(Y_i = 1|\, x_i) = \frac{e^{\beta_0 + \beta_1 x_i}}{1+e^{\beta_0 + \beta_1 x_i}} = \pi_i
+$$
+
+* $Y_i = 1$ denotes a Win for BYU, 
+* $Y_i=0$ denotes a Lose for BYU, and 
+* $x_i$ denotes the Passing Yards per game for BYU seasons 2021-2024. 
+
+If $\beta_1$ is zero in the above model, then $x_i$ (passing yards) provides no insight about the probability of a BYU win. If not zero however, then passing yards plays an important role in the probability of BYU's win. 
+
+Using a significance level of 
+
+<center>
+
+$\alpha = 0.05$ 
+
+</center>
+
+we will test the below hypotheses about $\beta_1$.
+
+$$
+  H_0: \beta_1 = 0 \\
+  H_a: \beta_1 \neq 0
+$$
+
+## Analysis
+
+The estimates of the coefficients $\beta_0$ and $\beta_1$ for the above logistic regression model and data are shown below.
+
+### Logistic Regression Model
+
+```{r}
+byu.glm <- glm(Num ~ PassYds, data=BYU, family=binomial)
+summary(byu.glm) %>%
+  pander()
+```
+
+<br/>
+
+This gives the estimated model for $\pi_i$ as
+
+$$
+  P(Y_i = 1|x_i) \approx \frac{e^{-0.09965+0.003374 x_i}}{1+e^{-0.09965+0.003374x_i}} = \hat{\pi}_i
+$$
+
+$b_0 = -0.09965$ is the value of the `(Intercept)` which estimates $\beta_0$ and $b_1 = 0.003374$ is the value of `PassYds` which estimates $\beta_1$.
+
+The p-value for the test of `PassYds` of $p$=0.3502 does not show sufficient evidence to conclude that $\beta_1 \neq 0$. Again, we were looking for sufficient evidence that the $p$-value would have shown us that $\beta_1$ was not 0. Therefore because we can't say that $\beta_1$ is not 0 we conclude that BYU's passing yards of the game does not effect their probability of a win.
+
+### Graph of Model
+
+```{r message=FALSE, warning=FALSE}
+BYUplot <- ggplot(data = BYU, aes(y = Num, x = PassYds, color=PassYds)) +
+  geom_point(size = 3.5, alpha = 0.8, aes(
+    text = paste(
+      "Passing Yards in a Game:", PassYds, "<br>",
+      "Win/Lose:", Win))) +
+  geom_smooth(method = "glm", method.args = list(family = "binomial"), se = FALSE, color = "royalblue1")+
+  scale_color_gradient(low = "royalblue1", high = "royalblue4") +
+  labs(title = "Is BYU More Likely to Win With More Passing Yards in a Game?", 
+       x = "Passing Yards",
+       y = "Win or Lose") +
+  theme_minimal() + 
+    theme( 
+    panel.background = element_rect(fill = "white", color = NA), 
+    plot.background = element_rect(fill = "white", color = NA)
+  )
+
+ggplotly(BYUplot, tooltip="text")
+
+```
+
+### Goodness of Model Fit
+
+```{r}
+p_value <- pchisq(334.01, 246, lower.tail = FALSE)
+sprintf("%.5f", p_value)  # Display p-value to 5 decimal places
+```
+
+We will run a Hosmer-Lemeshow Goodness-of-Fit Test to diagnose how well the x-values are represented in the logistic regression. There are very few repeated values in the data.
+
+```{r}
+hoslem.test(byu.glm$y, byu.glm$fitted, g=6) %>% pander()
+```
+In order to claim that the logistic regression is appropriate for this data we needed to see a $p$-value greater than $\alpha$ (0.05). With   $p$-value=0.01943 we cannot say that the logistic regression is a good fit for this data.
+
+## Interpretation
+
+There was not significant evidence to conclude that BYU wins more with more passing yards. The p-value of the $\beta1$ test did not reach significance at $p$=0.3502. The appropriateness of the x-values was also found to not be a good fit thanks to the Hosmer and Lemeshow (GOF) test. $p$-value=0.01943
+
+There isn't much significance in the model, however I still wanted to see the win probability prediction of passing yards at 300. That puts the model at:
+
+$$
+  P(Y_i = 1|x_i) \approx \frac{e^{-0.09965+0.003374*300}}{1+e^{-0.09965+0.003374*300}} = \hat{\pi}_i
+$$
+
+```{r}
+pred <- predict(byu.glm, data.frame(PassYds = 300), type = "response")
+#The inline code was used below to put this "pred" value into the text:
+#$\hat{\pi_i} \approx `r round(pred,5)`$
+```
+
+which, using R to do this calculation we get $\hat{\pi_i} \approx `r round(pred,5)`$. This shows that a win for BYU was much more likely to happen when the passing yards reached 300.
+
+Based on this prediction, BYU should put in the work on their passing yards. Their win probability is roughly 70% if they can pass the length of 3 football fields in one game! 
+
+--------
+: )

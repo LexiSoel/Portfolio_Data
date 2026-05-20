@@ -1,0 +1,279 @@
+---
+title: "House Selling Price"
+subtitle: "Course MATH 435"
+author: "Lexi Soelberg"
+format:
+  html:
+    self-contained: true
+    page-layout: full
+    title-block-banner: true
+    toc: true
+    toc-depth: 3
+    toc-location: body
+    number-sections: false
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: wrap
+    code-copy: hover
+    code-tools:
+        source: false
+        toggle: true
+        caption: See code
+execute: 
+  warning: false
+---
+
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(mosaic)
+library(knitr)
+```
+
+
+```{r}
+train <- read.csv("../../data/train.csv", stringsAsFactors = TRUE)
+```
+
+
+## Linear Model
+
+
+```{r message=FALSE, warning=FALSE}
+
+train <- train %>%
+  mutate(Cond = case_when(Condition1 %in% c("Norm") ~ 1, TRUE ~ 0),
+         SaleCond = case_when(SaleCondition %in% c("Normal") ~ 1, TRUE ~ 0))
+
+lm.over.log <- lm(log(SalePrice) ~ OverallQual + GrLivArea + I(GrLivArea^2) + GarageCars + KitchenQual + YearBuilt + I(YearBuilt^2) + TotalBsmtSF + SaleCond + OverallQual:Cond  + OverallQual:SaleCond + OverallQual:GrLivArea + OverallQual:YearBuilt, data=train)
+summary(lm.over.log)
+
+```
+
+### Coefficients
+
+```{r}
+b <- exp(coef(lm.over.log))
+
+#b <- exp(coef(lm.over.log)[2]*1000)
+
+b
+
+```
+#### Interpretation
+
+(Intercept)	~ 0	Not meaningful on its own — it's the baseline log-price when all variables are zero, which is outside the range of real houses.
+
+OverallQual	(4.334685)	Each 1-point increase in quality multiplies SalePrice by 4.33× — this is huge, the biggest one for sure. We will take a closer look in the graphs below.
+
+GrLivArea	(1.000540e+00)	Each additional square foot increases SalePrice by ~0.054%.
+
+I(GrLivArea^2)	(9.999999e-01)	Very slight diminishing returns to square footage. The overall effect is curved, this shows that of course large homes sell for more but there might be a slight disadvantage to too large of a home, such as if that home was being sold during the 2008 economic crisis. This data as quadratic only makes sense because of the couple of houses in the data set that are very large in square footage but low in price.
+
+GarageCars	(1.072106e+00)	Each extra garage spot increases price by ~7.2%.
+
+KitchenQualFa	(7.843718e-01)	“Fair” kitchen drops price by ~21.6% compared to Ex (Excellent).
+
+KitchenQualGd	(8.943670e-01)	“Good” kitchen is ~10.6% lower than Ex (Excellent).
+
+KitchenQualTA	(0.825)	“Typical/Average” is ~17.5% lower than Ex (Excellent).
+
+YearBuilt	(1.070016e+00)	Each additional year adds ~7% to SalePrice excepting our quadratic term,
+
+I(YearBuilt^2)	(9.999843e-01)	Slight negative curve, which alters the effect as the year increases, this is again true as we look at when these homes were built and sold. It is probably the same couple of houses that affected our greater living area variable as well.
+
+TotalBsmtSF	(1.000157e+00)	Each extra square foot in the basement adds ~0.016% to price.
+
+SaleCond	(1.339696e+00)	"Normal" sales are priced ~33.97% higher than other sale types.
+
+OverallQual:Cond	(1.010467e+00)	For homes with normal Condition1, the effect of quality is ~1% stronger.
+
+OverallQual:SaleCond	(9.611496e-01)	For normal sales, the effect of quality is slightly weaker (~3.9% reduction) This is most likely due to the coding of SalCond at 1 = Normal and not demonstrating each type of sale condition to each overall quality. Although this is the is the term that most negatively affects the model it also provides a better validation $R^2$ so I was not about to take it out of the regression. 
+
+GrLivArea:OverallQual	(1.000034e+00)	The benefit of additional GrLivArea ever so slighlty increases with higher quality.
+
+OverallQual:YearBuilt	(9.992809e-01)	As homes get newer, the value of quality slightly decreases (by ~0.072% per year).
+
+
+
+## Validation
+
+```{r}
+## validation
+set.seed(42)
+
+num_rows <- 1000  # Sample size for training
+keep <- sample(1:nrow(train), num_rows)
+
+mytrain <- train[keep, ]  # Training set
+mytest <- train[-keep, ]  # Testing set
+
+# Fit the regression model
+househd <- lm.over.log
+
+# Predictions on test set
+yh_hd <- predict(househd, newdata = mytest)
+
+ybar <- mean((log(mytest$SalePrice)))
+
+SSTO <- sum((log(mytest$SalePrice) - ybar)^2)
+
+# Compute SSE (Sum of Squared Errors)
+SSE_hd <- sum((log(mytest$SalePrice) - yh_hd)^2)
+
+# Compute R-squared
+rs_hd <- 1 - SSE_hd / SSTO
+
+# Compute Adjusted R-squared
+n <- nrow(mytest)  
+p_hd <- length(coef(househd))  
+
+rsa_hd <- 1 - (SSE_hd / SSTO) * ((n - 1) / (n - p_hd))
+
+# Create validation table
+my_output_table <- data.frame(
+  Model = "House Price Regression",
+  `Original R^2` = summary(househd)$r.squared,
+  `Original Adj. R^2` = summary(househd)$adj.r.squared,
+  `Validation R^2` = rs_hd,
+  `Validation Adj. R^2` = rsa_hd
+)
+
+# Format table for display
+colnames(my_output_table) <- c("Model", "Original $R^2$", "Original Adj. $R^2$", "Validation $R^2$", "Validation Adj. $R^2$")
+knitr::kable(my_output_table, escape = TRUE, digits = 4)
+
+```
+
+## Graphs {.tabset .tabset-fade}
+
+
+```{r message=FALSE, warning=FALSE}
+
+library(ggplot2)
+
+lm.over.log <- lm(log(SalePrice) ~ GrLivArea + OverallQual + I(GrLivArea^2) + GarageCars + KitchenQual + YearBuilt + I(YearBuilt^2) + TotalBsmtSF + SaleCond + OverallQual:Cond + OverallQual:SaleCond + OverallQual:GrLivArea + OverallQual:YearBuilt, data=train)
+b <- coef(lm.over.log)
+
+
+ggplot(train, aes(y=SalePrice, x=GrLivArea, fill = OverallQual)) +
+  geom_point(pch=21, color="gray", size = 2.5) +
+
+  stat_function(fun = function(GrLivArea, OverallQual = 5,GarageCars = 2, YearBuilt = 2000, TotalBsmtSF = 1000, KitchenQualFa = 0, KitchenQualGd = 0, KitchenQualTA = 1, SaleCond = 1, Cond = 1) exp(b[1] + b[2]*GrLivArea + b[3]*OverallQual + b[4]*GrLivArea^2 + b[5]*GarageCars + b[6]*KitchenQualFa + b[7]*KitchenQualGd + b[8]*KitchenQualTA + b[9]*YearBuilt + b[10]*YearBuilt^2 + b[11]*TotalBsmtSF + b[12]*SaleCond + b[13]*OverallQual*Cond + b[14]*OverallQual*SaleCond + b[15]*OverallQual*GrLivArea + b[16]*OverallQual*YearBuilt), aes(color="Base Prediction")) + 
+  
+  stat_function(fun = function(GrLivArea, OverallQual = 5,GarageCars = 1, YearBuilt = 2000, TotalBsmtSF = 1000, KitchenQualFa = 0, KitchenQualGd = 0, KitchenQualTA = 1, SaleCond = 1, Cond = 1) exp(b[1] + b[2]*GrLivArea + b[3]*OverallQual + b[4]*GrLivArea^2 + b[5]*GarageCars + b[6]*KitchenQualFa + b[7]*KitchenQualGd + b[8]*KitchenQualTA + b[9]*YearBuilt + b[10]*YearBuilt^2 + b[11]*TotalBsmtSF + b[12]*SaleCond + b[13]*OverallQual*Cond + b[14]*OverallQual*SaleCond + b[15]*OverallQual*GrLivArea + b[16]*OverallQual*YearBuilt), aes(color="Three Car Garage")) + 
+  
+  stat_function(fun = function(GrLivArea, OverallQual = 5,GarageCars = 2, YearBuilt = 2000, TotalBsmtSF = 1000, KitchenQualFa = 0, KitchenQualGd = 1, KitchenQualTA = 0, SaleCond = 1, Cond = 1) exp(b[1] + b[2]*GrLivArea + b[3]*OverallQual + b[4]*GrLivArea^2 + b[5]*GarageCars + b[6]*KitchenQualFa + b[7]*KitchenQualGd + b[8]*KitchenQualTA + b[9]*YearBuilt + b[10]*YearBuilt^2 + b[11]*TotalBsmtSF + b[12]*SaleCond + b[13]*OverallQual*Cond + b[14]*OverallQual*SaleCond + b[15]*OverallQual*GrLivArea + b[16]*OverallQual*YearBuilt), aes(color="Good Qual Kitchen")) + 
+  
+  stat_function(fun = function(GrLivArea, OverallQual = 10,GarageCars = 2, YearBuilt = 2000, TotalBsmtSF = 1000, KitchenQualFa = 0, KitchenQualGd = 0, KitchenQualTA = 1, SaleCond = 1, Cond = 1) exp(b[1] + b[2]*GrLivArea + b[3]*OverallQual + b[4]*GrLivArea^2 + b[5]*GarageCars + b[6]*KitchenQualFa + b[7]*KitchenQualGd + b[8]*KitchenQualTA + b[9]*YearBuilt + b[10]*YearBuilt^2 + b[11]*TotalBsmtSF + b[12]*SaleCond + b[13]*OverallQual*Cond + b[14]*OverallQual*SaleCond + b[15]*OverallQual*GrLivArea + b[16]*OverallQual*YearBuilt), aes(color="Overall Quality = 10")) + 
+  
+    stat_function(fun = function(GrLivArea, OverallQual = 5,GarageCars = 2, YearBuilt = 1980, TotalBsmtSF = 1000, KitchenQualFa = 0, KitchenQualGd = 0, KitchenQualTA = 1, SaleCond = 1, Cond = 1) exp(b[1] + b[2]*GrLivArea + b[3]*OverallQual + b[4]*GrLivArea^2 + b[5]*GarageCars + b[6]*KitchenQualFa + b[7]*KitchenQualGd + b[8]*KitchenQualTA + b[9]*YearBuilt + b[10]*YearBuilt^2 + b[11]*TotalBsmtSF + b[12]*SaleCond + b[13]*OverallQual*Cond + b[14]*OverallQual*SaleCond + b[15]*OverallQual*GrLivArea + b[16]*OverallQual*YearBuilt), aes(color="Year Built = 1980")) + 
+  
+  stat_function(fun = function(GrLivArea, OverallQual = 5,GarageCars = 2, YearBuilt = 2000, TotalBsmtSF = 500, KitchenQualFa = 0, KitchenQualGd = 0, KitchenQualTA = 1, SaleCond = 1, Cond = 1) exp(b[1] + b[2]*GrLivArea + b[3]*OverallQual + b[4]*GrLivArea^2 + b[5]*GarageCars + b[6]*KitchenQualFa + b[7]*KitchenQualGd + b[8]*KitchenQualTA + b[9]*YearBuilt + b[10]*YearBuilt^2 + b[11]*TotalBsmtSF + b[12]*SaleCond + b[13]*OverallQual*Cond + b[14]*OverallQual*SaleCond + b[15]*OverallQual*GrLivArea + b[16]*OverallQual*YearBuilt), aes(color="Basement Sq Footage = 500")) + 
+  
+  stat_function(fun = function(GrLivArea, OverallQual = 5,GarageCars = 2, YearBuilt = 2000, TotalBsmtSF = 1000, KitchenQualFa = 0, KitchenQualGd = 0, KitchenQualTA = 1, SaleCond = 0, Cond = 1) exp(b[1] + b[2]*GrLivArea + b[3]*OverallQual + b[4]*GrLivArea^2 + b[5]*GarageCars + b[6]*KitchenQualFa + b[7]*KitchenQualGd + b[8]*KitchenQualTA + b[9]*YearBuilt + b[10]*YearBuilt^2 + b[11]*TotalBsmtSF + b[12]*SaleCond + b[13]*OverallQual*Cond + b[14]*OverallQual*SaleCond + b[15]*OverallQual*GrLivArea + b[16]*OverallQual*YearBuilt), aes(color="Sale Condition Not Normal")) + 
+  
+  stat_function(fun = function(GrLivArea, OverallQual = 5,GarageCars = 2, YearBuilt = 2000, TotalBsmtSF = 1000, KitchenQualFa = 0, KitchenQualGd = 0, KitchenQualTA = 1, SaleCond = 1, Cond = 0) exp(b[1] + b[2]*GrLivArea + b[3]*OverallQual + b[4]*GrLivArea^2 + b[5]*GarageCars + b[6]*KitchenQualFa + b[7]*KitchenQualGd + b[8]*KitchenQualTA + b[9]*YearBuilt + b[10]*YearBuilt^2 + b[11]*TotalBsmtSF + b[12]*SaleCond + b[13]*OverallQual*Cond + b[14]*OverallQual*SaleCond + b[15]*OverallQual*GrLivArea + b[16]*OverallQual*YearBuilt), aes(color="Condition Not Normal")) + 
+  
+   labs(
+    title = "The Best Prediction of How a House Will Sell",
+    x = "Above Ground Living Area", 
+    y = "Sale Price (log)"
+  )
+```
+
+The base line shows where you can expect your house to cost based on total living area with the variables set at OverallQual = 5, GarageCars = 2, YearBuilt = 2000, TotalBsmtSF = 1000, KitchenQualFa = 0, KitchenQualGd = 0, KitchenQualTA = 1, SaleCond = 1, Cond = 1. 
+
+Every additional line contributes to one adjustment in the base line variable selection. 
+
+We can see from the graph that the biggest isolating principle has to be the Overall Quality. It seems fairly obvious that when the Overall Quality is a 10 then the sale price goes right up. Combined with the Above Ground Living Area of 3200 you're looking at around the highest price that this model can produce. 
+
+The rest of the lines as shown in the legend of the graph do little to add to the base line. The second best would be a good quality kitchen, and the worst would be a 3 car garage. 
+
+
+```{r}
+library(ggplot2)
+
+lm.over.log <- lm(log(SalePrice) ~ GrLivArea + OverallQual + I(GrLivArea^2) + GarageCars + KitchenQual + YearBuilt + I(YearBuilt^2) + TotalBsmtSF + SaleCond + OverallQual:Cond + OverallQual:SaleCond + OverallQual:GrLivArea + OverallQual:YearBuilt, data=train)
+b <- coef(lm.over.log)
+
+
+ggplot(train, aes(y=SalePrice, x=GrLivArea, fill = OverallQual)) +
+  geom_point(pch=21, color="gray", size = 2.5) +
+
+  stat_function(fun = function(GrLivArea, OverallQual = 5,GarageCars = 2, YearBuilt = 2000, TotalBsmtSF = 1000, KitchenQualFa = 0, KitchenQualGd = 0, KitchenQualTA = 1, SaleCond = 1, Cond = 1) exp(b[1] + b[2]*GrLivArea + b[3]*OverallQual + b[4]*GrLivArea^2 + b[5]*GarageCars + b[6]*KitchenQualFa + b[7]*KitchenQualGd + b[8]*KitchenQualTA + b[9]*YearBuilt + b[10]*YearBuilt^2 + b[11]*TotalBsmtSF + b[12]*SaleCond + b[13]*OverallQual*Cond + b[14]*OverallQual*SaleCond + b[15]*OverallQual*GrLivArea + b[16]*OverallQual*YearBuilt), aes(color="Base Prediction")) + 
+  
+  stat_function(fun = function(GrLivArea, OverallQual = 5,GarageCars = 1, YearBuilt = 2000, TotalBsmtSF = 1000, KitchenQualFa = 0, KitchenQualGd = 0, KitchenQualTA = 1, SaleCond = 1, Cond = 1) exp(b[1] + b[2]*GrLivArea + b[3]*OverallQual + b[4]*GrLivArea^2 + b[5]*GarageCars + b[6]*KitchenQualFa + b[7]*KitchenQualGd + b[8]*KitchenQualTA + b[9]*YearBuilt + b[10]*YearBuilt^2 + b[11]*TotalBsmtSF + b[12]*SaleCond + b[13]*OverallQual*Cond + b[14]*OverallQual*SaleCond + b[15]*OverallQual*GrLivArea + b[16]*OverallQual*YearBuilt), aes(color="Three Car Garage")) + 
+  
+  stat_function(fun = function(GrLivArea, OverallQual = 5,GarageCars = 2, YearBuilt = 2000, TotalBsmtSF = 1000, KitchenQualFa = 0, KitchenQualGd = 1, KitchenQualTA = 0, SaleCond = 1, Cond = 1) exp(b[1] + b[2]*GrLivArea + b[3]*OverallQual + b[4]*GrLivArea^2 + b[5]*GarageCars + b[6]*KitchenQualFa + b[7]*KitchenQualGd + b[8]*KitchenQualTA + b[9]*YearBuilt + b[10]*YearBuilt^2 + b[11]*TotalBsmtSF + b[12]*SaleCond + b[13]*OverallQual*Cond + b[14]*OverallQual*SaleCond + b[15]*OverallQual*GrLivArea + b[16]*OverallQual*YearBuilt), aes(color="Good Qual Kitchen")) + 
+  
+  stat_function(fun = function(GrLivArea, OverallQual = 10,GarageCars = 2, YearBuilt = 2000, TotalBsmtSF = 1000, KitchenQualFa = 0, KitchenQualGd = 1, KitchenQualTA = 0, SaleCond = 1, Cond = 1) exp(b[1] + b[2]*GrLivArea + b[3]*OverallQual + b[4]*GrLivArea^2 + b[5]*GarageCars + b[6]*KitchenQualFa + b[7]*KitchenQualGd + b[8]*KitchenQualTA + b[9]*YearBuilt + b[10]*YearBuilt^2 + b[11]*TotalBsmtSF + b[12]*SaleCond + b[13]*OverallQual*Cond + b[14]*OverallQual*SaleCond + b[15]*OverallQual*GrLivArea + b[16]*OverallQual*YearBuilt), aes(color="Overall Quality = 10")) + 
+  
+    stat_function(fun = function(GrLivArea, OverallQual = 5,GarageCars = 2, YearBuilt = 1980, TotalBsmtSF = 1000, KitchenQualFa = 0, KitchenQualGd = 1, KitchenQualTA = 0, SaleCond = 1, Cond = 1) exp(b[1] + b[2]*GrLivArea + b[3]*OverallQual + b[4]*GrLivArea^2 + b[5]*GarageCars + b[6]*KitchenQualFa + b[7]*KitchenQualGd + b[8]*KitchenQualTA + b[9]*YearBuilt + b[10]*YearBuilt^2 + b[11]*TotalBsmtSF + b[12]*SaleCond + b[13]*OverallQual*Cond + b[14]*OverallQual*SaleCond + b[15]*OverallQual*GrLivArea + b[16]*OverallQual*YearBuilt), aes(color="Year Built = 1980")) + 
+  
+  stat_function(fun = function(GrLivArea, OverallQual = 5,GarageCars = 2, YearBuilt = 2000, TotalBsmtSF = 500, KitchenQualFa = 0, KitchenQualGd = 1, KitchenQualTA = 0, SaleCond = 1, Cond = 1) exp(b[1] + b[2]*GrLivArea + b[3]*OverallQual + b[4]*GrLivArea^2 + b[5]*GarageCars + b[6]*KitchenQualFa + b[7]*KitchenQualGd + b[8]*KitchenQualTA + b[9]*YearBuilt + b[10]*YearBuilt^2 + b[11]*TotalBsmtSF + b[12]*SaleCond + b[13]*OverallQual*Cond + b[14]*OverallQual*SaleCond + b[15]*OverallQual*GrLivArea + b[16]*OverallQual*YearBuilt), aes(color="Basement Sq Footage = 500")) + 
+  
+  stat_function(fun = function(GrLivArea, OverallQual = 5,GarageCars = 2, YearBuilt = 2000, TotalBsmtSF = 1000, KitchenQualFa = 0, KitchenQualGd = 1, KitchenQualTA = 0, SaleCond = 0, Cond = 1) exp(b[1] + b[2]*GrLivArea + b[3]*OverallQual + b[4]*GrLivArea^2 + b[5]*GarageCars + b[6]*KitchenQualFa + b[7]*KitchenQualGd + b[8]*KitchenQualTA + b[9]*YearBuilt + b[10]*YearBuilt^2 + b[11]*TotalBsmtSF + b[12]*SaleCond + b[13]*OverallQual*Cond + b[14]*OverallQual*SaleCond + b[15]*OverallQual*GrLivArea + b[16]*OverallQual*YearBuilt), aes(color="Sale Condition Not Normal")) + 
+  
+  stat_function(fun = function(GrLivArea, OverallQual = 5,GarageCars = 2, YearBuilt = 2000, TotalBsmtSF = 1000, KitchenQualFa = 0, KitchenQualGd = 1, KitchenQualTA = 0, SaleCond = 1, Cond = 0) exp(b[1] + b[2]*GrLivArea + b[3]*OverallQual + b[4]*GrLivArea^2 + b[5]*GarageCars + b[6]*KitchenQualFa + b[7]*KitchenQualGd + b[8]*KitchenQualTA + b[9]*YearBuilt + b[10]*YearBuilt^2 + b[11]*TotalBsmtSF + b[12]*SaleCond + b[13]*OverallQual*Cond + b[14]*OverallQual*SaleCond + b[15]*OverallQual*GrLivArea + b[16]*OverallQual*YearBuilt), aes(color="Condition Not Normal")) + 
+  
+   labs(
+    title = "The Best Prediction of How a House Will Sell",
+    x = "Above Ground Living Area", 
+    y = "Sale Price (log)"
+  ) +
+  facet_wrap(~OverallQual)
+
+```
+
+
+
+## Graph of Overall Qual
+
+```{r message=FALSE, warning=FALSE}
+library(ggplot2)
+
+lm.over.log <- lm(log(SalePrice) ~ GrLivArea + OverallQual + I(GrLivArea^2) + GarageCars + KitchenQual + YearBuilt + I(YearBuilt^2) + TotalBsmtSF + SaleCond + OverallQual:Cond + OverallQual:SaleCond + OverallQual:GrLivArea + OverallQual:YearBuilt, data=train)
+b <- coef(lm.over.log)
+
+
+ggplot(train, aes(y=SalePrice, x=GrLivArea, fill = OverallQual)) +
+  geom_point(pch=21, color="gray", size = 2.5) +
+
+ stat_function(fun = function(GrLivArea, OverallQual = 1,GarageCars = 2, YearBuilt = 2000, TotalBsmtSF = 1000, KitchenQualFa = 0, KitchenQualGd = 0, KitchenQualTA = 1, SaleCond = 1, Cond = 1) exp(b[1] + b[2]*GrLivArea + b[3]*OverallQual + b[4]*GrLivArea^2 + b[5]*GarageCars + b[6]*KitchenQualFa + b[7]*KitchenQualGd + b[8]*KitchenQualTA + b[9]*YearBuilt + b[10]*YearBuilt^2 + b[11]*TotalBsmtSF + b[12]*SaleCond + b[13]*OverallQual*Cond + b[14]*OverallQual*SaleCond + b[15]*OverallQual*GrLivArea + b[16]*OverallQual*YearBuilt), aes(color="OverallQual=1")) + 
+  
+   stat_function(fun = function(GrLivArea, OverallQual = 2,GarageCars = 2, YearBuilt = 2000, TotalBsmtSF = 1000, KitchenQualFa = 0, KitchenQualGd = 0, KitchenQualTA = 1, SaleCond = 1, Cond = 1) exp(b[1] + b[2]*GrLivArea + b[3]*OverallQual + b[4]*GrLivArea^2 + b[5]*GarageCars + b[6]*KitchenQualFa + b[7]*KitchenQualGd + b[8]*KitchenQualTA + b[9]*YearBuilt + b[10]*YearBuilt^2 + b[11]*TotalBsmtSF + b[12]*SaleCond + b[13]*OverallQual*Cond + b[14]*OverallQual*SaleCond + b[15]*OverallQual*GrLivArea + b[16]*OverallQual*YearBuilt), aes(color="OverallQual=2")) + 
+  
+   stat_function(fun = function(GrLivArea, OverallQual = 3,GarageCars = 2, YearBuilt = 2000, TotalBsmtSF = 1000, KitchenQualFa = 0, KitchenQualGd = 0, KitchenQualTA = 1, SaleCond = 1, Cond = 1) exp(b[1] + b[2]*GrLivArea + b[3]*OverallQual + b[4]*GrLivArea^2 + b[5]*GarageCars + b[6]*KitchenQualFa + b[7]*KitchenQualGd + b[8]*KitchenQualTA + b[9]*YearBuilt + b[10]*YearBuilt^2 + b[11]*TotalBsmtSF + b[12]*SaleCond + b[13]*OverallQual*Cond + b[14]*OverallQual*SaleCond + b[15]*OverallQual*GrLivArea + b[16]*OverallQual*YearBuilt), aes(color="OverallQual=3")) + 
+  
+   stat_function(fun = function(GrLivArea, OverallQual = 4,GarageCars = 2, YearBuilt = 2000, TotalBsmtSF = 1000, KitchenQualFa = 0, KitchenQualGd = 0, KitchenQualTA = 1, SaleCond = 1, Cond = 1) exp(b[1] + b[2]*GrLivArea + b[3]*OverallQual + b[4]*GrLivArea^2 + b[5]*GarageCars + b[6]*KitchenQualFa + b[7]*KitchenQualGd + b[8]*KitchenQualTA + b[9]*YearBuilt + b[10]*YearBuilt^2 + b[11]*TotalBsmtSF + b[12]*SaleCond + b[13]*OverallQual*Cond + b[14]*OverallQual*SaleCond + b[15]*OverallQual*GrLivArea + b[16]*OverallQual*YearBuilt), aes(color="OverallQual=4")) + 
+  
+   stat_function(fun = function(GrLivArea, OverallQual = 5,GarageCars = 2, YearBuilt = 2000, TotalBsmtSF = 1000, KitchenQualFa = 0, KitchenQualGd = 0, KitchenQualTA = 1, SaleCond = 1, Cond = 1) exp(b[1] + b[2]*GrLivArea + b[3]*OverallQual + b[4]*GrLivArea^2 + b[5]*GarageCars + b[6]*KitchenQualFa + b[7]*KitchenQualGd + b[8]*KitchenQualTA + b[9]*YearBuilt + b[10]*YearBuilt^2 + b[11]*TotalBsmtSF + b[12]*SaleCond + b[13]*OverallQual*Cond + b[14]*OverallQual*SaleCond + b[15]*OverallQual*GrLivArea + b[16]*OverallQual*YearBuilt), aes(color="OverallQual=5")) + 
+  
+  stat_function(fun = function(GrLivArea, OverallQual = 6,GarageCars = 2, YearBuilt = 2000, TotalBsmtSF = 1000, KitchenQualFa = 0, KitchenQualGd = 0, KitchenQualTA = 1, SaleCond = 1, Cond = 1) exp(b[1] + b[2]*GrLivArea + b[3]*OverallQual + b[4]*GrLivArea^2 + b[5]*GarageCars + b[6]*KitchenQualFa + b[7]*KitchenQualGd + b[8]*KitchenQualTA + b[9]*YearBuilt + b[10]*YearBuilt^2 + b[11]*TotalBsmtSF + b[12]*SaleCond + b[13]*OverallQual*Cond + b[14]*OverallQual*SaleCond + b[15]*OverallQual*GrLivArea + b[16]*OverallQual*YearBuilt), aes(color="OverallQual=6")) + 
+  
+   stat_function(fun = function(GrLivArea, OverallQual = 7,GarageCars = 2, YearBuilt = 2000, TotalBsmtSF = 1000, KitchenQualFa = 0, KitchenQualGd = 0, KitchenQualTA = 1, SaleCond = 1, Cond = 1) exp(b[1] + b[2]*GrLivArea + b[3]*OverallQual + b[4]*GrLivArea^2 + b[5]*GarageCars + b[6]*KitchenQualFa + b[7]*KitchenQualGd + b[8]*KitchenQualTA + b[9]*YearBuilt + b[10]*YearBuilt^2 + b[11]*TotalBsmtSF + b[12]*SaleCond + b[13]*OverallQual*Cond + b[14]*OverallQual*SaleCond + b[15]*OverallQual*GrLivArea + b[16]*OverallQual*YearBuilt), aes(color="OverallQual=7")) + 
+  
+   stat_function(fun = function(GrLivArea, OverallQual = 8,GarageCars = 2, YearBuilt = 2000, TotalBsmtSF = 1000, KitchenQualFa = 0, KitchenQualGd = 0, KitchenQualTA = 1, SaleCond = 1, Cond = 1) exp(b[1] + b[2]*GrLivArea + b[3]*OverallQual + b[4]*GrLivArea^2 + b[5]*GarageCars + b[6]*KitchenQualFa + b[7]*KitchenQualGd + b[8]*KitchenQualTA + b[9]*YearBuilt + b[10]*YearBuilt^2 + b[11]*TotalBsmtSF + b[12]*SaleCond + b[13]*OverallQual*Cond + b[14]*OverallQual*SaleCond + b[15]*OverallQual*GrLivArea + b[16]*OverallQual*YearBuilt), aes(color="OverallQual=8")) + 
+  
+   stat_function(fun = function(GrLivArea, OverallQual = 9,GarageCars = 2, YearBuilt = 2000, TotalBsmtSF = 1000, KitchenQualFa = 0, KitchenQualGd = 0, KitchenQualTA = 1, SaleCond = 1, Cond = 1) exp(b[1] + b[2]*GrLivArea + b[3]*OverallQual + b[4]*GrLivArea^2 + b[5]*GarageCars + b[6]*KitchenQualFa + b[7]*KitchenQualGd + b[8]*KitchenQualTA + b[9]*YearBuilt + b[10]*YearBuilt^2 + b[11]*TotalBsmtSF + b[12]*SaleCond + b[13]*OverallQual*Cond + b[14]*OverallQual*SaleCond + b[15]*OverallQual*GrLivArea + b[16]*OverallQual*YearBuilt), aes(color="OverallQual=9")) + 
+  
+   stat_function(fun = function(GrLivArea, OverallQual = 10,GarageCars = 2, YearBuilt = 2000, TotalBsmtSF = 1000, KitchenQualFa = 0, KitchenQualGd = 0, KitchenQualTA = 1, SaleCond = 1, Cond = 1) exp(b[1] + b[2]*GrLivArea + b[3]*OverallQual + b[4]*GrLivArea^2 + b[5]*GarageCars + b[6]*KitchenQualFa + b[7]*KitchenQualGd + b[8]*KitchenQualTA + b[9]*YearBuilt + b[10]*YearBuilt^2 + b[11]*TotalBsmtSF + b[12]*SaleCond + b[13]*OverallQual*Cond + b[14]*OverallQual*SaleCond + b[15]*OverallQual*GrLivArea + b[16]*OverallQual*YearBuilt), aes(color="OverallQuality=10")) + 
+  
+   labs(
+    title = "Overall Quality 1 - 10",
+    x = "Above Ground Living Area", 
+    y = "Sale Price (log)"
+  )
+```
+
+This graph shows how a 1-10 rating in OverallQual changes the slope dramatically with each jump in quality. No other variables were adjusted in the graph. The most dramatic is of course a 9 to a 10. The least happens between 1 and 2. We can see from the facet wrap that the least values exist in the 1 and 2 groups. The dots with both the highest sale price and most above ground living area exist in the 10 group. All high sale price values are in groups 8, 9, and 10. 
+
+From the previous graph we can see how this was the most dramatic effect of any of the variables. If you want to sell your house for the most moola then do whatever it takes to get the quality up, a 10 is the best. 
+
+
+---------------
+
+: )
+

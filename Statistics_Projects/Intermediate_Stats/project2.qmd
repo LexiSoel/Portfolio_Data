@@ -1,7 +1,7 @@
 ---
-title: "Client Report - [Insert Project Title]"
-subtitle: "Course DS 250"
-author: "[STUDENT NAME]"
+title: "Recalling Words Wilcoxon Test"
+subtitle: "Course MATH 325"
+author: "Lexi Soelberg"
 format:
   html:
     self-contained: true
@@ -24,5 +24,298 @@ execute:
   warning: false
     
 ---
+  
 
-### Paste in a template
+```{r, warning=FALSE, message=FALSE}
+library(mosaic)
+library(car)
+library(pander)
+library(DT)
+library(plotly)
+library(ggplot2)
+```
+
+```{r, eval=FALSE}
+# Play the chunk above and this one to get the data into your Console
+# Note the eval=FALSE statement in this R-chunk will exclude this code
+# from running when you Knit and will only work in the Console.
+View(Friendly)
+?Friendly
+```
+
+
+<br />
+
+## Background 
+
+Many teachers and other educators are interested in understanding how to best deliver new content to students. In general, they have two choices of how to do this.
+
+1. The Meshed Approach
+    * Deliver new content while simultaneously reviewing previously understood content.
+
+2. The Before Approach
+    * Deliver new content after fully reviewing previously understood content.
+
+A study was performed to determine whether the *Meshed* or *Before* approaches to delivering content had any positive benefits on memory recall. 
+
+
+## {.tabset .tabset-pills}
+
+### Hide
+
+### Show the Experiment Details
+
+Individuals were seated at a computer and shown a list of words. Words appeared on the screen one at a time, for two seconds each, until all words had been shown (40 total). After all words were shown, they were required to perform a few two-digit mathematical additions (like 15 + 25) for 15 seconds to avoid immediate memory recall of the words. They were then asked to write down as many of the 40 words as they could remember. They were given a maximum of 5.3 minutes to recall words.
+
+The process of showing words and recalling words was repeated four times with the same list of words each time (four chances to get it right). The presentation of the first trial was the same for all treatment conditions. However, trials 2, 3, and 4 were slightly different for each treatment condition.
+
+<div style="padding-left:15px;">
+
+The `SFR` group (the control group) stands for Standard Free Recall. In all four trials the same list of 40 words was presented, in a random order each time.
+
+The `Before` group also used the same 40 words during each trial. However, any words that were correctly recalled in a previous trial were presented first, or *before* the words that were not recalled in the last trial. After all the correct words were presented in random order, the non-recalled words were presented in a random order.
+
+The `Meshed` group also used the same 40 words during each trial. However, words that were correctly recalled in a previous trial were alternated with a missed word during the next presentation order. 
+
+</div>
+
+The data records the number of correctly recalled words (out of the 40 possible) from the fourth trial. Results were obtained for 30 students, 10 in each of the three treatment groups: `SFR`, `Before`, and `Meshed`. 
+
+
+
+## {.tabset .tabset-pills}
+
+### Hide
+
+### Show the Data
+
+The results from the study can be found in the `Friendly` data set in R after loading `library(car)`. 
+
+Click the "Code" button to see the data.
+
+
+```{r}
+datatable(Friendly, options=list(lengthMenu = c(3,10,30)))
+```
+
+## Introduction
+
+The above background gives some great detailed information on a study taken of 30 participants tasked with remembering words. These participants were placed in 3 groups of reviewed before (`Before`), reviewed throughout (`Meshed`), and not reviewed (`SFR`).
+
+I am really interested to see if the `Meshed` approach, which I feel may have been beneficial to me during my schooling, is more effective than the `Before` approach. I want to see if there is a significance in the medians of these two groups. **This is my 1st section of testing.**
+
+I am also curious to see if any form of test reviewing is proven more effective than leaving the participant to their own devices. So, **my 2nd section of testing** will be viewing a `Control` group (`SFR`) and a `Test` group (`Before` & `Meshed`).
+
+## Hypothesis 
+ 
+## {.tabset .tabset-pills}
+
+### Hypothesis 1
+
+
+The 1st hypothesis is that the `Meshed` group will remember more than the remember more words than the `Before` group.
+
+$$
+  H_0: \text{difference in the medians} = 0 
+$$
+
+$$ 
+  H_a: \text{"Before" median} \ne \text{"Meshed" median}
+$$
+
+
+Significance level is 
+
+$$
+\alpha = 0.05
+$$ 
+
+
+### Hypothesis 2
+
+The 2nd hypothesis is that both the `Meshed` and `Before` tested groups together will score differently than the `SFR` control group.
+
+$$
+  H_0: \text{difference in the medians} = 0 
+$$
+
+$$ 
+  H_a: \text{Control Group Median} < \text{Test Group Median}
+$$
+
+
+
+Significance level is 
+
+$$
+\alpha = 0.05
+$$ 
+
+
+## Analysis
+
+## {.tabset .tabset-pills}
+
+### Analysis 1
+
+```{r}
+FriendlyH1 <- Friendly %>%
+  filter(condition %in% c("Before", "Meshed")) %>%
+group_by(condition) %>%
+  rename(TestCondition = condition,
+         CorrectWords = correct)
+
+```
+
+-------
+
+There are two groups of 20 different participants, 10 per test condition as shown in the table below. 
+
+```{r}
+datatable(FriendlyH1, options=list(lengthMenu = c(3,10,30)))
+```
+
+The box plot below depicts the 5 number summary of the two sample sizes. The numbers are also listed in the numerical summary just below.
+
+```{r message=FALSE, warning=FALSE}
+plot_ly(FriendlyH1, 
+        y = ~CorrectWords, 
+        x = ~as.factor(TestCondition), 
+        type = "box", 
+        color = ~as.factor(TestCondition),  
+        colors = c("royalblue4", "red"),  
+        line = list(color = "gray21", width = 2),
+        marker = list(line = list(color = "gray21", width = 1))) %>%
+  layout(title = "Effect of Test Conditions on Memory Recall", 
+         xaxis = list(title = "Experimental Test Groups"),
+         yaxis = list(title = "Correct Words (out of 40)"))
+
+```
+
+We can see that the median of the `Meshed` group is a couple points lower, at 36.5 and the `Before` group's median is 39. 
+
+It seems that the `Before` group has a higher success rate of words remembered than the `Meshed` group. 
+
+However, to see the actual difference, let's take a look at the significance using a Wilcoxon Rank Sum Test. 
+
+```{r}
+FriendlyH1 %>%
+  group_by(TestCondition) %>%
+  summarise(
+    Min = min(CorrectWords, na.rm = TRUE), 
+    Q1 = quantile(CorrectWords, 0.25, na.rm = TRUE), 
+    Med = median(CorrectWords, na.rm = TRUE), 
+    Q3 = quantile(CorrectWords, 0.75, na.rm = TRUE), 
+    Max = max(CorrectWords, na.rm = TRUE),
+    Average = mean(CorrectWords, na.rm = TRUE),
+    StDev = sd(CorrectWords, na.rm = TRUE),
+    SampleSize = n()
+  ) %>%
+  pander()
+```
+
+-------
+
+-------
+
+The Wilcoxon Rank Sum (Mann-Whitney) Test to see the differences in the medians is listed below. Running a two sided test to see if the `Meshed` group has a lower median than the `Before` group.
+
+```{r message=FALSE, warning=FALSE}
+wilcox.test(CorrectWords ~ TestCondition, data=FriendlyH1, mu=0)%>%
+  pander()
+```
+
+
+Test statistic is W = 62 with a p-value of 0.378>$\alpha$ . The results of the Wilcoxon test are not significant. We **fail to reject the null hypothesis**.
+
+### Analysis 2
+
+```{r}
+FriendlyH2 <- Friendly %>%
+  mutate(condition = case_when(
+    condition == "SFR" ~ "Control",
+    condition %in% c("Before", "Meshed") ~ "Test"
+  )) %>%
+  rename(TestCondition = condition,
+         CorrectWords = correct)
+
+```
+
+```{r}
+datatable(FriendlyH2, options=list(lengthMenu = c(3,10,30)))
+```
+
+A boxplot chart and numerical summary of the control group (`SFR`) of 10 participants and the 20 who received a test condition (either `Before` or `Meshed`).
+
+```{r message=FALSE, warning=FALSE}
+plot_ly(FriendlyH2, 
+        y = ~CorrectWords, 
+        x = ~as.factor(TestCondition), 
+        type = "box", 
+        color = ~as.factor(TestCondition),
+        colors = c("olivedrab4", "mediumpurple4"),  
+        line = list(color = "gray21", width = 2),
+        marker = list(line = list(color = "gray21", width = 1))) %>%
+  layout(title = "Memory Recall: Control vs Test", 
+         xaxis = list(title = "Benefits of Test Conditions on Memory Scores"),
+         yaxis = list(title = "Correct Words (out of 40)"))
+
+```
+
+We see a lot of spread in the Control (`SFR`) group despite the sample size being half that of the Test (`Before` and `Meshed`) group. 
+
+The correct words out of 40 for the Test group is much more successful in word recall with a median at 38 than the control group who has a median of 27. That's 11 words less!
+
+With this plot we can see a pretty clear difference in the medians but let's test the actual significance of that with a Wilcoxon test. 
+
+```{r}
+FriendlyH2 %>%
+  group_by(TestCondition) %>%
+  summarise(
+    Min = min(CorrectWords, na.rm = TRUE), 
+    Q1 = quantile(CorrectWords, 0.25, na.rm = TRUE), 
+    Med = median(CorrectWords, na.rm = TRUE), 
+    Q3 = quantile(CorrectWords, 0.75, na.rm = TRUE), 
+    Max = max(CorrectWords, na.rm = TRUE),
+    Average = mean(CorrectWords, na.rm = TRUE),
+    StDev = sd(CorrectWords, na.rm = TRUE),
+    SampleSize = n()
+  ) %>%
+  pander()
+```
+
+---------
+
+---------
+
+
+The Wilcoxon Rank Sum (Mann-Whitney) one sided less than test to see if the `Test` group has a signifigant difference over the in the medians of the `Control` group. 
+
+```{r message=FALSE, warning=FALSE}
+wilcox.test(CorrectWords ~ TestCondition, data=FriendlyH2, mu=0, alternative ="less")%>%
+  pander()
+```
+
+Test statistic is W = 51.5 with a p-value of 0.01644<$\alpha$ . The results of the Wilcoxon test are significant. We **reject the null hypothesis**.
+
+
+## Interpretation
+
+
+The Wilcoxon Test showed no significant difference in the medians of the `Before` and `Meshed` groups. The medians are both high at 39 and 36.5 words remembered. We failed to reject the null hypothesis that there would be a significance difference in the medians of the groups.
+
+We did reject the null hypothesis when testing the difference in medians of the combined `Before` and `Meshed` "Test" group and the `SFR` "Control" group. The p-value was below alpha and the medians were respectively 38 and 27 words remembered.
+
+## Conclusion
+
+We see no significant median difference between the test groups `Before` and `Meshed` however we see a significant difference in the medians for the control `SFR` and the tested groups. 
+
+We do see significant evidence to prove that any form of test review is powerful in increasing the amount of words that people will remember. If we leave people without a review there is a much wider range of words they will remember. If we provide an information review while introducing new content, the probability of a student or employee retaining and recalling information is much higher.
+
+Therefore, if we want to see better memory retention as we do when comparing these three groups we can employ methods of review, either before starting the new content or have the old intertwined with the new. 
+
+This can be applied and tested in many different settings to see if the same or similar results can be found. 
+
+
+-------
+: )

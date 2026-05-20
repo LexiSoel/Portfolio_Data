@@ -1,0 +1,182 @@
+---
+title: "Client Report - Stephanie's Housing Request"
+subtitle: "Course MATH 325"
+author: "Lexi Soelberg"
+format:
+  html:
+    self-contained: true
+    page-layout: full
+    title-block-banner: true
+    toc: true
+    toc-depth: 3
+    toc-location: body
+    number-sections: false
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: wrap
+    code-copy: hover
+    code-tools:
+        source: false
+        toggle: true
+        caption: See code
+execute: 
+  warning: false
+    
+---
+
+```{r message=FALSE, warning=FALSE}
+library(mosaic)
+library(tidyverse)
+library(pander)
+library(DT) # If you get an error stating: 
+            # Error in library(DT): there is no package called 'DT'
+            # You will need to run: install.packages("DT") 
+            # in your Console, then try "Knit HTML" again.
+Rent <- read_csv("../../data/Rent.csv")
+```
+
+<br/>
+
+## Background
+
+----------------------------------------------------------------------------------------------------------
+
+
+Stephanie is a first semester student that will be starting at BYU-Idaho next semester. She is looking for an affordable apartment close to campus that costs around $300 a month. Her one other request is she wants to be near a lot of people. She emailed me asking for help to find the best fit.
+
+----------------------------------------------------------------------------------------------------------
+
+
+## Response
+
+----------------------------------------------------------------------------------------------------------
+
+
+Dear Stephanie,
+
+There are a lot of great options within the parameters you were looking for. BYU-Idaho is pretty special in that almost all places are a semester rated rent cost. I have chosen 8 complexes for you to take a look at, along with my recommendation.
+
+I hope that as you look through the options you can find one that's perfect for you. 
+
+----------------------------------------------------------------------------------------------------------
+
+## Stephanie's Apartment Options
+
+Something I recommend to check out are the websites to check out amenities you may want, as well as to see pictures of the complex and schedule a tour. ***The link to the websites is in the drop down side arrow on the table.***
+
+As you can see in this table has the apartments, their monthly and semester rates as well as deposit (in dollars), their addresses, how far away it is to walk to the center of campus, and resident counts. 
+
+----------------------------------------------------------------------------------------------------------
+
+```{r}
+Stephanie.Rent <-select(Rent, 
+c(Name,AvgFloorPlanCost, Address, CrowFlyMetersToMC, Residents, Gender, Deposit, Latitude, Longitude, WebAddress)) %>% 
+mutate(MonthlyFloorPlanCost = round(AvgFloorPlanCost/3.5,2))%>% 
+mutate(CrowFlyMetersToMC = round(CrowFlyMetersToMC/3.28084,2))%>%
+mutate(MinutesToCampus =round(CrowFlyMetersToMC/3.28084/4.7,1))%>%
+filter(Gender=="F") %>%
+filter(MonthlyFloorPlanCost < 350) %>%
+filter(Residents >80)%>%
+rename(AptComplex=Name,
+       FeetFromMC=CrowFlyMetersToMC,
+       SemesterRate=AvgFloorPlanCost,
+       MonthlyRate=MonthlyFloorPlanCost,
+       Sex = Gender,
+       Address = Address,
+       MinutesToCampus =MinutesToCampus, 
+       Website=WebAddress)%>%
+  select(AptComplex, MonthlyRate, SemesterRate, Deposit, Address, MinutesToCampus, Residents, Website)%>%
+arrange(MonthlyRate)
+
+```
+
+```{r}
+datatable(Stephanie.Rent, options=list(scrollX= TRUE, lengthMenu = c(8)), extensions="Responsive")
+```
+
+----------------------------------------------------------------------------------------------------------
+
+## Map of Rexburg
+
+To help you visualize where the apartment complexes are located, I've created a map for you to see where each one is located in relation to campus. 
+
+Feel free to zoom in and look around. 
+
+If you ***click on the location markers** you will see how far away it would be to walk to the middle of campus. Number of residents is also included. 
+
+----------------------------------------------------------------------------------------------------------
+
+
+```{r}
+library(leaflet)
+library(htmlwidgets)
+
+apt_complexes <- data.frame(
+  Name = c("THE PINES - WOMEN", "RIVIERA APARTMENTS", "BROOKLYN APARTMENTS", "COTTONWOOD - WOMEN", "ROYAL CREST", "LA JOLLA - WOMEN", "SOMERSET APARTMENTS - WOMEN", "GREENBRIER - WOMEN"),
+  Address = c("140 W 2ND S", "245 S 1ST E", "345 S 2ND W", "42 S 1ST W", 
+              "340 S 1ST W", "65 S 1ST W", "480 S 1ST W", "129 PRINCETON CT"),
+  Lat = c(43.82247, 43.82015, 43.81867, 43.82470, 43.81914, 43.8244, 43.81634, 43.82297),
+  Lon = c(-111.7876, -111.7805, -111.789, -111.7871, -111.7877, -111.7863, -111.7875, -111.7790),
+  MinutesToCampus = c(12.1, 4.9, 10.4, 15.6, 8.5, 14.4, 9.2, 11.4),
+  Residents = c(126, 82, 144, 84, 342, 210, 180, 92),
+  MonthlyRate = c(255.54, 278.57, 284.29, 284.29, 284.29, 336.86, 342.86, 347.62)
+)
+map <- leaflet(apt_complexes) %>%
+  addTiles() %>%
+  addMarkers(lng = ~Lon, lat = ~Lat, popup = ~paste(Name, "<br>Minutes To Campus:",MinutesToCampus, 
+"<br>Monthly Rent:", MonthlyRate, "<br>Resident Count:", Residents)) %>%
+  setView(lng = -111.79, lat = 43.82, zoom = 13)
+map
+
+```
+
+----------------------------------------------------------------------------------------------------------
+
+In the above map the proximity to campus and students in each complex are highlighted.
+
+In the graph below I wanted you to see the side by side costs of each complex. Here you will see the monthly, semester, and deposit costs.
+
+----------------------------------------------------------------------------------------------------------
+
+## Stephanie's Cost of Rent
+
+----------------------------------------------------------------------------------------------------------
+
+```{r}
+
+Stephanie.Rent$AptComplex <- abbreviate(Stephanie.Rent$AptComplex, minlength = 9)
+
+bar_positions <- barplot(
+  t(Stephanie.Rent[, c("Deposit", "SemesterRate","MonthlyRate")]),
+  beside = TRUE,                                      
+  col = c("lightblue4", "lightblue3","lightblue1"),               
+  main = "BYU-Idaho Approved Apartment Cost", 
+  ylab = "Amount($)", 
+  names.arg = Stephanie.Rent$AptComplex,              
+  cex.names = 0.75,                                    
+  las = 2
+)
+legend("topleft", legend = c("Deposit", "Semester Rate", "Monthly Rate"), 
+       fill = c("lightblue4","lightblue3", "lightblue1"), bty = "n", cex = 0.85)
+
+```
+
+----------------------------------------------------------------------------------------------------------
+
+While ultimately it is your decision, I wanted to highlight the pros and cons of the complex I think you should choose. ***You wanted close to campus, around $300, and with lots of people.*** I've selected 8 different complexes that fit right about your parameters.
+
+With all this, I think you should choose [Royal Crest](WWW.ROYALCRESTAPARTMENTS.COM)
+
+
+Royal Crest is one of the closest to campus, only an 8 minute walk away. It has the most residents—342 new people you can go meet. 
+Royal Crest is equal with Cottonwood and Brooklyn for price, $284.29 monthly or $995 semester with a $150 deposit.
+
+----------------------------------------------------------------------------------------------------------
+
+I hope this helps! Good luck in the upcoming semester.
+
+----------------------------------------------------------------------------------------------------------
+
+: )
+

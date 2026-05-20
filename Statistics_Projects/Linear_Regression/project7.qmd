@@ -1,0 +1,333 @@
+---
+title: "Logistic Regression - Predicting Grades"
+subtitle: "Course MATH 435"
+author: "Lexi Soelberg"
+format:
+  html:
+    self-contained: true
+    page-layout: full
+    title-block-banner: true
+    toc: true
+    toc-depth: 3
+    toc-location: body
+    number-sections: false
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: wrap
+    code-copy: hover
+    code-tools:
+        source: false
+        toggle: true
+        caption: See code
+execute: 
+  warning: false
+---
+
+
+```{r, include=FALSE}
+library(mosaic)
+library(ResourceSelection)
+library(readr)
+library(pander)
+library(ggplot2)
+library(plotly)
+library(dplyr)
+library(car)
+library(colorspace)
+library(RColorBrewer)
+library(gt)
+library(data.table)
+library(DT)
+library()
+
+test <- read_csv("../../data/math325grades_test.csv")
+spec(test)
+train <- read_csv("../../data/math325grades_train.csv")
+spec(train)
+
+
+# pairs(m425, panel=panel.smooth, col=rgb(.2,.2,.2,.2))
+
+#glm1 <- glm(f90 ~ AssessmentQuizCompletionFinalScore + ClassActivitiesFinalScore + SkillsQuizzesTotalFinalScore, data=train, family=binomial)
+
+# summary(glm4)
+
+#AIC(glm1)
+
+
+#glm2 <- glm(f90 ~ # Analysis_HighSchoolSeniors
+#              + Analysis_RecallingWords #+ Analysis_MySimpleLinearRegression 
+#            + Analysis_CarPrices #+ Analysis_MyLogisticRegression 
+#            + Analysis_MyChiSquaredTest, data=train, family=binomial)
+
+#summary(glm2)
+
+#AIC(glm2)
+
+#glm3 <- glm(f90 ~ # Analysis_HighSchoolSeniors
+#              + Analysis_RecallingWords #+ Analysis_MySimpleLinearRegression 
+#            + Analysis_CarPrices #+ Analysis_MyLogisticRegression 
+ #           + Analysis_MyChiSquaredTest + PredictedFinalExam + AssessmentQuizCompletionTotal + AnalysesCurrentScore + #PeerReviewFinalScore + SkillsQuizzesTotalFinalScore + ClassActivitiesFinalScore, data=train, family=binomial)
+
+#summary(glm3)
+
+#AIC(glm3)
+
+#glm4 <- glm(f90 ~ 
+#              PredictedFinalExam + AssessmentQuizCompletionTotal + AnalysesCurrentScore + SkillsQuizzesTotalFinalScore + ClassActivitiesFinalScore, data=train, family=binomial)
+
+#summary(glm4)
+
+#AIC(glm4)
+
+```
+
+```{r}
+
+# subset <- train %>% 
+#  mutate_if(is.character, as.factor) %>%
+#  select(CurrentScore, everything())
+
+#subset <- subset[, c(1, 68:88)]
+
+#pairs(subset, panel=panel.smooth)
+
+```
+
+
+
+### Math 325, Predicting your Grades
+
+# Analysis {.tabset .tabset-fade}
+
+
+## Logistic Regression
+
+```{r message=FALSE, warning=FALSE}
+
+train <- train %>%
+  mutate(f90 = ifelse(CurrentScore > 90, 1, 0))
+
+
+m325.glm <- glm(f90 ~ FinalExamCurrentScore + AnalysesCurrentScore + SkillsQuizzesTotalFinalScore, data=train, family=binomial)
+```
+
+
+## Prediction of Getting an A
+
+```{r}
+
+predict(m325.glm, data.frame(AnalysesCurrentScore=90, SkillsQuizzesTotalFinalScore=100, FinalExamCurrentScore=68), type="response") %>% pander()
+
+summary(train[,c("AnalysesCurrentScore","SkillsQuizzesTotalFinalScore", "FinalExamCurrentScore")])
+
+```
+
+This prediction takes a look at the chances of getting an A based on 3 specific criteria. If you got 100 on the skills quiz (which you have to do in order to get any points), at least 90% on your analyses, and get a final exam score of 68 or higher. To break that down a little further, You need to get 17/25 on the final.
+
+The odds of this prediction are 35.76 to 1. This looks like:
+
+$$
+Odds = 0.9728/1-0.9728 = 35.76
+$$
+```{r}
+0.9728/(1-0.9728)
+```
+
+You are 36 times more likely to get an A if you meet the 90% analyses, 100% skills quizzes, and 68% final exam. 
+
+
+## Goodness of Fit Test
+
+```{r}
+
+predict(m325.glm, data.frame(AnalysesCurrentScore=90, SkillsQuizzesTotalFinalScore=100, FinalExamCurrentScore=68), type="response")
+
+summary(train[,c("AnalysesCurrentScore","SkillsQuizzesTotalFinalScore", "FinalExamCurrentScore")])
+
+library(ResourceSelection)
+
+hoslem.test(m325.glm$y, m325.glm$fit, g=4) #bring g down until it first works
+
+keep <- sample(1:nrow(train), 90)
+
+mytrain <- train[keep,]
+mytest <- train[-keep,]
+
+glm.test <- glm(f90 ~ FinalExamCurrentScore + AnalysesCurrentScore + SkillsQuizzesTotalFinalScore, data=train, family=binomial)
+
+mypreds <- predict(glm.test, newdata=mytest, type="response")
+
+mydecs <- ifelse(mypreds > 0.5, 1, 0)
+
+cm <- table(mydecs, mytest$f90)
+
+pcc <- (cm[1] + cm[4]) / sum(cm)
+
+```
+
+The goodness of fit test is just under the table of variables. For this, we want to see a p-value greater than .05 and we definitely got that. A .95 p-value tells us that this regression is a good fit for the data. This is what we want. Now let's take a look at this. 
+
+### Graphs
+
+```{r message=FALSE, warning=FALSE}
+library(ggplot2)
+library(plotly)
+
+train$predicted_prob <- predict(m325.glm, newdata = train, type = "response")
+
+final.ggplot <- ggplot(train, aes(x = FinalExamCurrentScore, y = f90)) +
+  geom_jitter(aes(color = predicted_prob), width = 1, height = 0.05, alpha = 0.6) +
+  geom_smooth(method = "glm", method.args = list(family = "binomial"), se = FALSE, color = "goldenrod") +
+  scale_color_gradient(low = "lightgoldenrod", high = "goldenrod") +
+  labs(title = "Final Exam Score vs. Probability of High Grade",
+       x = "Final Exam Score",
+       y = "Probability of Getting an A",
+       color = "Probability") +
+  theme_minimal()
+
+ggplotly(final.ggplot, tooltip = c("x", "y"))
+
+```
+
+Obviously the higher your exam score the better but we have a lot more variability in getting an A based on the final exam score alone. Compared to the other two variables, you potentially could get a 44 and get an A or get an 88 and not get an A. We need to add in more variables to see what predicts the overall grade best. 
+
+```{r message=FALSE, warning=FALSE}
+library(ggplot2)
+library(plotly)
+
+train$predicted_prob <- predict(m325.glm, newdata = train, type = "response")
+
+analyses.ggplot <- ggplot(train, aes(x = AnalysesCurrentScore, y = f90)) +
+  geom_jitter(aes(color = predicted_prob), width = 1, height = 0.05, alpha = 0.6) +
+  geom_smooth(method = "glm", method.args = list(family = "binomial"), se = FALSE, color = "steelblue") +
+  scale_color_gradient(low = "lightsteelblue", high = "steelblue") +
+  labs(title = "Analyses Score vs. Probability of High Grade",
+       x = "Analyses Score",
+       y = "Probability of Getting an A",
+       color = "Probability") +
+  theme_minimal()
+
+ggplotly(analyses.ggplot, tooltip = c("x", "y"))
+```
+
+This variable is my favorite, the Analyses are worth 35% of your overall grade and you can resubmit until you get 15/15 on each one. If you do, your likelihood of getting an A is way higher as demonstrated in the graph. Later we will discuss the odds of your success based on these three variables. 
+
+
+```{r message=FALSE, warning=FALSE}
+library(ggplot2)
+library(plotly)
+
+train$predicted_prob <- predict(m325.glm, newdata = train, type = "response")
+
+skillsquiz.ggplot <- ggplot(train, aes(x = SkillsQuizzesTotalFinalScore, y = f90)) +
+  geom_jitter(aes(color = predicted_prob), width = 1, height = 0.05, alpha = 0.6) +
+  geom_smooth(method = "glm", method.args = list(family = "binomial"), se = FALSE, color = "firebrick") +
+  scale_color_gradient(low = "lightcoral", high = "firebrick") +
+  labs(title = "Skills Quizzes Score vs. Probability of High Grade",
+       x = "Skills Quizzes Score",
+       y = "Probability of Getting an A",
+       color = "Probability") +
+  theme_minimal()
+
+ggplotly(skillsquiz.ggplot, tooltip = c("x", "y"))
+
+```
+
+It would be a very good predictor of your score if you get 100% on your skills quizzes. Just go until you can get them to 100%. 
+
+
+### Logistic Regression
+
+```{r message=FALSE, warning=FALSE}
+
+m325.glm <- glm(f90 ~ FinalExamCurrentScore + AnalysesCurrentScore + SkillsQuizzesTotalFinalScore, data=train, family=binomial)
+
+pander(summary(m325.glm))
+
+AIC(m325.glm)
+```
+
+All p-values are less than .05. Each variable's p-value contributes significantly to the outcome of the logistic regression. 
+
+The final exam score estimate indicates that for every one point increase in that test score increases the chance of getting an A by .5273. We can use this to interpret the odds of $e$0.5273 = 1.694. You have a 1.694 times greater chance of getting an A for each 1 point exam score increase. 
+
+The analyses scores estimates that $e$1.28 = 3.59. This is the biggest predictor of your overall grade. Your odds of getting an A are 3.59 times greater per 1 point increase in your analyses score.
+
+The skills quizzes tells us that $e$0.7147 = 2.04. Your odds of getting an A on the skills quizzes alone increased by 2.04 for every 1 point increase in your skills quizzes scores. 
+
+Also I want to point out the AIC or the Akaike Information Cirteria. This shows that the lower the AIC score, the better this model is. 18 is a really low AIC so this model works really well. 
+
+
+### Mathematical Model & Hypotheses
+
+$$
+P(Y_i = 1|\, FinalExamScore,AnalysesScore,SkillsQuizzes) = \frac{e^{\beta_0 + \beta_1 {FinalExamScore} + \beta_2 {AnalysesScore} + \beta_3 {SkillsQuizzes}}}{1+e^{\beta_0 + \beta_1 {FinalExamScore} + \beta_2 {AnalysesScore} + \beta_3 {SkillsQuizzes}}} = \pi_i
+$$
+$$
+ H_0: \beta_1 = 0 \text{ (FinalExamScore has no effect)} \\
+  H_a: \beta_1 \neq 0 \text{ (FinalExamScore has an effect)}
+$$
+
+$$
+ H_0: \beta_2 = 0 \text{ (AnalysesScores has no effect)} \\
+  H_a: \beta_2 \neq 0 \text{ (AnalysesScores has an effect)}
+$$
+
+$$
+ H_0: \beta_3 = 0 \text{ (SkillsQuizzesScore has no effect)} \\
+  H_a: \beta_3 \neq 0 \text{ (SkillsQuizzesScore has an effect)}
+$$
+
+### Validation
+
+```{r message=FALSE, warning=FALSE}
+set.seed(121)
+n <- nrow(train)
+
+keep <- sample(1:n, size = floor(0.7 * n)) #putSomeNumberHere that is about 60-70% of your data set's size)
+mytrain <- train[keep, ]
+mytest <- train[-keep, ]
+
+train.glm <- glm(f90 ~ FinalExamCurrentScore + AnalysesCurrentScore + SkillsQuizzesTotalFinalScore, 
+                 data = mytrain, family = "binomial")
+
+mypreds <- predict(train.glm, mytest, type = "response")
+
+callit <- ifelse(mypreds > 0.9, 1, 0) #you can put whatever you want for the 0.9 value
+
+cm <- table(mytest$f90, callit)
+
+pcc <- (cm[1] + cm[4]) / sum(cm) #sum the correct answers you got then divide by the total number of guesses you made
+
+print(cm)
+print(pcc)
+  
+```
+This table tells us who actually passed the class who met the requirements, who didn't who should have, and any false-positive and false negatives. 
+
+the 24 represent those who did get not an A based on the model.
+
+The 12 are those who did pass the class according to the model 
+
+This model is 100% accurate because there isn't anyone who got a 68 on the final, 100% on the skils quizzes, and 90 on the analyses who didn't pass the class.
+
+There also isn't anyone who met the parameters of this test who did get an A. 
+
+
+### Final Remarks
+
+As you can see there are some really big predictors for your overall grade in this course. The biggest are if you turn in your analyses and get at least 90% in them, if your Final Exam score is 68 or higher, and if your Skills Quizzes are 100% completed. 
+
+
+##### Test my data
+```{r}
+test$FinalGrade <- ifelse(predict(m325.glm, test, type="response") > 90, "A", "Other")
+
+write.csv(test, "testm325.csv", row.names=FALSE)
+```
+
+
+------
+: )

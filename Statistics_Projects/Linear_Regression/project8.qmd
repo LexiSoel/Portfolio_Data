@@ -1,0 +1,378 @@
+---
+title: "Consulting Project - Logistic Regression Prediction of Envy"
+subtitle: "Course MATH 435"
+author: "Lexi Soelberg"
+format:
+  html:
+    self-contained: true
+    page-layout: full
+    title-block-banner: true
+    toc: true
+    toc-depth: 3
+    toc-location: body
+    number-sections: false
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: wrap
+    code-copy: hover
+    code-tools:
+        source: false
+        toggle: true
+        caption: See code
+execute: 
+  warning: false
+---
+
+
+```{r message=FALSE, warning=FALSE}
+library(mosaic)
+library(ResourceSelection)
+library(readr)
+library(pander)
+library(ggplot2)
+library(plotly)
+library(dplyr)
+library(car)
+library(colorspace)
+library(RColorBrewer)
+library(gt)
+library(data.table)
+library(DT)
+
+Envy <- read_csv("../../data/EnvyData.csv")
+
+```
+
+## Intro
+
+This data was taken from my study data last semester. Originally this data was collected with very little quantitative variables. There are multiple categorical variables which contribute to the overall Envy scores. I knew I wanted to take a different approach to this data and see what I could find. I knew I probably wasn't going to find much significance. This data was best looked at with t-tests and anovas. Still I wondered if a logistic regression could tell me if the envy score could predict that the participant was a female. I also wanted to see if possible there way a way to see a linear relationship between age and envy between males and females. 
+
+I had the thought to interpret the data in this way. 
+
+As you can see it is for students 18 - 25 years of age. 
+
+### Data
+
+```{r message=FALSE, warning=FALSE}
+
+Envy <- read_csv("../../Data/EnvyData.csv")
+
+Envy <- Envy %>%
+  filter(Gender != "Non-binary") %>%
+  mutate(sex = ifelse(Gender > "Female", 0, 1)) %>%
+  filter(Age %in% c(18, 19, 20, 21, 22, 23, 24, 25)) %>% 
+  rename(envyscore = `Total Average`)
+  
+```
+
+
+```{r}
+library(dplyr)
+library(DT)
+
+Envy <- Envy %>%
+  dplyr::select(Gender, sex, envyscore, Age)
+
+datatable(Envy, options=list(lengthMenu = c(5,10,15)))
+
+```
+
+
+## Analyses {.tabset .tabset-fade}
+
+### Logistic Regression
+
+
+#### Logistic Model
+
+```{r}
+
+Envy.glm <- glm(sex ~ envyscore*as.factor(Age), data=Envy, family=binomial)
+pander(summary(Envy.glm))
+
+pander(paste("AIC:", round(AIC(Envy.glm), 2)))
+
+```
+
+This model does not completely reach significance. The Total Average is significant but the intercept is not significant. Let's see where that takes us.  
+
+The AIC as well is very high at 261.4. This is much higher than I would have liked to see. 
+
+#### Graph
+
+```{r message=FALSE, warning=FALSE}
+library(ggplot2)
+library(plotly)
+
+envyplot <- ggplot(Envy, aes(x = envyscore, y = sex, color = as.factor(Age))) +
+  geom_point(aes(text = paste("Age:", Age, "<br>Envy:", envyscore, "<br>Gender:", sex)), 
+             alpha = 0.6, size = 2) +
+  geom_smooth(method = "glm",
+              method.args = list(family = "binomial"),
+              formula = y ~ x,
+              se = FALSE) +
+  scale_color_viridis_d(name = "Age") +
+  labs(title = "How Does Envy Predict Gender Across Ages?",
+       x = "Envy Score",
+       y = "Probability of Being Female (1)") +
+  theme_minimal()
+
+ggplotly(envyplot, tooltip="text")
+```
+
+
+This graph is wild but it's showing the differences in envy on the ages of college students aged 18 - 25. 
+
+age 19 only has 1 male so it's not showing a good representative sample
+
+#### Goodness-Of-Fit-Test
+
+```{r}
+pander(hoslem.test(Envy.glm$y, Envy.glm$fit, g=10))
+```
+This goodness-of-fit test shows that this model is actually a good fit for the data. We can see this through the high p-value $p$ = 0.7492. Although the logistic regression model doesn't show statistical significance in the intercept, it's still a good model. 
+
+#### Mathematical Model
+
+$$
+  P(Y_i = 1|x_i) \approx \frac{e^{-0.6713+0.3434*5}}{1+e^{-0.6713+0.3434*5}} = \hat{\pi}_i
+$$
+
+
+#### Interpretation
+
+I really liked looking at this model for this data. It was a cool additional insight into what I already knew about females being more envious than males. This calculation of odds using a logistic model was veryy cool and interesting to take a look at. I'll be sure to share it with my group from last semester and see what they think. 
+
+-----------
+
+: )
+
+
+#### Prediction 18
+
+For this prediction I wanted to see the prediction of an average score of 5 would predict that the participant of 18 years old is female. 
+
+```{r}
+predenvy18 <- predict(Envy.glm, data.frame(envyscore = 5, Age = 18), type = "response")
+
+pander(predenvy18)
+```
+
+This model predicts that there is a 86% chance of the participant being a female if they have a 5 average envy score and are age 18. 
+
+#### Odds 18
+
+```{r}
+odds <- predenvy18 / (1 - predenvy18)
+pander(odds)
+```
+
+
+$$
+
+Odds = \frac{{0.86}}{1-0.86} \approx 6.142
+
+$$
+
+
+The odds of the participant being a female is 6.142 to 1 with an envy score of 5 and the age of 18. Those odds only increase as the envy score increases and vary across the ages. 
+
+
+
+##### Prediction 19
+
+```{r}
+predenvy19 <- predict(Envy.glm, data.frame(envyscore = 5, Age = 19), type = "response")
+
+pander(predenvy19)
+```
+This model predicts that there is a 98.52% chance of the participant being a female if they have a 5 average envy score. 
+
+
+##### Odds 19
+
+```{r}
+odds <- predenvy19 / (1 - predenvy19)
+pander(odds)
+```
+
+$$
+
+Odds = \frac{{.9852}}{1-.9852} \approx 66.38
+
+$$
+
+The odds of the participant being a female is 66.38 to 1 with an envy score of 5 and the age of 19. This is most likely representative of the sample size of 19 females and lack of males. I believe there is only 1 male who is 19in this data set, that would definitely skew the data. His envy score was only 3.28 which is on the lower half of the total envy 1 - 7. 
+
+
+##### Prediction 20
+
+```{r}
+predenvy20 <- predict(Envy.glm, data.frame(envyscore = 5, Age = 20), type = "response")
+
+pander(predenvy20)
+```
+This model predicts that there is a 65.04% chance of the participant being a female if they have a 5 average envy score. 
+
+
+##### Odds 20
+
+```{r}
+odds <- predenvy20 / (1 - predenvy20)
+pander(odds)
+```
+
+$$
+
+Odds = \frac{{.6504}}{1-.6504} \approx 1.861
+
+$$
+
+The odds of the participant being a female is 1.861 to 1 with an envy score of 5 and the age of 20.
+
+
+##### Prediction 21
+
+```{r}
+predenvy21 <- predict(Envy.glm, data.frame(envyscore = 5, Age = 21), type = "response")
+
+pander(predenvy21)
+```
+This model predicts that there is a 35.43% chance of the participant being a female if they have a 5 average envy score. 
+
+
+##### Odds 21
+
+```{r}
+odds <- predenvy21 / (1 - predenvy21)
+pander(odds)
+```
+
+$$
+
+Odds = \frac{{.3543}}{1-.3543} \approx .5487
+
+$$
+
+The odds of the participant being a female is 5487 to 1 with an envy score of 5 and the age of 21.
+
+
+##### Prediction 22
+
+```{r}
+predenvy22 <- predict(Envy.glm, data.frame(envyscore = 5, Age = 22), type = "response")
+
+pander(predenvy22)
+```
+This model predicts that there is a 56.04% chance of the participant being a female if they have a 5 average envy score. 
+
+
+##### Odds 22
+
+```{r}
+odds <- predenvy22 / (1 - predenvy22)
+pander(odds)
+```
+
+$$
+
+Odds = \frac{{.5604}}{1-.5604} \approx 1.275
+
+$$
+
+The odds of the participant being a female is 1.275 to 1 with an envy score of 5 and the age of 22.
+
+
+##### Prediction 23
+
+```{r}
+predenvy23 <- predict(Envy.glm, data.frame(envyscore = 5, Age = 23), type = "response")
+
+pander(predenvy23)
+```
+This model predicts that there is a 98.52% chance of the participant being a female if they have a 5 average envy score. 
+
+
+##### Odds 23
+
+```{r}
+odds <- predenvy23 / (1 - predenvy23)
+pander(odds)
+```
+
+$$
+
+Odds = \frac{{.6981}}{1-.6981} \approx 2.312
+
+$$
+
+The odds of the participant being a female is 2.312 to 1 with an envy score of 5 and the age of 23.
+
+
+##### Prediction 24
+
+```{r}
+predenvy24 <- predict(Envy.glm, data.frame(envyscore = 5, Age = 24), type = "response")
+
+pander(predenvy24)
+```
+This model predicts that there is a 69.83% chance of the participant being a female if they have a 5 average envy score. 
+
+
+##### Odds 24
+
+```{r}
+odds <- predenvy24 / (1 - predenvy24)
+pander(odds)
+```
+
+$$
+
+Odds = \frac{{.6983}}{1-.6983} \approx 2.315
+
+$$
+
+The odds of the participant being a female is 23.15 to 1 with an envy score of 5 and the age of 24.
+
+
+##### Prediction 25
+
+```{r}
+predenvy25 <- predict(Envy.glm, data.frame(envyscore = 5, Age = 25), type = "response")
+
+pander(predenvy25)
+```
+This model predicts that there is a 77.22% chance of the participant being a female if they have a 5 average envy score. 
+
+
+##### Odds 25
+
+```{r}
+odds <- predenvy25 / (1 - predenvy25)
+pander(odds)
+```
+
+$$
+
+Odds = \frac{{.7722}}{1-.7722} \approx 3.389
+
+$$
+
+The odds of the participant being a female is 3.389 to 1 with an envy score of 5 and the age of 25.
+
+
+
+
+#### Conclusion
+
+This one was a little trickier to pull off since i I had run comparisons like this on less linear data. It was cool to see all of the different ways the data behaved in this model. I tried so many different things to pull off this model and showing it like this. My data had some crazy ranges in age, I decided to zoom it a bit. 
+
+Overall I enjoyed this little experiment with my data once again. It helped me to think outside the box with it. I thought it was really cool to see this data in all the different logistic ways. 
+
+
+--------------
+
+: )
+
+

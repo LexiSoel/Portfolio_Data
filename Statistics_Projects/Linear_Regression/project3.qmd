@@ -1,0 +1,337 @@
+---
+title: "Car Selling Price - Honda HR-V"
+subtitle: "Course MATH 435"
+author: "Lexi Soelberg"
+format:
+  html:
+    self-contained: true
+    page-layout: full
+    title-block-banner: true
+    toc: true
+    toc-depth: 3
+    toc-location: body
+    number-sections: false
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: wrap
+    code-copy: hover
+    code-tools:
+        source: false
+        toggle: true
+        caption: See code
+execute: 
+  warning: false
+---
+
+
+```{r, message=FALSE, warning=FALSE}
+# Load your libraries
+library(car)
+library(pander)
+library(tidyverse)
+library(dplyr)
+library(mosaic)
+library(ggplot2)
+library(plotly)
+library(DT)
+
+
+# boxcox to figure out which transformation i need
+# y prime
+# remove prime and put what 
+# predicted value snap the line back. 
+#square the prime again after computed value (3rd equation)
+# when including boxcox put it away in details and don't present it
+# consider log for exponential car
+# pick transformation : like the fit (boxcox) or belief system (human logic)
+# 3 equations = prime space, what prime is, 
+
+carselling <- data.frame(
+  Mileage = c(66000, 27165, 98241, 25, 7, 87208, 5, 80655, 86740, 101714, 145715, 66912, 15411, 77509, 72764, 19136, 21394, 11255, 22291, 31084, 103162, 69057, 9567, 67592, 32238, 147099, 192216, 176835, 138436, 3978),
+  Price = c(12999, 17500, 16818, 31324, 32350, 15990, 32434, 14950, 16495, 17687, 13295, 17800, 25000, 17596, 18288, 25575, 27998, 29998, 22998, 25998, 17955, 19590, 23998, 18998, 20404, 14250, 14977, 10977, 13499, 30998),
+  Year = c(2019, 2019, 2017, 2025, 2025, 2017, 2025, 2019, 2016, 2017, 2017, 2018, 2018, 2023, 2018, 2017, 2022, 2023, 2024, 2021, 2022, 2022, 2021, 2020, 2021, 2021, 2020, 2016, 2016, 2024)
+)
+
+```
+
+
+#### Background {.tabset .tabset-fade}
+
+The Honda HR-V was introduced as a compact crossover vehicle in 2016 and therefore finding a vehicle with 200k miles is nearly impossible. This vehicle has existed for less than a decade. The data is limited but interesting. Even the oldest models seem to have upheld their value pretty well over the years. The trim for my car specifically the EX-L has great value. 
+
+The cars were found on [KSL.com](https://cars.ksl.com/search/make/Honda/model/HR-V/yearFrom/2016/yearTo/2026/mileageFrom/0/mileageTo/1000000), [Cars.com](https://www.cars.com/shopping/results/?dealer_id=&include_shippable=true&keyword=&list_price_max=&list_price_min=&makes[]=honda&maximum_distance=all&models[]=honda-hr_v&monthly_payment=&page=10&page_size=50&sort=best_match_desc&stock_type=all&trims[]=honda-hr_v-ex_l_awd&trims[]=honda-hr_v-ex_l_w_navigation&year_max=&year_min=2018&zip=83460), [Autotrader](https://www.autotrader.com/cars-for-sale/all-cars/honda/hr-v/rockland-id?endYear=2022&zip=83271), and the best website for nation-wide searching was [TrueCar](https://www.truecar.com/used-cars-for-sale/listings/honda/hr-v/location-rexburg-id/?searchRadius=5000&trim=ex-l).
+
+I collected 30 cars, from 5 miles to 192k and from $11k to $32k, years ranging from 2016-2025.
+
+My Car is a 2021 Honda HR-V EX-L AWD. Her name is Rexie.
+
+##### Hide Data
+
+
+##### Show Data
+
+```{r message=FALSE, warning=FALSE}
+carselling <- data.frame(
+  Mileage = c(66000, 27165, 98241, 25, 7, 87208, 5, 80655, 86740, 101714, 145715, 66912, 15411, 77509, 72764, 19136, 21394, 11255, 22291, 31084, 103162, 69057, 9567, 67592, 32238, 147099, 192216, 176835, 138436, 3978),
+  Price = c(12999, 17500, 16818, 31324, 32350, 15990, 32434, 14950, 16495, 17687, 13295, 17800, 25000, 17596, 18288, 25575, 27998, 29998, 22998, 25998, 17955, 19590, 23998, 18998, 20404, 14250, 14977, 10977, 13499, 30998),
+  Year = c(2019, 2019, 2017, 2025, 2025, 2017, 2025, 2019, 2016, 2017, 2017, 2018, 2018, 2023, 2018, 2017, 2022, 2023, 2024, 2021, 2022, 2022, 2021, 2020, 2021, 2021, 2020, 2016, 2016, 2024)
+)
+
+datatable(carselling, options=list(lengthMenu = c(5,10,15))) %>%
+formatStyle(names(carselling), color="mediumseagreen")
+```
+
+-----
+
+#### Hypothesis
+
+This analysis attempts to model the price I can expect to sell my car at based on the mileage using a simple linear regression.
+
+$$
+  \underbrace{Y_i}_\text{Predicted Price} = {\beta_0} + {\beta_1} \underbrace{X_i}_\text{Mileage} + \epsilon_i \quad \text{where} \ \epsilon_i \sim N(0, \sigma^2)
+$$
+
+
+The hypotheses for my study consider the slope of the regression model $\beta_1$. If the slope is zero then there is not a meaningful relationship between deep and quality sleep.
+
+$$
+H_0: \beta_1 = 0 \\  
+H_a: \beta_1 \neq 0
+$$
+
+<center> $\alpha$ = 0.05 </center>
+
+
+# HR-V Linear Regression {.tabset .tabset-fade}
+
+## Normal Regression
+
+### Graph 
+
+
+<center>
+```{r message=FALSE, warning=FALSE}
+
+carsell.lm <- lm(Price ~ Mileage, data = carselling)
+n <- coef(carsell.lm)
+
+mypred.cc <- predict(carsell.lm, data.frame(Mileage=21000), interval="confidence")
+mypred.cp <- predict(carsell.lm, data.frame(Mileage=21000), interval="prediction")
+
+
+carsellm.log <- lm(log(Price) ~ Mileage, data = carselling)
+b.log <- coef(carsellm.log)
+
+
+carsell.lm <- lm(Price ~ Mileage, data = carselling)
+n <- coef(carsell.lm)
+
+
+mypred.c <- exp(predict(carsellm.log, data.frame(Mileage=120000), interval="confidence"))
+mypred.p <- exp(predict(carsellm.log, data.frame(Mileage=120000), interval="prediction"))
+
+
+carsell.ggplot <- ggplot(carselling, aes(y = Price, x = Mileage, color = Price, label = Year)) +
+  geom_point(pch = 16, bg = "white", size = 3) + 
+  stat_function(fun = function(x) n[1] + n[2] * x, color = "lightseagreen", size = 1.5) +
+  
+  stat_function(fun = function(x) exp(b.log[1] + b.log[2] * x), color = "cadetblue1", size = 1.5) + 
+  scale_color_gradient(low = "steelblue1", high = "steelblue4") +
+  labs(
+    title = "Honda HR-V EX-L Prices and Mileages Over The Years<br><sup>2016 - 2025</sup>",
+    x = "Mileage", 
+    y = "Price ($)"
+  ) +
+  ylim(5000, 40000) + 
+  theme_light() +
+  geom_text(
+    aes(x = 21000, y = 16000, label = "My Car"),
+    color = "forestgreen", nudge_y = -2000, size = 3.75
+  ) +
+  geom_point(
+    aes(x = 21000, y = 16000, label = 2021), 
+    color = "forestgreen", size = 3.5
+  ) +
+  geom_point(
+    aes(x = 120000, y = predict(carsell.lm, data.frame(Mileage = 120000, label = 2021))),
+    color = "darkgoldenrod2", size = 3.5
+  ) +
+  geom_text(
+    aes(x = 120000, y = predict(carsell.lm, data.frame(Mileage = 120000)), 
+        label = "When I Sell My Car"),
+    color = "darkgoldenrod3", nudge_y = -2500, nudge_x = -10000,  size = 3.75
+  ) +
+geom_segment(
+  aes(x = 21000, y = 16000, xend = 120000, yend = predict(carsell.lm, data.frame(Mileage = 120000))), 
+  color = "goldenrod", lwd = 1
+) +
+  geom_point() + 
+  stat_function(fun=function(x) exp(n[1] + n[2]*x)) + 
+  geom_segment(aes(x=120000, xend=120000, y=mypred.c[2], yend=mypred.c[3]),
+               alpha=0.1, color="goldenrod2", lwd=3) + 
+  geom_segment(aes(x=120000, xend=120000, y=mypred.p[2], yend=mypred.p[3]),
+               alpha=0.01, color="firebrick", lwd=2)+
+  geom_point() + 
+  stat_function(fun=function(x) exp(n[1] + n[2]*x)) + 
+  geom_segment(aes(x=21000, xend=21000, y=mypred.cc[2], yend=mypred.cc[3]),
+               alpha=0.1, color="forestgreen", lwd=3) + 
+  geom_segment(aes(x=21000, xend=21000, y=mypred.cp[2], yend=mypred.cp[3]),
+               alpha=0.01, color="steelblue", lwd=2)
+  
+ggplotly(carsell.ggplot, tooltip = c("y", "x", "label"))
+
+```
+</center>
+
+
+```{r}
+CarSellPredict <- predict(carsell.lm, data.frame(Mileage=120000))
+
+pander(paste("Predicted Price When Selling:", round(CarSellPredict, 2)))
+```
+
+
+The green dot represents my car when I bought it ($16k - 21k miles) and the yellow is when I plan on selling it at 120k miles for the predicted price of $15,255.59.
+
+Because I got my car at such an amazing price when I bought it, I can run it for another 100k miles and sell it for almost the same price. Hondas are super reliable so I will do exactly that. 
+
+#### Linear Matheatical Model
+
+$$
+  \underbrace{\hat{Y}_i}_\text{Pred Price} = \text{27124} + \text{-0.0989} \underbrace{X_i}_\text{Mileage}
+$$
+
+
+### Linear Summary Results
+
+```{r}
+carsell.lm <- lm(Price ~ Mileage, data=carselling)
+summary(carsell.lm) %>% pander
+```
+
+### Linear Interpretation
+
+Our $B_1$ hypothesis The estimated slope of this regression is significantly different from zero at -9.890e-02 ($p$ = 4.88e-09 < $\alpha$). 
+There is a significant negative relationship between a car's price based on its mileage. This is what we were looking for. For our HR-Vs that relationship looks like for every mile the car is driven its value depreciated by $0.0989 (approx 10 cents)
+
+Also because our y-intercept is also significant $p$ = 1.645e-21 < $\alpha$ we can conclude that if a HR-V has 0 miles on it it will cost about $27,120.
+
+The correlation coefficient or $R^2$ shows a fairly moderate tightness of the residuals to $\hat{Y_i}$, $R^2$ = 7.11
+
+
+### Y-Prime Summary Results
+
+
+
+<center> $\lambda$ =0 </center>
+
+
+
+```{r}
+
+carsellm.log <- lm(log(Price) ~ Mileage, data = carselling)
+summary(carsellm.log) %>% pander
+
+```
+
+#### Y-Prime Mathematical Model
+
+$$
+\widehat{Y}_i' = 10.21 + -4.856e-06 X_i
+$$
+$$
+\log(\hat{Y}_i) = 10.21 + -4856e-06 X_i
+$$
+
+```{r}
+carsellm.log <- lm(log(Price) ~ Mileage, data = carselling)
+summary(carsellm.log) %>% pander
+```
+
+EXP fix
+
+
+```{r}
+
+exp(coef(carsellm.log))
+
+```
+
+Our final interpretation of $\hat{Y_i}$ is:
+
+$$
+\hat{Y}_i = \text{exp}(2.7112 + -0.099 X_i)
+$$
+
+
+### Log Interpretation
+
+When we snapped log back with exp we find the original linear regression results. 
+
+-------
+
+### Appropriateness of Linear Regression
+
+<center>
+
+```{r fig.height=3}
+
+carsell.lm <- lm(Price ~ Mileage, data=carselling)
+
+par(mfrow=c(1,3))
+
+plot(carsell.lm, which=1)
+
+qqPlot(carsell.lm$residuals, main="Q-Q Plot", col="steelblue3", col.lines="steelblue4", pch= 19, id=FALSE)
+
+plot(carsell.lm$residuals, main = "Residuals vs. Order")
+
+```
+
+</center>
+
+There are 5 associated assumptions to the linear regression. All but #4 can be checked with these above plots. 
+
+**Assumption 1: Linear Relationship Between X and Y**
+
+No significant linearity is shown in the Residuals vs Fitted plot, although 27, 1 and 2 are outliers they do not greatly affect the overal linear regression.  
+
+**Assumption 2: Normal Distribution of Error Terms**
+
+We can see a slight skew in the normality of the data as shown in the Q-Q plot. This does not affect the outcome of this model. 
+
+**Assumption 3: Constant Variance (X values)**
+
+There does not seem to be a pattern in the data, showing constant variance.
+
+**Assumption 4: Fixed X Values**
+
+We can assume the prices and mileages of the cars are accurate and consistent measurements of actual prices of HR-V cars. 
+
+**Assumption 5: Independent Error Terms**
+
+The Residuals vs Order plot shows the chaos in the data. Error terms do not appear to be correlated. There is not a clear pattern in the plot. 
+
+
+There is not sufficient evidence shown in the above plots to discredit the whole linear regression analysis. 
+
+------
+
+: )
+
+## Appendix
+
+```{r}
+boxCox(carsell.lm)
+```
+I'm going to run a log because of this boxCox assumption
+
+
+------
+
+: )
+
+###### Credits
+
+Thank you Brother Saunders for helping with the codes on Friday to make the boxCox and different lines. 

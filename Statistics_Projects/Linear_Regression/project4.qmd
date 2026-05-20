@@ -1,0 +1,590 @@
+---
+title: "Midterm Decision"
+subtitle: "Course MATH 435"
+author: "Lexi Soelberg"
+format:
+  html:
+    self-contained: true
+    page-layout: full
+    title-block-banner: true
+    toc: true
+    toc-depth: 3
+    toc-location: body
+    number-sections: false
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: wrap
+    code-copy: hover
+    code-tools:
+        source: false
+        toggle: true
+        caption: See code
+execute: 
+  warning: false
+---
+
+
+```{r, include=FALSE}
+library(mosaic)
+library(ResourceSelection)
+library(readr)
+library(pander)
+library(ggplot2)
+library(plotly)
+library(dplyr)
+library(car)
+library(colorspace)
+library(RColorBrewer)
+library(gt)
+library(data.table)
+library(DT)
+
+M425P <- read_csv("../../data/Math425PastGrades.csv")
+spec(M425P)
+```
+
+```{r}
+
+M425P1 <- M425P %>% 
+  filter(AttendedAlmostAlways == "Y", ClassActivitiesCompletedPerfectly == "Y", SkillsQuizzesCompletedPerfectly == "Y", MagicTwoGroups == 2,
+)
+
+
+M425P2 <- M425P %>% 
+  filter(AttendedAlmostAlways == "Y", ClassActivitiesCompletedPerfectly == "Y", SkillsQuizzesCompletedPerfectly == "Y", MagicTwoGroups == 2, Midterm != 52
+)
+
+
+```
+
+### Decision: Keep My Midterm Score
+
+# Analysis {.tabset .tabset-fade}
+
+I have filtered the data for the Midterm and Final scores based on criteria that most aligns with my performance in the class thus far. Not touching any scores but filtering by Attendance, Class Activity and Sk ills Quiz Completion, as well as the Magic Group I have the best chance of finding a significant prediction for my Final Exam score based on the students who match best to my work ethic in this class so far. 
+
+## Cubic Model
+
+
+### Graph
+
+```{r message=FALSE, warning=FALSE}
+
+library(ggplot2)
+library(plotly)
+
+midpred.lm <- lm(FinalExam ~ Midterm + I(Midterm^2) + I(Midterm^3), data = M425P2)
+b <- coef(midpred.lm)
+
+
+predintv <- predict(midpred.lm, data.frame(Midterm = 68), interval = "prediction")
+confintv <- predict(midpred.lm, data.frame(Midterm = 68), interval = "confidence")
+
+midterm.ggplot <- ggplot(M425P2, aes(y = FinalExam, x = Midterm, color = FinalExam)) +  
+  geom_point(pch = 16, bg = "white", size = 3) + 
+  stat_function(fun=function(x) b[1] + b[2]*x + b[3]*x^2 + b[4]*x^3, color = "seagreen3", size = 1.5) +
+  scale_color_gradient(low = "cadetblue1", high = "cadetblue4") +
+  labs(
+    title = "How Well Does My Midterm Predict My Final Exam?<br><sup>Let's Goooo<sup>",
+    x = "Past Midterm Scores (2019-2024)", 
+    y = "Past Final Exam Scores (2019-2024)"
+  ) +
+  ylim(min(M425P2$FinalExam) - 5, max(M425P2$FinalExam) + 5) +
+  theme_minimal() +
+  geom_point(
+    aes(x = 68, y = predict(midpred.lm, data.frame(Midterm = 68))),
+    color = "firebrick", size = 4
+  ) +
+  geom_text(
+    aes(x = 68, y = predict(midpred.lm, data.frame(Midterm = 68)), label = "Predicted Final Exam Score"),
+    color = "firebrick", nudge_x = -11.25, size = 3
+  ) +
+  geom_segment(aes(x=68, xend=68, y=confintv[2], yend=confintv[3]),
+               alpha=0.04, color="goldenrod2", lwd=2) + 
+  geom_segment(aes(x=68, xend=68, y=predintv[2], yend=predintv[3]),
+               alpha=0.009, color="firebrick", lwd=1.5)
+
+ggplotly(midterm.ggplot, tooltip = c("x", "y"))
+
+```
+
+
+
+### Cubic Regression
+
+```{r message=FALSE, warning=FALSE}
+
+midpred.lm <- lm(FinalExam ~ Midterm + I(Midterm^2) + I(Midterm^3), data = M425P2)
+
+pander(summary(midpred.lm))
+
+```
+
+I have selected the cubic model because although the $R^2$ and RSE is better in the "quinto" and "sexto" models in the appendix, they are also unreasonable. the curves are disproportionate to reality. 
+
+### Math Equation
+
+$$
+\underbrace{53.62}_\text{Final Exam Score} =
+{165.3} +
+\underbrace{X_{i}}_\text{Midterm Score} +
+{-6.294}\underbrace{X_{i}^2}_\text{I(Midterm Score^2)} +
+{0.1066} \underbrace{X_{i}^3}_\text{I(Midterm Score^3)}
++ {-0.0005145}
++ \epsilon_i
+$$
+
+#### Checking for Correctness
+
+```{r}
+par(mfrow=c(1,3))
+
+plot(midpred.lm, which=1)
+
+qqPlot(midpred.lm$residuals, main="Q-Q Plot", col="cadetblue4", col.lines="seagreen", pch= 19, id=FALSE)
+
+plot(midpred.lm$residuals, main = "Residuals vs. Order")
+```
+
+Everything looks fairly good. 
+
+There are 5 associated assumptions to the linear regression. All but #4 can be checked with these above plots. 
+
+**Assumption 1: Linear Relationship Between X and Y**
+
+The linearity as shown in the residuals/fitted plot is a little wonky but it evens out. This is due to the dots being on the right side with more linearity than the left side. 
+
+**Assumption 2: Normal Distribution of Error Terms**
+
+Most of the dots as shown in the Q-Q plot fall on or close to the line, there are a few at the top that vary from normality but this isn't too bad. 
+
+**Assumption 3: Constant Variance (X values)**
+
+We do see a push of the data to higher values. The right side is more occupied that the left. Constant variance is put into question here. 
+
+**Assumption 4: Fixed X**
+
+The $X_i$ values can be considered fixed and measured without error.
+
+**Assumption 5: Independent Error Terms**
+
+The Residuals vs Order plot shows the chaos in the data. Error terms do not appear to be correlated. There is not a clear pattern in the plot. 
+
+**Assumption Conclusion**
+
+There is not sufficient evidence shown in the above plots to discredit the whole linear regression analysis. 
+
+
+### Prediction
+
+```{r}
+library(pander)
+
+# Prediction Interval
+predintv <- predict(midpred.lm, data.frame(Midterm = 68), interval = "prediction")
+pander(data.frame(`Prediction Interval` = predintv))
+
+# Confidence Interval
+confintv <- predict(midpred.lm, data.frame(Midterm = 68), interval = "confidence")
+pander(data.frame(`Confidence Interval` = confintv))
+
+```
+
+
+### Final Decision
+
+**The big question is then what if I get exactly my prediction? What will my final score be?**
+```{r}
+pander(paste(0.7*68.49 + 0.3*68))
+```
+
+**The prediction intervals:**
+
+**High**
+*(0.3 x 68 + 0.7 x 88.55)*
+```{r}
+pander(paste(+ 0.3*68 + 0.7*88.55))
+```
+
+**Low**
+*(0.3 x 68 + 0.7 x 48.43)*
+```{r}
+pander(paste(0.3*68 + 0.7*48.43))
+```
+
+
+If I go based off my final exam prediction I am likely to get a 68 but accounting for prediction intervals, I have a range of plus or minus 20 points. I believe I will be more confident in my final exam score with the addition of my midterm. 68 wasn't too bad to start out as the midterm. I have the chance to get an 88 on the final, bringing my overall exam score to an 82 but there's also a chance to get a 48 on the final and that will bring my overall exam score to a 54. 
+
+**I am deciding to keep my midterm** and shoot for a higher score than 68 on my final exam. I feel confident that I can aim for a 76. If I got a 76 on the final my overall exam grade would be a 74.
+
+<br>
+
+
+## Appendix
+
+### Residual 21
+
+First of all: When examining the original residulas plots as well as the graph, there was an extreme outlier. Someone who got a 52 on the midterm and a 92 on the final exam. It was pulling the data away like crazy. It is number 21 as shown below. I removed that dot from the analysis. It made the $R^2$ for all models significantly better.
+
+```{r}
+midpredd.lm <- lm(FinalExam ~ Midterm + I(Midterm^2) + I(Midterm^3) + I(Midterm^4), data = M425P1)
+
+par(mfrow=c(1,3))
+
+plot(midpredd.lm, which=1)
+
+qqPlot(midpredd.lm$residuals, main="Q-Q Plot", col="cadetblue4", col.lines="seagreen", pch= 19, id=FALSE)
+
+plot(midpredd.lm$residuals, main = "Residuals vs. Order")
+```
+
+#### Confidence Intervals
+
+**How about if I get the high end of my confidence interval?**
+
+```{r}
+pander(paste(0.7*74.6 + 0.3*68))
+```
+
+**The low end?**
+```{r}
+pander(paste(0.7*62.37 + 0.3*68))
+```
+
+
+### Other Models {.tabset .tabset-fade}
+
+I noticed the data bending at certain points and I wanted to check that possibility. I ultimately settled on the Cubic model because it produced the best adjusted $R^2$ **with an acurate graph** as well as the tightest confidence and prediction intervals.
+
+I will show you my logic of before. I initially ran a simple linear regression. I knew I wasn't going to run a two groups model because I filtered my data into 1 group of 35 members
+
+AttendedAlmostAlways == "Y", 
+ClassActivitiesCompletedPerfectly == "Y", 
+SkillsQuizzesCompletedPerfectly == "Y", 
+MagicTwoGroups == 2
+Midterm != 52 (the one outlier)
+
+
+
+#### The Simple Model
+
+The $R^2$ was low for this one so I moved to a quadratic:
+
+```{r}
+midpred1.lm <- lm(FinalExam ~ Midterm, data = M425P2)
+
+pander(summary(midpred1.lm))
+```
+
+
+```{r message=FALSE, warning=FALSE}
+library(ggplot2)
+library(plotly)
+
+midpred1.lm <- lm(FinalExam ~ Midterm, data = M425P2)
+b <- coef(midpred1.lm)
+
+
+predintv <- predict(midpred1.lm, data.frame(Midterm = 68), interval = "prediction")
+confintv <- predict(midpred1.lm, data.frame(Midterm = 68), interval = "confidence")
+
+midterm.ggplot <- ggplot(M425P2, aes(y = FinalExam, x = Midterm, color = FinalExam)) +  
+  geom_point(pch = 16, bg = "white", size = 3) + 
+  stat_function(fun=function(x) b[1] + b[2]*x, color = "seagreen3", size = 1.5) +
+  scale_color_gradient(low = "cadetblue1", high = "cadetblue4") +
+  labs(
+    title = "How Well Does My Midterm Predict My Final Exam?<br><sup>Let's Goooo<sup>",
+    x = "Past Midterm Scores (2019-2024)", 
+    y = "Past Final Exam Scores (2019-2024)"
+  ) +
+  ylim(min(M425P2$FinalExam) - 5, max(M425P2$FinalExam) + 5) +
+  theme_minimal() +
+  geom_point(
+    aes(x = 68, y = predict(midpred.lm, data.frame(Midterm = 68))),
+    color = "firebrick", size = 4
+  ) +
+  geom_text(
+    aes(x = 68, y = predict(midpred.lm, data.frame(Midterm = 68)), label = "Predicted Final Exam Score"),
+    color = "firebrick", nudge_x = -11.25, size = 3
+  ) +
+  geom_segment(aes(x=68, xend=68, y=confintv[2], yend=confintv[3]),
+               alpha=0.04, color="goldenrod2", lwd=2) + 
+  geom_segment(aes(x=68, xend=68, y=predintv[2], yend=predintv[3]),
+               alpha=0.009, color="firebrick", lwd=1.5)
+
+ggplotly(midterm.ggplot, tooltip = c("x", "y"))
+```
+
+```{r}
+predintv1 <- predict(midpred1.lm, data.frame(Midterm = 68), interval = "prediction")
+pander(data.frame(`Prediction Interval` = predintv1))
+
+# Confidence Interval
+confintv1 <- predict(midpred1.lm, data.frame(Midterm = 68), interval = "confidence")
+pander(data.frame(`Confidence Interval` = confintv1))
+```
+
+
+
+
+#### The Quadratic Model
+
+The $R^2$ was almost worse for this one so I moved to a cubic:
+
+```{r}
+midpred2.lm <- lm(FinalExam ~ Midterm + I(Midterm^2), data = M425P2)
+
+pander(summary(midpred2.lm))
+```
+
+```{r message=FALSE, warning=FALSE}
+
+library(ggplot2)
+library(plotly)
+
+midpred2.lm <- lm(FinalExam ~ Midterm + I(Midterm^2), data = M425P2)
+b <- coef(midpred2.lm)
+
+
+predintv <- predict(midpred2.lm, data.frame(Midterm = 68), interval = "prediction")
+confintv <- predict(midpred2.lm, data.frame(Midterm = 68), interval = "confidence")
+
+midterm.ggplot <- ggplot(M425P2, aes(y = FinalExam, x = Midterm, color = FinalExam)) +  
+  geom_point(pch = 16, bg = "white", size = 3) + 
+  stat_function(fun=function(x) b[1] + b[2]*x + b[3]*x^2, color = "seagreen3", size = 1.5) +
+  scale_color_gradient(low = "cadetblue1", high = "cadetblue4") +
+  labs(
+    title = "How Well Does My Midterm Predict My Final Exam?<br><sup>Let's Goooo<sup>",
+    x = "Past Midterm Scores (2019-2024)", 
+    y = "Past Final Exam Scores (2019-2024)"
+  ) +
+  ylim(min(M425P2$FinalExam) - 5, max(M425P2$FinalExam) + 5) +
+  theme_minimal() +
+  geom_point(
+    aes(x = 68, y = predict(midpred.lm, data.frame(Midterm = 68))),
+    color = "firebrick", size = 4
+  ) +
+  geom_text(
+    aes(x = 68, y = predict(midpred.lm, data.frame(Midterm = 68)), label = "Predicted Final Exam Score"),
+    color = "firebrick", nudge_x = -11.25, size = 3
+  ) +
+  geom_segment(aes(x=68, xend=68, y=confintv[2], yend=confintv[3]),
+               alpha=0.04, color="goldenrod2", lwd=2) + 
+  geom_segment(aes(x=68, xend=68, y=predintv[2], yend=predintv[3]),
+               alpha=0.009, color="firebrick", lwd=1.5)
+
+ggplotly(midterm.ggplot, tooltip = c("x", "y"))
+
+```
+
+```{r}
+predintv2 <- predict(midpred2.lm, data.frame(Midterm = 68), interval = "prediction")
+pander(data.frame(`Prediction Interval` = predintv2))
+
+# Confidence Interval
+confintv2 <- predict(midpred2.lm, data.frame(Midterm = 68), interval = "confidence")
+pander(data.frame(`Confidence Interval` = confintv2))
+```
+
+
+#### The Quad (as in 4) Model
+
+The adjusted $R^2$ was getting worse and the $R^2$ was still low for this one so as I was deciding on the 4 beta model in my analysis I also tested what it would be with 5 and 6 betas:
+
+*This is when it gets crazy:*
+
+```{r}
+midpred4.lm <- lm(FinalExam ~ Midterm + I(Midterm^2) + I(Midterm^3) + I(Midterm^4), data = M425P2)
+
+pander(summary(midpred4.lm))
+```
+
+
+```{r message=FALSE, warning=FALSE}
+
+library(ggplot2)
+library(plotly)
+
+midpred4.lm <- lm(FinalExam ~ Midterm + I(Midterm^2) + I(Midterm^3) + I(Midterm^4), data = M425P2)
+b <- coef(midpred4.lm)
+
+
+predintv <- predict(midpred4.lm, data.frame(Midterm = 68), interval = "prediction")
+confintv <- predict(midpred4.lm, data.frame(Midterm = 68), interval = "confidence")
+
+midterm.ggplot <- ggplot(M425P2, aes(y = FinalExam, x = Midterm, color = FinalExam)) +  
+  geom_point(pch = 16, bg = "white", size = 3) + 
+  stat_function(fun=function(x) b[1] + b[2]*x + b[3]*x^2 + b[4]*x^3 + b[5]*x^4, color = "seagreen3", size = 1.5) +
+  scale_color_gradient(low = "cadetblue1", high = "cadetblue4") +
+  labs(
+    title = "How Well Does My Midterm Predict My Final Exam?<br><sup>Let's Goooo<sup>",
+    x = "Past Midterm Scores (2019-2024)", 
+    y = "Past Final Exam Scores (2019-2024)"
+  ) +
+  ylim(min(M425P2$FinalExam) - 5, max(M425P2$FinalExam) + 5) +
+  theme_minimal() +
+  geom_point(
+    aes(x = 68, y = predict(midpred.lm, data.frame(Midterm = 68))),
+    color = "firebrick", size = 4
+  ) +
+  geom_text(
+    aes(x = 68, y = predict(midpred.lm, data.frame(Midterm = 68)), label = "Predicted Final Exam Score"),
+    color = "firebrick", nudge_y = -10, size = 3
+  ) +
+  geom_segment(aes(x=68, xend=68, y=confintv[2], yend=confintv[3]),
+               alpha=0.04, color="goldenrod2", lwd=2) + 
+  
+  geom_segment(aes(x=68, xend=68, y=predintv[2], yend=predintv[3]),
+               alpha=0.01, color="firebrick", lwd=1.5)
+
+ggplotly(midterm.ggplot, tooltip = c("x", "y"))
+
+```
+
+
+```{r}
+predintv4 <- predict(midpred4.lm, data.frame(Midterm = 68), interval = "prediction")
+pander(data.frame(`Prediction Interval` = predintv4))
+
+# Confidence Interval
+confintv4 <- predict(midpred4.lm, data.frame(Midterm = 68), interval = "confidence")
+pander(data.frame(`Confidence Interval` = confintv4))
+```
+
+
+
+#### The "Quinto" Model
+
+```{r}
+midpred5.lm <- lm(FinalExam ~ Midterm + I(Midterm^2) + I(Midterm^3) + I(Midterm^4) + I(Midterm^5), data = M425P2)
+
+pander(summary(midpred5.lm))
+```
+
+The $R^2$ is so much better! But the graph...
+
+
+```{r message=FALSE, warning=FALSE}
+
+library(ggplot2)
+library(plotly)
+
+midpred5.lm <- lm(FinalExam ~ Midterm + I(Midterm^2) + I(Midterm^3) + I(Midterm^4) + I(Midterm^5), data = M425P2)
+b <- coef(midpred5.lm)
+
+
+predintv <- predict(midpred5.lm, data.frame(Midterm = 68), interval = "prediction")
+confintv <- predict(midpred5.lm, data.frame(Midterm = 68), interval = "confidence")
+
+midterm.ggplot <- ggplot(M425P2, aes(y = FinalExam, x = Midterm, color = FinalExam)) +  
+  geom_point(pch = 16, bg = "white", size = 3) + 
+  stat_function(fun=function(x) b[1] + b[2]*x + b[3]*x^2 + b[4]*x^3 + b[5]*x^4 + b[6]*x^5, color = "seagreen3", size = 1.5) +
+  scale_color_gradient(low = "cadetblue1", high = "cadetblue4") +
+  labs(
+    title = "How Well Does My Midterm Predict My Final Exam?<br><sup>Let's Goooo<sup>",
+    x = "Past Midterm Scores (2019-2024)", 
+    y = "Past Final Exam Scores (2019-2024)"
+  ) +
+  ylim(min(M425P2$FinalExam) - 5, max(M425P2$FinalExam) + 5) +
+  theme_minimal() +
+  geom_point(
+    aes(x = 68, y = predict(midpred.lm, data.frame(Midterm = 68))),
+    color = "firebrick", size = 4
+  ) +
+  geom_text(
+    aes(x = 68, y = predict(midpred.lm, data.frame(Midterm = 68)), label = "Predicted Final Exam Score"),
+    color = "firebrick", nudge_x = -11.25, size = 3
+  ) +
+  geom_segment(aes(x=68, xend=68, y=confintv[2], yend=confintv[3]),
+               alpha=0.04, color="goldenrod2", lwd=2) + 
+  geom_segment(aes(x=68, xend=68, y=predintv[2], yend=predintv[3]),
+               alpha=0.009, color="firebrick", lwd=1.5)
+
+ggplotly(midterm.ggplot, tooltip = c("x", "y"))
+
+```
+
+The graph is basically saying that if you got a 40 on your midterm you are likely to get a 75 on the final. There aren't any data points there so it is assuming that. 
+
+How about 6 betas?
+
+```{r}
+predintv5 <- predict(midpred5.lm, data.frame(Midterm = 68), interval = "prediction")
+pander(data.frame(`Prediction Interval` = predintv5))
+
+# Confidence Interval
+confintv5 <- predict(midpred5.lm, data.frame(Midterm = 68), interval = "confidence")
+pander(data.frame(`Confidence Interval` = confintv5))
+```
+
+
+
+#### The "Sexto" Model
+```{r}
+midpred6.lm <- lm(FinalExam ~ Midterm + I(Midterm^2) + I(Midterm^3) + I(Midterm^4) + I(Midterm^5) + I(Midterm^6), data = M425P2)
+
+pander(summary(midpred6.lm))
+```
+
+Again, the $R^2$ is so much better! But the graph is horrible. 
+
+I don't think 120+ is possible on the final... this model is beyond reasonable probability.
+
+```{r message=FALSE, warning=FALSE}
+
+library(ggplot2)
+library(plotly)
+
+midpred6.lm <- lm(FinalExam ~ Midterm + I(Midterm^2) + I(Midterm^3) + I(Midterm^4) + I(Midterm^5) + I(Midterm^6), data = M425P2)
+b <- coef(midpred6.lm)
+
+
+predintv <- predict(midpred6.lm, data.frame(Midterm = 68), interval = "prediction")
+confintv <- predict(midpred6.lm, data.frame(Midterm = 68), interval = "confidence")
+
+midterm.ggplot <- ggplot(M425P2, aes(y = FinalExam, x = Midterm, color = FinalExam)) +  
+  geom_point(pch = 16, bg = "white", size = 3) + 
+  stat_function(fun=function(x) b[1] + b[2]*x + b[3]*x^2 + b[4]*x^3 + b[5]*x^4 + b[6]*x^5 + b[7]*x^6, color = "seagreen3", size = 1.5) +
+  scale_color_gradient(low = "cadetblue1", high = "cadetblue4") +
+  labs(
+    title = "How Well Does My Midterm Predict My Final Exam?<br><sup>Let's Goooo<sup>",
+    x = "Past Midterm Scores (2019-2024)", 
+    y = "Past Final Exam Scores (2019-2024)"
+  ) +
+  ylim(min(M425P2$FinalExam) - 5, max(M425P2$FinalExam) + 5) +
+  theme_minimal() +
+  geom_point(
+    aes(x = 68, y = predict(midpred.lm, data.frame(Midterm = 68))),
+    color = "firebrick", size = 4
+  ) +
+  geom_text(
+    aes(x = 68, y = predict(midpred.lm, data.frame(Midterm = 68)), label = "Predicted Final Exam Score"),
+    color = "firebrick", nudge_x = -11.25, size = 3
+  ) +
+  geom_segment(aes(x=68, xend=68, y=confintv[2], yend=confintv[3]),
+               alpha=0.04, color="goldenrod2", lwd=2) + 
+  geom_segment(aes(x=68, xend=68, y=predintv[2], yend=predintv[3]),
+               alpha=0.009, color="firebrick", lwd=1.5)
+
+ggplotly(midterm.ggplot, tooltip = c("x", "y"))
+
+```
+
+```{r}
+predintv6 <- predict(midpred6.lm, data.frame(Midterm = 68), interval = "prediction")
+pander(data.frame(`Prediction Interval` = predintv6))
+
+# Confidence Interval
+confintv6 <- predict(midpred6.lm, data.frame(Midterm = 68), interval = "confidence")
+pander(data.frame(`Confidence Interval` = confintv6))
+```
+
+
+
+
+
+I have selected the cubic model because although the $R^2$ and RSE is better in the "quinto" and "sexto" models in the appendix, they are also unreasonable. the curves are disproportionate to reality. 
+
+--------
+: )

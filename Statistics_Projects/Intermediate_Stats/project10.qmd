@@ -1,0 +1,823 @@
+---
+title: "Consulting Project - From Anticipation to Reflection: How Time Alters Perceptions of Enviable Experiences"
+subtitle: "Course MATH 325"
+author: "Lexi Soelberg"
+format:
+  html:
+    self-contained: true
+    page-layout: full
+    title-block-banner: true
+    toc: true
+    toc-depth: 3
+    toc-location: body
+    number-sections: false
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: wrap
+    code-copy: hover
+    code-tools:
+        source: false
+        toggle: true
+        caption: See code
+execute: 
+  warning: false
+    
+---
+
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(DT)
+library(pander)
+library(readr)
+library(plotly)
+library(car)
+library(dplyr)
+library(data.table)
+library(lattice)
+
+EnvyData <- read_csv("../../data/EnvyData.csv")
+#If this code does not work: 
+#Use the top menu from RStudio's window to select "Session, Set Working Directory, To Source File Location", and then play this R-chunk into your console to read the EnvyData data into R. 
+
+## In your Console run View(HSS) to ensure the data has loaded correctly.
+```
+
+# Background {.tabset .tabset-fade}
+
+## Intro
+
+In the PSYCH 485 Experiencing Research Class we conducted a survey with BYU-Idaho PSYCH 111 students as respondents. My teammates and I are replicating the first study found in the research article [Yesterday’s News: A Temporal Discontinuity in the Sting of Inferiority](https://journals.sagepub.com/doi/10.1177/0956797619839689).
+
+The PSYCH 111 students were asked to imagine 5 different scenarios as either just after the event (`Past`) or just before the event occurred (`Future`). The scenarios were participants own dream vacation, dream date, dream house, dream job, and dream car. They were asked to imagine their own close friend having this scenario. In a 5 item 7 point likert scale survey for each of the 5 scenarios the students reported their responses. We received 235 respondents. 
+
+I am presenting this html with a data analysis for my fellow research teammates. I'm hoping to gather additional insight into the data we collected. Unfortunately, our original demographics of marital status and class standing were replaced with religious affiliation due to a different group's lack of foresight. I will not be including any ANOVA of the religious affiliation demographic because there were only 3 responses from 3 different groups that do not identify as a latter-day saint. 
+
+I have included two ANOVA analyses on gender and age groups as listed below. 
+
+## Envy Data Table
+
+```{r}
+
+Envy <- select(EnvyData, Tense, `Total Average`, Vaca_Avg, Job_Avg, Date_Avg, House_Avg, Car_Avg, Gender)
+
+datatable(Envy, 
+          options=list(scrollX= TRUE, 
+          lengthMenu = c(5, 10, 15)), 
+          extensions="Responsive")
+```
+
+# Analyses {.tabset .tabset-fade}
+
+In all of these analyses I am presenting the data to my fellow classmates. They know statistics well, I am just showing this data to them in R. 
+
+There will be little to no wording throughout due to the volume of t.tests. The more interesting and summarized findings will be the ANOVAS below. 
+
+
+## Total Envy
+
+Questions & Hypotheses
+
+**Is there a difference in reported envy of a perceived event in the past or the future?**
+
+$$
+  H_0: \mu_\text{Future Group} = \mu_\text{Past Group}
+$$
+
+
+$$ 
+  H_a: \mu_\text{Future Group} > \mu_\text{Past Group}
+$$
+
+Significance level is 
+
+$$
+\alpha = 0.05
+$$ 
+
+
+Total Envy Analysis
+
+This boxplot shows the reported envy of all the Psych 111 students.
+
+```{r message=FALSE, warning=FALSE}
+plot_ly(data = Envy, 
+        y = ~`Total Average`,
+        x = ~Tense,
+        type = "box", 
+        color = ~Tense,
+        colors = c("olivedrab3","olivedrab4")) %>%
+  layout(
+    title = "Friend Gets Dream Events: In Anticipation or Retrospection", 
+    yaxis = list(title = "Average Envy Score"),
+    xaxis = list(title = "Group by Tense")
+  )
+
+
+```
+
+
+Total Envy Summary Table
+
+```{r}
+suppressWarnings(
+  Envy %>%
+    group_by(Tense) %>%
+    summarise(
+      Min = min(Vaca_Avg, na.rm = TRUE), 
+      Q1 = quantile(Vaca_Avg, 0.25, na.rm = TRUE), 
+      Med = median(Vaca_Avg, na.rm = TRUE), 
+      Q3 = quantile(Vaca_Avg, 0.75, na.rm = TRUE), 
+      Max = max(Vaca_Avg, na.rm = TRUE),
+      Average = mean(Vaca_Avg, na.rm = TRUE),
+      StDev = sd(Vaca_Avg, na.rm = TRUE),
+      SampleSize = n()
+    ) %>%
+    pander()
+)
+
+```
+
+
+Using an independent samples t.test the true differences in the means will be tested. First, the normality of the distributions is shown using Q-Q Plots.
+
+Q-Q Plots
+
+```{r}
+car::qqPlot(`Total Average` ~ Tense, data = Envy, main = "Q-Q Plot of Total Envy in Future or Past")       
+```
+
+
+## Vacation
+
+Questions & Hypotheses
+
+**Is there a difference in reported envy of a dream vacation in the past or the future?**
+
+$$
+  H_0: \mu_\text{Future Vacation} = \mu_\text{Past Vacation}
+$$
+
+
+$$ 
+  H_a: \mu_\text{Future Vacation} < \mu_\text{Past Vacation}
+$$
+
+Significance level is 
+
+$$
+\alpha = 0.05
+$$ 
+
+Vacation Analysis
+
+```{r}
+plot_ly(data = Envy, 
+        y = ~Vaca_Avg,
+        x = ~Tense,
+        type = "box", 
+        color = ~Tense,
+        colors = c("mediumpurple","mediumpurple4")) %>%
+  layout(
+    title = "Friend Gets Dream Vacation: Happened or About To", 
+    yaxis = list(title = "Average Vacation Score (Vaca_Avg)"),
+    xaxis = list(title = "Group by Tense")
+  )
+```
+
+```{r}
+suppressWarnings(
+  Envy %>%
+    group_by(Tense) %>%
+    summarise(
+      Min = min(Vaca_Avg, na.rm = TRUE), 
+      Q1 = quantile(Vaca_Avg, 0.25, na.rm = TRUE), 
+      Med = median(Vaca_Avg, na.rm = TRUE), 
+      Q3 = quantile(Vaca_Avg, 0.75, na.rm = TRUE), 
+      Max = max(Vaca_Avg, na.rm = TRUE),
+      Average = mean(Vaca_Avg, na.rm = TRUE),
+      StDev = sd(Vaca_Avg, na.rm = TRUE),
+      SampleSize = n()
+    ) %>%
+    pander()
+)
+```
+
+
+```{r}
+car::qqPlot(`Vaca_Avg` ~ Tense, data = Envy, main = "Q-Q Plot of Vacation Envy on Tense")  
+```
+
+## Job
+
+Questions & Hypotheses
+
+**Is there a difference in reported envy of a dream job in the past or the future?**
+
+$$
+  H_0: \mu_\text{Future Job} = \mu_\text{Past Job}
+$$
+
+
+$$ 
+  H_a: \mu_\text{Future Job} > \mu_\text{Past Job}
+$$
+
+Significance level is 
+
+$$
+\alpha = 0.05
+$$ 
+
+Job Analysis
+
+```{r}
+plot_ly(data = Envy, 
+        y = ~Job_Avg,
+        x = ~Tense,
+        type = "box", 
+        color = ~Tense,
+        colors = c("deepskyblue2","deepskyblue4")) %>%
+  layout(
+    title = "Friend Gets Dream Job: Happened or About To", 
+    yaxis = list(title = "Average Job Envy Score"),
+    xaxis = list(title = "Group by Tense")
+  )
+```
+
+```{r}
+suppressWarnings(
+  Envy %>%
+    group_by(Tense) %>%
+    summarise(
+      Min = min(Job_Avg, na.rm = TRUE), 
+      Q1 = quantile(Job_Avg, 0.25, na.rm = TRUE), 
+      Med = median(Job_Avg, na.rm = TRUE), 
+      Q3 = quantile(Job_Avg, 0.75, na.rm = TRUE), 
+      Max = max(Job_Avg, na.rm = TRUE),
+      Average = mean(Job_Avg, na.rm = TRUE),
+      StDev = sd(Job_Avg, na.rm = TRUE),
+      SampleSize = n()
+    ) %>%
+    pander()
+)
+```
+
+Q-Q Plot
+
+```{r}
+car::qqPlot(`Job_Avg` ~ Tense, data = Envy, main = "Q-Q Plot of Job Envy on Tense")  
+```
+
+## Date
+
+Questions & Hypotheses
+
+**Is there a difference in reported envy of a dream date in the past or the future?**
+
+$$
+  H_0: \mu_\text{Future Date} = \mu_\text{Past Date}
+$$
+
+
+$$ 
+  H_a: \mu_\text{Future Date} > \mu_\text{Past Date}
+$$
+
+Significance level is 
+
+$$
+\alpha = 0.05
+$$ 
+
+Date Analysis
+
+```{r}
+plot_ly(data = Envy, 
+        y = ~Date_Avg,
+        x = ~Tense,
+        type = "box", 
+        color = ~Tense,
+        colors = c("deeppink2","deeppink4")) %>%
+  layout(
+    title = "Friend Gets Dream Date: Happened or About To", 
+    yaxis = list(title = "Average Date Envy Score"),
+    xaxis = list(title = "Group by Tense")
+  )
+```
+
+```{r}
+suppressWarnings(
+  Envy %>%
+    group_by(Tense) %>%
+    summarise(
+      Min = min(Date_Avg, na.rm = TRUE), 
+      Q1 = quantile(Date_Avg, 0.25, na.rm = TRUE), 
+      Med = median(Date_Avg, na.rm = TRUE), 
+      Q3 = quantile(Date_Avg, 0.75, na.rm = TRUE), 
+      Max = max(Date_Avg, na.rm = TRUE),
+      Average = mean(Date_Avg, na.rm = TRUE),
+      StDev = sd(Date_Avg, na.rm = TRUE),
+      SampleSize = n()
+    ) %>%
+    pander()
+)
+```
+
+Q-Q Plot
+
+```{r}
+car::qqPlot(`Date_Avg` ~ Tense, data = Envy, main = "Q-Q Plot of Dream Date Envy on Tense")  
+```
+
+## House
+
+Questions & Hypotheses
+
+**Is there a difference in reported envy of a dream house in the past or the future?**
+
+$$
+  H_0: \mu_\text{Future House} = \mu_\text{Past House}
+$$
+
+
+$$ 
+  H_a: \mu_\text{Future House} > \mu_\text{Past House}
+$$
+
+Significance level is 
+
+$$
+\alpha = 0.05
+$$ 
+
+```{r}
+plot_ly(data = Envy, 
+        y = ~House_Avg,
+        x = ~Tense,
+        type = "box", 
+        color = ~Tense,
+        colors = c("goldenrod1","goldenrod3")) %>%
+  layout(
+    title = "Friend Gets Dream House: Happened or About To", 
+    yaxis = list(title = "Average House Envy Score"),
+    xaxis = list(title = "Group by Tense")
+  )
+```
+
+
+```{r}
+suppressWarnings(
+  Envy %>%
+    group_by(Tense) %>%
+    summarise(
+      Min = min(House_Avg, na.rm = TRUE), 
+      Q1 = quantile(House_Avg, 0.25, na.rm = TRUE), 
+      Med = median(House_Avg, na.rm = TRUE), 
+      Q3 = quantile(House_Avg, 0.75, na.rm = TRUE), 
+      Max = max(House_Avg, na.rm = TRUE),
+      Average = mean(House_Avg, na.rm = TRUE),
+      StDev = sd(House_Avg, na.rm = TRUE),
+      SampleSize = n()
+    ) %>%
+    pander()
+)
+```
+
+```{r}
+car::qqPlot(`House_Avg` ~ Tense, data = Envy, main = "Q-Q Plot of Dream House Envy on Tense")  
+```
+
+
+
+## Car
+
+Questions & Hypotheses
+
+**Is there a difference in reported envy of a dream car in the past or the future?**
+
+$$
+  H_0: \mu_\text{Future Car} = \mu_\text{Past Car}
+$$
+
+
+$$ 
+  H_a: \mu_\text{Future Car} > \mu_\text{Past Car}
+$$
+
+Significance level is 
+
+$$
+\alpha = 0.05
+$$ 
+
+```{r}
+plot_ly(data = Envy, 
+        y = ~Car_Avg,
+        x = ~Tense,
+        type = "box", 
+        color = ~Tense,
+        colors = c("indianred2","indianred4")) %>%
+  layout(
+    title = "Friend Gets Dream Car: Happened or About To", 
+    yaxis = list(title = "Average Vacation Score (Vaca_Avg)"),
+    xaxis = list(title = "Group by Tense")
+  )
+```
+
+```{r}
+suppressWarnings(
+  Envy %>%
+    group_by(Tense) %>%
+    summarise(
+      Min = min(Car_Avg, na.rm = TRUE), 
+      Q1 = quantile(Car_Avg, 0.25, na.rm = TRUE), 
+      Med = median(Car_Avg, na.rm = TRUE), 
+      Q3 = quantile(Car_Avg, 0.75, na.rm = TRUE), 
+      Max = max(Car_Avg, na.rm = TRUE),
+      Average = mean(Car_Avg, na.rm = TRUE),
+      StDev = sd(Car_Avg, na.rm = TRUE),
+      SampleSize = n()
+    ) %>%
+    pander()
+)
+```
+
+```{r}
+car::qqPlot(`Car_Avg` ~ Tense, data = Envy, main = "Q-Q Plot of Dream Car Envy on Tense")  
+```
+
+
+
+-----
+
+# T.Test Stats {.tabset .tabset-fade}
+
+## Total t.test
+
+```{r}
+t.test(`Total Average` ~ Tense, data=Envy, mu=0, alternative = "greater")%>%
+  pander()
+```
+
+## Vacation t.test
+
+```{r}
+t.test(Vaca_Avg ~ Tense, data=Envy, mu=0, alternative = "greater") %>%
+  pander()
+```
+
+
+## Job t.test
+
+```{r}
+t.test(Job_Avg ~ Tense, data=Envy, mu=0, alternative = "greater") %>%
+  pander()
+```
+
+## Date t.test
+
+```{r}
+t.test(Date_Avg ~ Tense, data=Envy, mu=0, alternative = "greater") %>%
+  pander()
+```
+
+## House t.test
+
+```{r}
+t.test(House_Avg ~ Tense, data=Envy, mu=0, alternative = "greater") %>%
+  pander()
+```
+
+## Car t.test
+
+```{r}
+t.test(Car_Avg ~ Tense, data=Envy, mu=0, alternative = "greater") %>%
+  pander()
+```
+
+# ANOVA {.tabset .tabset-fade}
+
+We have run and checked the above t.tests in R already. Now, for some extra curricular inferential analyses I wanted to test our demographics, particularly of males and females, and age groups.
+
+## Gender ANOVA
+
+I wanted to see if there were any discrepancies in the enviousness between males and females and males and females in anticipation or retrospection. 
+
+
+I performed a two-way ANOVA to see the combined enviousness. 
+
+
+$$
+H_0: \text{The effect of gender on the average envy score is consistent across both tenses}
+$$
+
+$$
+H_a: \text{The effect of gender on the average envy score differs across the tenses.}
+$$
+
+**Significance level is**
+
+$$
+\alpha = 0.05
+$$ 
+
+```{r}
+library(dplyr)
+
+Envy <- Envy %>% 
+  filter(Gender != "Non-binary")
+
+Envy <- Envy[Envy$Gender != "Non-binary", ]
+
+
+Envy.aov <- aov(`Total Average` ~ Tense + Gender + Tense:Gender, data = Envy)
+
+summary(Envy.aov) %>% 
+  pander()
+
+```
+
+```{r}
+# Load the plotly library
+library(plotly)
+
+# Assume your dataset 'Envy' is already loaded
+# Replace the below code with your actual dataset as necessary
+
+# Generate the plotly boxplot
+fig <- plot_ly(
+  data = Envy,
+  x = ~interaction(Tense, Gender, sep = " * "),
+  y = ~`Total Average`,
+  type = "box",
+  color = ~interaction(Tense, Gender),
+  colors = c("hotpink1", "hotpink3", "royalblue1", "royalblue3")
+)
+
+# Customize the layout
+fig <- fig %>% layout(
+  title = "The Enviousness of Girls and Guys",
+  xaxis = list(title = ".", tickangle = 45),
+  yaxis = list(title = "Total Average")
+)
+
+# Display the plot
+fig
+
+```
+
+A closer look at the tenses and the overal envy scores between genders.
+
+```{r}
+
+xyplot(`Total Average` ~ as.factor(Tense), data = Envy, groups=Gender, type=c("p","a"), auto.key=TRUE, 
+        main="Females are More Envious than Males", 
+        ylab="Average Envy", 
+        xlab="Grouped by Tense")
+```
+
+Now to see the mean scores as represented in the plots and table below
+
+```{r}
+# Interaction plot to visualize group differences
+interaction.plot(Envy$Tense, Envy$Gender, Envy$`Total Average`, 
+                 col = c("blue", "red"), 
+                 legend = TRUE, 
+                 xlab = "Tense", 
+                 ylab = "Total Average")
+
+```
+
+```{r}
+library(dplyr)
+library(ggplot2)
+
+# Assuming 'Envy' dataset exists and has a 'Gender' and 'Total Average' column.
+means <- Envy %>%
+  group_by(Gender) %>%
+  summarize(Mean = mean(`Total Average`, na.rm = TRUE), .groups = 'drop')
+
+ggplot(means, aes(x = Gender, y = Mean, fill = Gender)) +
+  geom_col(position = "dodge", color = "white") +
+  scale_fill_manual(values = c("hotpink", "royalblue")) +
+  labs(title = "Envy between Guys and Girls", 
+       x = "Gender", 
+       y = "Mean Total Average") +
+  theme_minimal()
+
+
+```
+
+
+```{r}
+aggregate(Envy$`Total Average`, by = list(Envy$Tense, Envy$Gender), mean)
+
+```
+
+```{r}
+
+EnvyGtable <- table(Envy$Gender) 
+
+table(Envy$Gender) %>% pander()
+```
+
+We will run a post-hoc to view the significant findings in comparing the envy of the genders. A Scheffé correction is appropriate due to the unequal sample sizes of the between subjects design.
+
+```{r message=FALSE, warning=FALSE}
+library(DescTools)
+
+scheffe_results <- ScheffeTest(Envy.aov)
+pander(scheffe_results)
+
+```
+
+
+```{r}
+library(effectsize)
+
+eta_sq <- eta_squared(Envy.aov, partial = TRUE)  # Partial eta-squared
+
+print(eta_sq)
+
+```
+
+
+
+## Age ANOVA
+
+$$
+H_0: \text{The effect of age on the average envy score is consistent across both tenses}
+$$
+
+$$
+H_a: \text{The effect of age on the average envy score differs across the tenses.}
+$$
+
+**Significance level is**
+
+$$
+\alpha = 0.10
+$$ 
+
+```{r}
+
+EnvyAge <- EnvyData %>%
+  mutate(Age = case_when(
+    Age == 18 ~ "18",
+    Age == 19 ~ "19",
+    Age == 20 ~ "20",
+    Age == 21 ~ "21",
+    Age == 22 ~ "22",
+    Age >= 23 & Age <= 30 ~ "23-30",
+    Age >= 31 ~ "31+"
+  ))
+
+EnvyAge.aov <- aov(`Total Average` ~ Tense + as.factor(Age) + Tense:as.factor(Age), data = EnvyAge)
+
+summary(EnvyAge.aov)  %>% 
+  pander()
+
+```
+
+
+```{r}
+
+EnvyAtable <- table(EnvyAge$Age) 
+ table(EnvyAge$Age)
+ 
+```
+
+The below boxplot demonstrates the ages and their envy 
+```{r}
+boxplot(`Total Average` ~ Age, 
+        data = EnvyAge, 
+        col = c("salmon1", 
+                "lightgoldenrod1", 
+                "seagreen1", 
+                "paleturquoise1",  
+                "skyblue1", 
+                "thistle1",  
+                "plum1"),
+        main = "The Enviousness of the Ages",
+        xlab = ".",
+        ylab = "Total Average",
+        las = 3)
+
+```
+
+I also want to see how the ages are represented in the past and future envy.
+
+```{r}
+xyplot(`Total Average` ~ as.factor(Tense), data = EnvyAge, groups=Age, type=c("p","a"), auto.key=TRUE, 
+        main="Enviousness of the Ages", 
+        ylab="Average Envy", 
+        xlab="Grouped by Tense")
+```
+
+
+I noticed that the 20 and 22 year olds had the most interesting data. Theirs appears to be most closely aligned with the original hypothesis that anticipation (future) is more envious than reflection (past). All other groups leaned towards higher past envy than future.
+
+I ran a new ANOVA just to see the isolation of the 20 & 22 year olds.
+
+
+```{r}
+EnvyAge_filtered <- subset(EnvyAge, Age %in% c(20, 22))
+
+EnvyAge.aov <- aov(`Total Average` ~ Tense + as.factor(Age) + Tense:as.factor(Age), data = EnvyAge_filtered)
+
+summary(EnvyAge.aov) %>% pander()
+
+```
+
+There isn't a difference between the 20 & 22 year olds. However, since we have them separated from the other groups we can see one interesting thing. 
+There is significance in the tenses for these two age groups. The future tense is significantly more envious than the past group for 20 & 22 year olds from our sample of 235 PSYCH 311 students. 
+
+```{r}
+boxplot(`Total Average` ~ Tense * Age, 
+        data = EnvyAge_filtered, 
+        col = c("seagreen1", "seagreen3", 
+                "skyblue1", "skyblue3" 
+               ),
+        main = "The Enviousness of the Ages",
+        xlab = ".",
+        ylab = "Total Average",
+        las = 3)
+```
+
+
+## Ethnicity ANOVA
+
+$$
+H_0: \text{The effect of ethnicity on the average envy score is consistent across both tenses}
+$$
+
+$$
+H_a: \text{The effect of ethnicity on the average envy score differs across the tenses.}
+$$
+
+**Significance level is**
+
+$$
+\alpha = 0.10
+$$ 
+
+```{r}
+EnvyEtable <- table(EnvyData$Ethnicity) 
+ table(EnvyData$Ethnicity)
+```
+
+
+```{r}
+EnvyE.aov <- aov(`Total Average` ~ Tense + Ethnicity + Tense:Ethnicity, data = EnvyData)
+
+summary(EnvyE.aov) %>% 
+  pander()
+```
+
+```{r}
+boxplot(`Total Average` ~ Tense * Ethnicity, 
+        data = EnvyData, 
+        col = c("chocolate4", "lightsalmon4",
+                "seashell1", "seashell",
+                "peachpuff", "peachpuff2", 
+                "violetred1", "violetred3", 
+                "yellow1", "yellow3"),
+        main = "Enviousness by Ethnicity",
+        xlab = ".",
+        ylab = "Total Average",
+        las = 3)
+```
+
+
+```{r}
+xyplot(`Total Average` ~ as.factor(Tense), data = EnvyData, groups=Ethnicity, type=c("p","a"), auto.key=TRUE, 
+        main="Enviousness by Ethnicity", 
+        ylab="Average Envy", 
+        xlab="Grouped by Tense")
+```
+
+-----
+
+# Interpretation
+
+There are a lot of graphs and a lot of analyses. With so much data there is so much to do and see. We did not find significance in any of our original hypotheses that are the t.tests but if we switch the job hypothesis to less instead of greater the p-value is actually $p$-value = 0.035 < $\alpha$. This is showing us that college students are actually more envious when their close friend has just received their dream job than if their friend were just about to receive it. 
+
+With the gender ANOVA we see that women are more envious than men on average. $\mu$ = 4.32 females and $\mu$ = 3.81 males with a $p$-value = 0.004437 < $\alpha$. Thats a 0.5 average mean score difference.
+
+The Age Anova where age and tense were tested did show significance $p$-value = 0.08452 < $\alpha$ = 0.1. At least one age group reported higher envy scores than another.
+
+When we separated out the 20 and 22 year olds we found a difference for tense only, showing that testing just the 20 and 22 year olds did find significantly more enviousness in the future $p$-value = 0.00137. This was our original hypothesis and only the 20 & 22 year olds found anticipation to be more envious than reflection.  
+
+Finally we reached significance again in testing the ethnicity envy score $p$-value = 0.05149 < $\alpha$ = 0.1. This shows us that at least one ethnicity is probably more envious than another. However, looking at the counts with 85% of our participants being White we probably don't have enough participants of other ethnicities to conclude a significant difference. 
+
+----------
+
+###### Final Word
+
+Again, all of this data will be presented to my teammates who are already quite familiar with the data and are running t.tests of their own. I am mostly showing them the graphs in r as well as running ANOVAs of my own to present. They are familiar with ANOVA so just seeing the data will be interesting. We ended up only presenting the mean differences between the men and women of the ANOVA results. 
+
+-------------
+: )
+

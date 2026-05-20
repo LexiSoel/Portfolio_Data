@@ -1,0 +1,266 @@
+---
+title: "Multiple Linear Regression - Weather Patterns in Argentina"
+subtitle: "Course MATH 325"
+author: "Lexi Soelberg"
+format:
+  html:
+    self-contained: true
+    page-layout: full
+    title-block-banner: true
+    toc: true
+    toc-depth: 3
+    toc-location: body
+    number-sections: false
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: wrap
+    code-copy: hover
+    code-tools:
+        source: false
+        toggle: true
+        caption: See code
+execute: 
+  warning: false
+    
+---
+
+
+<div style="text-align: center;">
+  <img src="https://www.google.com/imgres?q=flag%20of%20argentina&imgurl=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2F1%2F1a%2FFlag_of_Argentina.svg&imgrefurl=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FFlag_of_Argentina&docid=mnVsplhmDTCihM&tbnid=JFk8VMZb-9okjM&vet=12ahUKEwj-mtSloceUAxWsHUAKHSJVMOUQnPAOegQIFxAB..i&w=800&h=500&hcb=2&ved=2ahUKEwj-mtSloceUAxWsHUAKHSJVMOUQnPAOegQIFxAB" alt="ARGENTINA FLAG" style="width: 75%;">
+</div>
+
+
+## Background
+
+I picked two cities in Argentina, Junín is a city in the Rosario Argentina mission and is one of the cities where my dad served as a missionary for The Church of Jesus Christ of Latter-day Saints. Rio Cuarto is a city near Cordoba where a senior missionary I knew in my mission served as a young Elder.
+
+I served my mission speaking Spanish and I've always felt connected to Argentina because of my dad and the people I've met from there. I'd love to study the weather for these cities in this beautiful country. I picked these two cities to compare for the year of 1996, when my father arrived in his mission. 
+
+## Intro {.tabset .tabset-fade}
+
+### Map
+
+<center>
+
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+library(mosaic)
+library(tidyverse)
+library(pander)
+library(DT) 
+library(dplyr)
+library(leaflet)
+library(htmlwidgets)
+library(car)
+library(ggplot2)
+library(plotly)
+
+Argentina_Weather <- data.frame(
+  NAME = c("JUNÍN","RIO CUARTO AREA DE MATERIAL"),
+  LAT = c(-34.546, -33.085),
+  LON = c(-60.931, -64.261)
+)
+
+map <- leaflet(Argentina_Weather) %>%
+  addTiles() %>%
+  addMarkers(lng = ~LON, lat = ~LAT, popup = ~paste(NAME)) %>%
+  setView(lng = -63.5, lat = -32.5, zoom = 5)
+map
+```
+
+</center>
+
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+library(GSODR) #run: install.packages("GSODR") 
+# to get the GSODR package. You'll need this package to pull in your weather data.
+load(system.file("extdata", "isd_history.rda", package = "GSODR"))
+```
+
+```{r eval=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+#Run this in your console to see the Country Names you can pick from:
+View(isd_history)
+#Search "United States" in the search bar of the top-right corner of the data Viewer that pops up.
+#Or search for any other country you are interested in.
+#Goal, select the STNID (station ID) for two different weather stations. 
+#For example, Rexburg is STNID == "726818-94194"
+#Once you have two STNID values selected, go to the next R-chunk.
+
+load(system.file("extdata", "isd_history.rda", package = "GSODR"))
+View(isd_history)
+
+```
+
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+#To see what columns mean, go here: https://cran.r-project.org/web/packages/GSODR/vignettes/GSODR.html#appendices
+
+Junin <- get_GSOD(years = 1996, station = "875480-99999")
+RioCuarto <- get_GSOD(years = 1996, station = "874530-99999")
+
+weather <- rbind(Junin, RioCuarto)
+
+```
+
+<!-- Now write up an analysis that studies something like how well the MIN temperature predicts the MAX temperature of the day in the two cities you selected. Of course, you are welcome to do any multiple regression you want with the data, but the recommendation would be to just run a "two-lines" model with the x=MIN, y=MAX, and color of the dots the NAME column. -->
+
+### Data
+
+```{r message=FALSE, warning=FALSE}
+# Relabeling within NAME column
+weather <- weather %>%
+  select(STNID, NAME, COUNTRY_NAME, MIN, MAX, LATITUDE, LONGITUDE) %>%
+  mutate(NAME = ifelse(NAME == "RIO CUARTO AREA DE MATERIAL", "RIO CUARTO", NAME))
+
+datatable(weather)
+```
+
+---------
+
+## Linear Regression Analysis
+
+$$
+\underbrace{Y_i}_{\text{Low Temp}} = \overbrace{\beta_0 + \beta_1 \underbrace{X_{i1}}_{\text{High Temp}}}^{\text{Junín Line}} + \overbrace{\beta_2 \underbrace{X_{i2}}_{\text{1 if Rio Cuarto}} + \beta_3 \underbrace{X_{i1} X_{i2}}_{\text{Interaction}}}^{\text{Rio Cuarto Adjustments to Line}} + \epsilon_i
+$$
+where $\epsilon_i\sim N(0,\sigma^2)$ and $X_{i2} = 0$ when the weather is in the city of Junín and $X_{i2} = 1$ when the weather is in Rio Cuarto. This forced 0, 1 encoding for $X_{i2}$ produces the following models.
+
+<center>
+
+|  City   | Value of $X_{i2}$ | Resulting Model   |
+|---------|-------------------|-------------------|
+| Junín   | $X_{i2} = 0$      | $Y_i = \beta_0 + \beta_1 X_{i1} + \epsilon_i$ |
+| Rio Cuarto | $X_{i2} = 1$      | $Y_i = (\beta_0 + \beta_2) + (\beta_1 + \beta_3) X_{i1} + \epsilon_i$ |
+
+</center>
+
+### Hypotheses
+
+The hypotheses for this analysis will be testing the interaction of the minimum and maximum yearly temperature for 1996 of JUNÍN` and `RIO CUARTO`. We will be looking at the y-intercepts and the slopes of the two cities.
+
+$$
+  H_0: \beta_2 = 0 \\
+  H_a: \beta_2 \neq 0
+$$
+
+A significant $\beta_2$ suggests a vertical shift in the line for Rio Cuarto compared to Junín, meaning the low temperatures differ systematically between the two cities regardless of high temperature.
+
+
+$$
+  H_0: \beta_3 = 0 \\
+  H_a: \beta_3 \neq 0
+$$
+
+A significant $\beta_3$ indicates the slope of the Rio Cuarto line differs from Junín, meaning the effect of high temperature on low temperature varies between the cities.
+
+
+|  Parameter  |          Effect                      |
+|-------------|--------------------------------------|
+| $\beta_0$   |  Y-intercept of the Model.
+| $\beta_1$   | Controls the slope of the `JUNÍN` line.
+| $\beta_2$   | Controls the change in y-intercept for the `RIO CUARTO` line in the model as compared to the y-intercept of the `JUNÍN` line.
+| $\beta_3$   | Called the “interaction” term. Controls the change in the slope for the `RIO CUARTO` line in the model as compared to the slope of the `JUNÍN` line.
+
+
+## The Model
+
+<center>
+
+```{r}
+argentina.lm <- lm(MIN ~ MAX + NAME + MAX:NAME, data=weather)
+
+n <- coef(argentina.lm)
+
+weather.plot <- ggplot(weather, aes(y=MIN, x=MAX, color=factor(`NAME`))) +
+  geom_point(pch=16, bg="white") + 
+  stat_function(fun = function(x) n[1]+n[2]*x, color ="skyblue") +
+  stat_function(fun = function(x) (n[1]+n[3]) + (n[2]+n[4])*x, color="goldenrod1")+
+  scale_color_manual(name="Argentina Cities", values=c("skyblue","goldenrod1")) +
+  labs(title="Weather Patterns of Argentina", x = "Maximum Tempurature (°C)", y = "Minimum Tempurature (°C)") +
+  ylim(min(weather$MIN) - 5, max(weather$MAX) + 5)+
+  theme_minimal()
+
+ggplotly(weather.plot)
+
+```
+
+</center>
+
+¡Viva Argentina!
+
+From the graph we can see that the slopes are very similar and that the placement of the dots indicating the tempurature in Celcius is moderately tight to the line for both cities. Let's look at the actual data to determine what is signifigant here!
+
+```{r}
+pander(summary(argentina.lm))
+```
+
+With a **$p$-value of 1.622e-37** we can see that $\_beta_0$ \neq 0 and we can reject the null hypothesis and accept that the intercept is significant (not 0). 
+
+We see from the (MAX) slope that **for every 1°C increase in the maximum temperature, the minimum temperature for `Junín` increases by 0.814.** This is the $\beta_1$ hypothesis. This hypothesis is signifigant with a **$p$-value of 1.641e-122 < $\alpha$.**
+
+The $\beta_2$ hypothesis tests whether or not `Rio Cuarto` has a different y-intercept than `Junín`. The values of that hypothesis are shown in the Name:Rio Cuarto of the above linear model. The estimate is that **the y-intercept of `Rio Cuarto` is 1.886 units higher than `Junín`'s.** **The $p$-value almost reaches significance 0.05714 > $\alpha$.** `Rio Cuarto` might have a higher minimum temperature than `Junín` but there is not sufficient evidence to reject the null hypothesis. 
+
+$\beta_3$ tests whether the relationship between maximum and minimum temperatures (the slope) is different for Río Cuarto compared to Junín. The slope for `Río Cuarto` is slightly smaller (by 0.05001) than `Junín`’s slope. However, with a **$p$-value of 0.210**, this difference is not significant. This means there’s no strong evidence that the effect of maximum temperature differs between the two cities.
+
+## Results / Conclusion
+
+First of all, I love the $R^2$ = 0.6849. This shows moderate strength in our linear model, the correlation between minimum and maximum temperatures is a positive, moderate relationship. We see here that as minimum daily temperatures rise so do the maximum for that day, this is cnsistent across both cities as demonstrated in the above scatter plot. 
+
+However for our hypotheses we are just barely not reaching statistical significance. $\beta_2$ $p$-value is 0.05714 > $\alpha$. There is not sufficient difference in the y-intercepts between `Junín` and `Rio Cuarto`. 
+
+$\beta_3$ $p$-value is 0.2102 > $\alpha$. This $\beta_3$ hypothesis shows there is not sufficient evidence to reject the null hypothesis that the slopes for `Junín` and `Rio Cuarto` are different. 
+
+
+We will now run our diagnostic plots.
+
+### Test for Residuals Data
+
+<center>
+
+```{r fig.height=3, message=TRUE, warning=TRUE}
+library(car)
+
+par(mfrow=c(1,3))
+
+plot(argentina.lm, which=1)
+
+qqPlot(argentina.lm$residuals, id=FALSE, main= "Q-Q plot", col="steelblue", col.lines = "steelblue3", pch = 16)
+
+plot(argentina.lm$residuals, main="Residuals vs Order")
+
+```
+</center>
+
+There are 5 associated assumptions to the linear regression. All but #4 can be checked with these above plots. 
+
+**Assumption 1: Linear Relationship Between X and Y**
+
+The linearity is good as shown in the residuals/fitted plot because the red line is almost flat. 
+
+**Assumption 2: Normal Distribution of Error Terms**
+
+There are no obvious outliers as shown in the Q-Q plot. The data appears to be normally distributed. 
+
+**Assumption 3: Constant Variance (X values)**
+
+In the residuals vs fitted plot there does not seem to be a pattern in the data, showing constant variance.
+
+**Assumption 4: Fixed X Values**
+
+It can be assumed that this assumption has been met, as The [GSODR](https://cran.r-project.org/web/packages/GSODR/vignettes/GSODR.html#appendices) used to measure weather patterns across the world is expected to take accurate and consistent measurements that do not change over time.
+
+**Assumption 5: Independent Error Terms**
+
+The Residuals vs Order plot shows the chaos in the data, although there is almost a W, but that is natural according to the ups and downs in temperature throughout the year. Error terms do not appear to be correlated.
+
+There is not overwhelming evidence shown in the above plots to discredit the whole linear regression analysis. 
+
+-------
+
+##### Credits
+
+I would like to credit Brother Saunders and his Civic vs Corolla example analysis because I was completely lost without it.
+
+I would also like to thank ChatGPT for helping explain to me how to interpret my intercepts and slopes. 
+
+-------
+
+: )
+

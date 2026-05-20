@@ -1,0 +1,477 @@
+---
+title: "**Residuals, Sum of Squares, & R-Squared**"
+output: 
+  html_document:
+    theme: cosmo
+    code_folding: hide
+  
+---
+
+```{r, message=FALSE, warning=FALSE}
+library(car)
+library(pander)
+library(tidyverse)
+library(dplyr)
+library(mosaic)
+library(ggplot2)
+library(plotly)
+library(DT)
+
+```
+
+## **The Linear Model**
+
+I ran an analysis a week ago that had me predicting the tempurature for Janurary 13th 2025 based on temperature data gathered from the last month. 
+
+I have included the original linear regression model here to help almost as a guide because by the end of this analysis you should be able to tell what the Residual Std. Error and $R^2$ actually mean. 
+
+```{r message=FALSE, warning=FALSE}
+predweather <- data.frame(
+  Day = c(19, 20, 31, 1, 2, 3, 6, 7, 8, 9, 10, 13),
+  Month = c("Dec", "Dec", "Dec", "Jan", "Jan", "Jan", "Jan", "Jan", "Jan", "Jan", "Jan", "Jan"),
+  HighTemp = c(28, 32, 28, 29, 29, 38, 33, 33, 22, 23, 24, 23),
+  LowTemp = c(16, 20, 8, 9, 23, 29, 13, 7, 3, 18, 20, 12)
+)
+```
+
+```{r}
+predweathlm <- lm(HighTemp ~ LowTemp, data=predweather)
+summary(predweathlm) %>% pander
+```
+
+# **Analyses** {.tabset .tabset-fade}
+
+## **Residual**
+
+### Graph
+
+```{r message=FALSE, warning=FALSE}
+library(ggplot2)
+library(plotly)
+
+predweathlm <- lm(HighTemp ~ LowTemp, data = predweather)
+n <- coef(predweathlm)
+
+weather.ggplot <- ggplot(predweather, aes(y = HighTemp, x = LowTemp, color = HighTemp, label = Day)) +
+  geom_point(pch = 16, bg = "white", size = 3) + 
+  stat_function(fun = function(x) n[1] + n[2] * x, color = "skyblue", size = 1.5) +
+  scale_color_gradient(low = "royalblue1", high = "royalblue4") +
+  labs(
+    title = "Rexburg's Beginning of Winter Temperatures<br><sup>December 19th 2024 - January 10th 2025</sup>",
+    x = "Low Temperature (°F)", 
+    y = "High Temperature (°F)"
+  ) +
+  ylim(min(predweather$HighTemp) - 5, max(predweather$HighTemp) + 5) +
+  theme_minimal() +
+  geom_point(
+    aes(x = 12, y = predict(predweathlm, data.frame(LowTemp = 12))),
+    color = "red", size = 4
+  ) +
+  geom_text(
+    aes(x = 12, y = predict(predweathlm, data.frame(LowTemp = 12)), label = "Predicted Point (Jan 13th)"),
+    color = "red", nudge_y = 3, size = 3
+  ) +
+  geom_text(
+    aes(x = 12, y = 23, label = "Actual High Temp on Jan 13th"),
+    color = "seagreen", nudge_y = 2, size = 3
+  ) + 
+   geom_point(
+    aes(x = 12, y = 23),
+    color = "seagreen", size = 3
+  ) +
+geom_segment(aes(x = 12, y = 28, xend = 12, yend = 23), 
+             color = "darkseagreen", 
+             linetype = "solid")
+
+
+ggplotly(weather.ggplot, tooltip = c("x", "y", "label"))
+
+```
+
+
+### Math Formula
+
+$$
+r_i = \underbrace{Y_i}_{\substack{\text{Observed} \\ \text{Y-value}}}
+- \underbrace{\hat{Y}_i}_{\substack{\text{Predicted} \\ \text{Y-value}}}
+\quad \text{(residual)}
+$$
+
+### Computed Value
+
+**Prediction**
+
+```{r}
+predict(predweathlm, data.frame(LowTemp=12)) %>%
+pander(paste("Weather Prediction:", round(2)))
+```
+
+
+$$
+r_i = {23}
+- {27.75} = {-4.25}
+\quad \text{(prediction residual)}
+$$
+
+### Written Explanations
+
+A residual is the deviance of the y value from it's predicted point, where it should fall along the $\hat{Y}_i$ (or the line) based on the x value of the dot. 
+
+One residual has a lot of impact on how tight a correlation is and how significant the slope is. Obviously the whole picture is the better option to see how residuals behave together. 
+
+I will be referring to the light blue regression line as the $\hat{Y}_i$ throughout this analysis. That is representative of the predicted value of y.
+
+The horizontal gray dotted line is the $\bar{Y}$. It is the mean of the y-values. 
+
+The blue dots are represented by $Y_i$, these are the actual or observed value.
+
+The purple and gray dotted vertical lines will be explained further but they help visualize the residuals in relation to the $\bar{Y}$ and the $\hat{Y}_i$. There will be specific names for each comparison we make. 
+
+As an example we will isolate the January 13th point. We are comparing the difference between the actual point as where it falls on the $\hat{Y}_i$ based on it's x-value. With the x-value of 12 the prediction was it would be at y = 27.75 but it actually fell on y = 23 and the residuals calculation is finding the difference. For this point the difference between the actual and the prediction is -4.25.
+
+## **SSE**
+
+### Graph
+
+```{r message=FALSE, warning=FALSE}
+library(ggplot2)
+library(plotly)
+
+predweathlm <- lm(HighTemp ~ LowTemp, data = predweather)
+n <- coef(predweathlm)
+
+weather.ggplot <- ggplot(predweather, aes(y = HighTemp, x = LowTemp, color = HighTemp, label = Day)) +
+  geom_point(pch = 16, bg = "white", size = 3) + 
+  stat_function(fun = function(x) n[1] + n[2] * x, color = "skyblue", size = 1.5) +
+  scale_color_gradient(low = "royalblue1", high = "royalblue4") +
+  labs(
+    title = "Sum of Squared Errors<br><sup>SSE<sup>",
+    x = "Low Temperature (°F)", 
+    y = "High Temperature (°F)"
+  ) +
+  ylim(min(predweather$HighTemp) - 5, max(predweather$HighTemp) + 5) +
+  theme_minimal() +
+  geom_point(
+    aes(x = 12, y = predict(predweathlm, data.frame(LowTemp = 12))),
+    color = "red", size = 3.5
+  ) +
+  geom_segment(aes(xend=LowTemp, yend = predweathlm$fit), color = "mediumpurple", linetype = "solid")
+
+ggplotly(weather.ggplot, tooltip = c("x", "y", "label"))
+
+```
+
+
+### Math Formula
+
+$$
+\text{SSE} = \sum_{i=1}^n \left(Y_i -
+\hat{Y}_i\right)^2
+$$
+
+### Computed Value
+
+```{r}
+SSE <- sum((predweather$HighTemp - predweathlm$fit)^2 )
+
+pander(paste("SSE:", round(SSE, 2)))
+```
+
+### Written Explanations
+
+The SSE is the sum of squared errors and it is found by adding up the distance from all residuals in the model to the $\hat{Y}_i$. The purple lines in the graph are representative of this distance being measured. This is the unexplained variance the why are we seeing observed values different than our predicted ones?
+
+We want to see how well this model fits with this data, and a smaller SSE will help show us that, the y values will be closer to the prediction.
+
+The calculation of SSE in this model is done by taking the sum of $Y_i$ minus $\hat{Y}_i$ squared. Our answer to that is 223.49. That is fairly large. We'll get into how large that is in the SSTO section. 
+
+## **SSR**
+
+### Graph
+
+
+```{r message=FALSE, warning=FALSE}
+library(ggplot2)
+library(plotly)
+
+predweathlm <- lm(HighTemp ~ LowTemp, data = predweather)
+n <- coef(predweathlm)
+
+weather.ggplot <- ggplot(predweather, aes(y = HighTemp, x = LowTemp, color = HighTemp, label = Day)) +
+  stat_function(fun = function(x) n[1] + n[2] * x, color = "skyblue", size = 1.5) +
+  labs(
+    title = "Sum of Squares Regression<br><sup>SSR<sup>",
+    x = "Low Temperature (°F)", 
+    y = "High Temperature (°F)"
+  ) +
+  ylim(min(predweather$HighTemp) - 5, max(predweather$HighTemp) + 5) +
+  theme_minimal() +
+  geom_hline(aes(yintercept = mean(HighTemp)), color = "gray47", linetype = "longdash", alpha = 0.8) +
+  geom_segment(aes(x = LowTemp, xend = LowTemp, y = mean(HighTemp), 
+                   yend = n[1] + n[2] * LowTemp), color = "purple4")
+
+ggplotly(weather.ggplot)
+
+```
+
+
+### Math Formula
+
+$$
+\text{SSR} = \sum_{i=1}^n
+\left(\hat{Y}_i - \bar{Y}\right)^2
+$$
+
+
+
+### Computed Value
+
+```{r}
+SSR <- sum( (predweathlm$fit - mean(predweather$HighTemp))^2 )
+pander(paste("SSR:", round(SSR, 2)))
+```
+
+### Written Explanations
+
+The SSR or Sum of Squares Regression is the measurement of how big of a deviation there is of the regression line ($\hat{Y_i}$) the from the average of all the y-values ($\bar{Y}$). The average of all the y-values falls right in the middle of our graph. If SSE is our unexplained variance than SSR is our explained variance. We are able to see the difference between predicted values the mean of the observed values. 
+
+More significant models typically find a more aggressive $\hat{Y_i}$ that shows a trend in linearity. Our slope for this model is not significant ($p$ = 0.193 > $\alpha$). 
+
+Ideally, we want a larger SSR so we have a better explanation for the variability in the data.
+
+Our SSR is only 43.51. That is fairly small. We'll get into how small that is in the SSTO section. 
+
+## **SSTO**
+
+### Graph
+
+```{r message=FALSE, warning=FALSE}
+
+library(ggplot2)
+library(plotly)
+
+predweathlm <- lm(HighTemp ~ LowTemp, data = predweather)
+n <- coef(predweathlm)
+
+weather.ggplot <- ggplot(predweather, aes(y = HighTemp, x = LowTemp, color = HighTemp, label = Day)) +
+  geom_point(pch = 16, bg = "white", size = 3) + 
+  scale_color_gradient(low = "royalblue1", high = "royalblue4") +
+  labs(
+    title = "Total Sum of Squares<br><sup>SSTO<sup>",
+    x = "Low Temperature (°F)", 
+    y = "High Temperature (°F)"
+  ) +
+  ylim(min(predweather$HighTemp) - 5, max(predweather$HighTemp) + 5) +
+  theme_minimal() +
+  geom_point(
+    aes(x = 12, y = predict(predweathlm, data.frame(LowTemp = 12))),
+    color = "red", size = 3.5
+  ) +
+  geom_segment(aes(x = LowTemp, xend = LowTemp, y = HighTemp, yend = mean(HighTemp)), 
+               linetype = "dashed", color = "gray47", alpha = 0.8 ) +
+  geom_hline(aes(yintercept = mean(HighTemp)), color = "gray47", linetype = "dashed", alpha = 0.8)
+
+ggplotly(weather.ggplot, tooltip = c("x", "y", "label"))
+
+```
+
+
+
+### Math Formula
+
+$$
+\text{SSTO} = \sum_{i=1}^n \left(Y_i -
+\bar{Y}\right)^2
+$$
+
+
+### Computed Value
+
+```{r}
+SSTO <- sum( (predweather$HighTemp - mean(predweather$HighTemp))^2 )
+pander(paste("SSTO:", round(SSTO, 2)))
+```
+
+
+
+### Written Explanations
+
+The SSTO is the sum of SSE and SSR. This shows us how far each point is from the average of all y values or the $\bar{Y}$ as represented in the dotted line above. Since the SSE is the unexplained variance and the SSR is the explained variance then the SSTO is the total variance, hence it being the Total Sum of Squares.
+
+For this linear model the SSTO is 267. This number comprises SSE(223.49) and SSR(43.51). This shows the total variability that exists in my December 2024 - January 2025 data. The sum is significant and the breakdown of the SSE and SSR within the SSTO is important.
+
+When SSE goes up, SSR goes down, and vice-versa. We know that our SSE is larger, signifying a poor fit in the data, the dots fall far from the line. If our SSR was large and the SSE was small we would see the dots falling at or close to the $\hat{Y_i}$ Our SSR is small, if it was large, the whole 267 our model would be perfect. All the variance would be explained and the model would perfectly fit the data. This is not the case with this data.
+
+
+## **R-Squared**
+
+### Graph
+
+```{r message=FALSE, warning=FALSE}
+
+library(ggplot2)
+library(plotly)
+
+predweathlm <- lm(HighTemp ~ LowTemp, data = predweather)
+n <- coef(predweathlm)
+
+weather.ggplot <- ggplot(predweather, aes(y = HighTemp, x = LowTemp, color = HighTemp, label = Day)) +
+  geom_point(pch = 16, bg = "white", size = 3) + 
+  scale_color_gradient(low = "royalblue1", high = "royalblue4") +
+  stat_function(fun = function(x) n[1] + n[2] * x, color = "skyblue", size = 1.5) +
+  labs(
+    title = "R-Squared Plot<br><sup>R^2<sup>",
+    x = "Low Temperature (°F)", 
+    y = "High Temperature (°F)"
+  ) +
+  ylim(min(predweather$HighTemp) - 5, max(predweather$HighTemp) + 5) +
+  theme_minimal() +
+  geom_point(
+    aes(x = 12, y = predict(predweathlm, data.frame(LowTemp = 12))),
+    color = "red", size = 3.5
+  ) +
+  geom_segment(aes(x = LowTemp, xend = LowTemp, y = HighTemp, yend = mean(HighTemp)), 
+               linetype = "dashed", color = "gray47", alpha = 0.8 ) +
+  geom_hline(aes(yintercept = mean(HighTemp)), color = "gray47", linetype = "dashed", alpha = 0.8) +
+  geom_segment(aes(x = LowTemp, xend = LowTemp, y = mean(HighTemp), 
+                   yend = n[1] + n[2] * LowTemp), color = "purple4")
+
+ggplotly(weather.ggplot, tooltip = c("x", "y", "label"))
+
+```
+
+
+### Math Formula
+
+$$
+R^2 = \frac{SSR}{SSTO} = 1 -
+\frac{SSE}{SSTO}
+$$
+
+### Computed Value
+
+```{r}
+pander(paste("R-squared:", round(SSR/SSTO, 5)))
+```
+
+
+### Written Explanations
+
+All of the previous plots and explanations have led us to one of our ultimate goals: correlation. Correlation is related to the sum of squares and the $R^2$ helps explain why that is. 
+
+$R^2$ is "the proportion of variability in Y than can be explained by the linear regression model." It is proportion since the $R^2$ calculation, like the $p$-value, can only be between 0 and 1. It comprises the SSE, SSR, and SSTO which each show the variability of the y-values, each is represented in the R-Squared Plot above. 
+- We see with the solid purple line the difference between the $\hat{Y_i}$ and the $\bar{Y}$. 
+- The gray dotted line leading to each residual is the total sum of squares, the difference between each residual in relation to $\bar{Y}$. 
+- The Sum of Squared Errors is actually both of those sets of lines together, though it's the difference in the residuals and the $\hat{Y_i}$. 
+
+The above code to calculate $R^2$ is the given by dividing the SSR by the SSTO or by taking 1 minus the SSE over the SSTO. If the dots are closer to the $\hat{Y_i}$ then the $R^2$ will be closer to 1.  
+
+In my model the $R^2$ is closer to 0 (0.163), demonstrating a poor regression model, less predictable directionality between the Low Temp and High Temp of Rexburg's days. 
+
+One important thing to note is that the square root of R-squared is the correlation.
+
+
+
+## **MSE & "Residual Standard Error"**
+
+### Graph
+
+```{r}
+library(ggplot2)
+library(plotly)
+
+predweathlm <- lm(HighTemp ~ LowTemp, data = predweather)
+n <- coef(predweathlm)
+
+weather.ggplot <- ggplot(predweather, aes(y = HighTemp, x = LowTemp, color = HighTemp, label = Day)) +
+  geom_point(pch = 16, bg = "white", size = 3) + 
+  stat_function(fun = function(x) n[1] + n[2] * x, color = "skyblue", size = 1.5) +
+  scale_color_gradient(low = "royalblue1", high = "royalblue4") +
+  labs(
+    title = "Residual Standard Error Plot<br><sup>MSE<sup>",
+    x = "Low Temperature (°F)", 
+    y = "High Temperature (°F)"
+  ) +
+  ylim(min(predweather$HighTemp) - 5, max(predweather$HighTemp) + 5) +
+  theme_minimal() +
+  geom_point(
+    aes(x = 12, y = predict(predweathlm, data.frame(LowTemp = 12))),
+    color = "red", size = 4
+  ) +
+  geom_hline(aes(yintercept = mean(HighTemp)), color = "gray47", linetype = "longdash", alpha = 0.8) +
+  geom_segment(aes(xend=LowTemp, yend = predweathlm$fit), color = "mediumpurple") +
+  geom_rect(aes(xmin=LowTemp, xmax=LowTemp+predweathlm$res*0.82, ymin=HighTemp, ymax=predweathlm$fit), 
+            color="mediumpurple4",
+            alpha=0.1) +
+
+geom_rect(aes(xmin = 25, xmax = 30, ymin = 20, ymax = 25), 
+            fill = "red", alpha = 0.3, color = "firebrick") +
+  # Label for MSE
+  annotate("text", x = 27.6, y = 22.5, label = "MSE = 22.35", 
+           color = "white", size = 2, fontface = "bold") +
+  
+  # Residual Standard Error Line
+  geom_segment(aes(x = 25, y = 20, xend = 25, yend = 25), 
+               color = "goldenrod", linetype = "solid", size = 1.2) +
+  # Label for Residual Standard Error
+  annotate("text", x = 24.5, y = 19.25, label = "Residual Standard Error", 
+           color = "goldenrod", size = 2, angle = 90, fontface = "bold") +
+  
+  coord_fixed()
+
+ggplotly(weather.ggplot, tooltip = c("x", "y", "label"))
+```
+
+
+
+### Math Formula
+
+$$
+\begin{equation}
+  s^2 = MSE = \frac{SSE}{n-2} = \frac{\sum(Y_i-\widehat{Y}_i)^2}{n-2} =
+\frac{\sum r_i^2}{n-2}
+\end{equation}
+$$
+
+
+### Computed Value
+
+```{r}
+
+n <- length(predweathlm$model[[1]])  
+
+MSE <- SSE / (n-2)
+
+pander(paste("MSE:", round(MSE, 2)))
+```
+
+
+### Written Explanation
+
+By taking the SSE and dividing it by n - 2 we get the MSE. We are taking the sum of squared errors and dividing by degrees of freedom. 
+
+MSE stands for Mean Squared Error and the Residual Standard Error is $\sqrt{MSE}$
+
+The smallest MSE can get is 0, this is found when all dots lie perfectly on the $\hat{Y_i}$ and there is no deviance. MSE can be as large as the discrepancies between the predicted and observed values. The larger the MSE the more inaccurate the predictions are. 
+
+MSE checks the average difference in the prediction errors. It averages the squared residuals. If we were to take all of the squares on the above graph the **average squared difference is 22.35 degrees Fahrenheit squared.**  
+
+Now that isn't very helpful because what does Fahrenheit squared even mean? Thankfully we have the Residual Standard Error. It is simply the square root of MSE. As found in the summary of the lm it is right next to $R^2$. For this model the RSE is 4.73 degrees Fahrenheit. 
+
+RSE is similar to the MSE in that smaller values shows that our model is better at predicting the actual values of y.  
+
+We are checking how well the data fits within the linear model. 
+
+
+----------
+
+# Credits
+
+--------
+
+I would like to credit Brother Saunders for help with the r-squared graph coding, for explaining all of the concepts, and for providing the Stats Notebook with literally all of the information on all of the statistics found in this report. 
+
+
+--------
+
+: )

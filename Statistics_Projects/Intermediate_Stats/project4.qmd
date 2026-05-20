@@ -1,0 +1,294 @@
+---
+title: "Two Way ANOVA: Sleep in the Summer vs During School"
+subtitle: "Course MATH 325"
+author: "Lexi Soelberg"
+format:
+  html:
+    self-contained: true
+    page-layout: full
+    title-block-banner: true
+    toc: true
+    toc-depth: 3
+    toc-location: body
+    number-sections: false
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: wrap
+    code-copy: hover
+    code-tools:
+        source: false
+        toggle: true
+        caption: See code
+execute: 
+  warning: false
+    
+---
+
+
+```{r, warning=FALSE, message=FALSE}
+library(mosaic)
+library(DT)
+library(pander)
+library(car)
+library(tidyverse)
+library(lattice)
+library(dplyr)
+
+# Record your data from your own mini experiment in Excel.
+# Save the data as a .csv file in the Data folder of the Statistics-Notebook.
+
+
+aovsleep <- read_csv("../../data/aovsleep.csv")
+
+```
+
+<!-- Instructions:
+
+Perform your own mini experiment using two factors that each have at least two levels. Analyze your data using a two-way ANOVA.
+
+Studying reaction time is recommended because the data is quickly collected.
+
+While you should use the warpbreaks example analyses as your guide on how to properly complete this analysis, you should also be creative in your final delivery of this analysis. If you copy the format and approach of the example analyses, be sure to give credit in your document to these example analyses. You could write something like, "This work is modeled after the [warpbreaks](https://byuistats.github.io/Statistics-Notebook/Analyses/ANOVA/Examples/warpbreaksTwoWayANOVA.html) analysis." Whatever you do, DO NOT use any of the written statements from the example analyses in your analysis unless you quote them directly and give credit. Using someone else's writing as your own without giving credit to the original author is plagiarism and is an Honor Code Violation. So do your own work. Plus, the more you try to write things in your own words, the more you will learn. Also, note that there aren't really any "rules" about exactly how your document should be organized. So be creative and organize your file in a way that makes sense to you, but still has all important elements.
+
+-->
+
+
+## Background {.tabset .tabset-fade}
+
+### Intro
+
+I have been tracking my sleep for months using the app AutoSleep and my apple watch. I downloaded my sleep data from July 26th to October 24th 2024. I wanted to put together a comparison of my sleep in the summer vs during school. I split the days that I was home for the summer (July 26th - September 12th) and the school (September 13th - October 24th).
+
+I will be comparing how in the summer vs during school affects my total sleep hours as well as looking at sleep sessions (essentially if I took a nap or not) and how that affected my overall sleep hours. Sleep sessions hours are added to the total hours for the day automatically by AutoSleep.
+
+### Data
+
+I've listed all 89 tracked sleep days below. 
+
+August 10th is missing because I didn't wear my watch to bed that day.
+
+```{r message=FALSE, warning=FALSE}
+MySleepANOVA <- select(aovsleep, c(toDate, SEASON, asleep, sessions)) %>%
+  rename(Date = toDate)
+```
+
+```{r}
+datatable(MySleepANOVA, options=list(lengthMenu = c(3,10,30)))
+```
+
+
+## Analysis {.tabset .tabset-fade}
+
+### Hypotheses
+
+
+**(1)**
+
+Factor: Season with levels School(Fall) and Summer.
+
+$$
+H_0: \mu_\text{School} = \mu_\text{Summer}
+$$
+
+$$
+H_a: \text{The average number of sleep hours differs for at least one Season}
+$$
+
+**(2)**
+
+
+$$
+H_0: \mu_\text{Sleep Sessions (1)} = \mu_\text{Sleep Sessions (2)}
+$$
+
+$$
+H_a: \text{The average number sleep hours differs depending of the number of sleep sessions}
+$$
+
+**(3)**
+
+$$
+H_0: \text{The effect of sleep session on the average number of sleep hours is consistent across both seasons.}
+$$
+
+$$
+H_a: \text{The effect of sleep session on the average number of sleep hours differs across the seasons.}
+$$
+
+**Significance level is**
+
+$$
+\alpha = 0.05
+$$ 
+
+------
+
+### ANOVA
+
+```{r}
+sleep.aov <- aov(as.numeric(asleep)/3600 ~ SEASON + sessions + SEASON:sessions, MySleepANOVA)
+summary(sleep.aov) %>% 
+  pander()
+```
+
+The ANOVA test tells us what differences in the means are significant between groups. This two-way ANOVA shows us the comparisons of seasons and sleep sessions on average sleep hours and helps us determine if one group's mean differs.  
+
+The ANOVA shows us the degrees of freedom per group. Because both 'SEASON' and 'sessions' have only 2 groups the degrees of freedom are 1 each, as is the combination of the two labeled as SEASON:sessions. The residuals are 85 because we have 89 days to observe and that is total - 1 - degrees of freedom. 
+
+In comparing Summer and School  sleep we don't see a difference in the average sleep hours, showing that I've gotten about the same sleep in the summer as well as while attending school. The low F-Statisitc backs this claim in the high p-value.
+
+We also don't see a difference in average sleep hours for when I have or haven't had a nap (sleep sessions). F-value is low and the p-value is high.
+
+We see that the only significant p-value is the combined season and sleep session showing the most impact of the average sleep hours. The F-value of 5.77 coupled with the p-value of 0.0185 helps us determine the significance.  
+
+Let's look into the graphs to see the variance in the data.
+
+--------
+
+### Graphs
+
+
+```{r}
+xyplot(( as.numeric(asleep) / 3600) ~ as.factor(SEASON), data = MySleepANOVA, type = c("p", "a"),
+       main="Hours of Sleep in the Summer vs Fall(In School)",
+       ylab="Sleep Hours", 
+       xlab="Season")
+```
+
+**Season Numerical Summary**
+
+```{r}
+MySleepANOVA %>%
+  group_by(SEASON) %>%
+  summarise(
+    Min = min(as.numeric(asleep)/3600, na.rm = TRUE), 
+    Q1 = quantile(as.numeric(asleep)/3600, 0.25, na.rm = TRUE), 
+    Med = median(as.numeric(asleep)/3600, na.rm = TRUE), 
+    Q3 = quantile(as.numeric(asleep)/3600, 0.75, na.rm = TRUE), 
+    Max = max(as.numeric(asleep)/3600, na.rm = TRUE),
+    Average = mean(as.numeric(asleep)/3600, na.rm = TRUE),
+    StDev = sd(as.numeric(asleep)/3600, na.rm = TRUE),
+    SampleSize = n()
+  ) %>%
+  pander()
+```
+
+We see barely a difference in the means of School and Summer. There is only a 0.045 difference in the means as shown in the above graph and numerical summary.
+
+```{r}
+xyplot(( as.numeric(asleep) / 3600) ~ as.factor(sessions), data = MySleepANOVA, type = c("p", "a"),
+       main = "Across 89 Days of Sleep: Sleep Sessions and Hours", 
+       ylab = "Sleep Hours", 
+       xlab = "Sleep Sessions per Day")
+```
+
+-------
+
+**Sleep Sessions**
+
+```{r}
+MySleepANOVA %>%
+  group_by(sessions) %>%
+  summarise(
+    Min = min(as.numeric(asleep)/3600, na.rm = TRUE), 
+    Q1 = quantile(as.numeric(asleep)/3600, 0.25, na.rm = TRUE), 
+    Med = median(as.numeric(asleep)/3600, na.rm = TRUE), 
+    Q3 = quantile(as.numeric(asleep)/3600, 0.75, na.rm = TRUE), 
+    Max = max(as.numeric(asleep)/3600, na.rm = TRUE),
+    Average = mean(as.numeric(asleep)/3600, na.rm = TRUE),
+    StDev = sd(as.numeric(asleep)/3600, na.rm = TRUE),
+    SampleSize = n()
+  ) %>%
+  pander()
+```
+
+We see a slightly steeper drop in the means of 1 sleep session, average is 7.529 and 2 sleep sessions, average is 7.291. That is a 0.238 difference in the means. 
+
+-------
+
+```{r}
+xyplot(( as.numeric(asleep) / 3600) ~ as.factor(sessions), data = MySleepANOVA, groups=SEASON, type=c("p","a"), auto.key=TRUE, 
+        main="How Naps Affect Sleep in Summer vs During School", 
+        ylab="Sleep Hours", 
+        xlab="Sleep Sessions Per Day")
+```
+
+This graph show the significance of the combined factors season and sleep sessions. 
+
+```{r}
+summersleepaov <- filter(MySleepANOVA, SEASON == "Summer")
+```
+
+**SUMMER**
+```{r}
+summersleepaov %>%
+  group_by(sessions) %>%
+  summarise(
+    Min = min(as.numeric(asleep)/3600, na.rm = TRUE), 
+    Q1 = quantile(as.numeric(asleep)/3600, 0.25, na.rm = TRUE), 
+    Med = median(as.numeric(asleep)/3600, na.rm = TRUE), 
+    Q3 = quantile(as.numeric(asleep)/3600, 0.75, na.rm = TRUE), 
+    Max = max(as.numeric(asleep)/3600, na.rm = TRUE),
+    Average = mean(as.numeric(asleep)/3600, na.rm = TRUE),
+    StDev = sd(as.numeric(asleep)/3600, na.rm = TRUE),
+    SampleSize = n()
+  ) %>%
+  pander()
+```
+
+We see the average sleep hours in the days when I had a nap during the `Summer` are higher at 7.719 hours compared to when I didn't at 7.341 hours.
+
+
+```{r}
+schoolsleepaov <- filter(MySleepANOVA, SEASON == "School")
+```
+
+**SCHOOL**
+```{r}
+schoolsleepaov %>%
+  group_by(sessions) %>%
+  summarise(
+    Min = min(as.numeric(asleep)/3600, na.rm = TRUE), 
+    Q1 = quantile(as.numeric(asleep)/3600, 0.25, na.rm = TRUE), 
+    Med = median(as.numeric(asleep)/3600, na.rm = TRUE), 
+    Q3 = quantile(as.numeric(asleep)/3600, 0.75, na.rm = TRUE), 
+    Max = max(as.numeric(asleep)/3600, na.rm = TRUE),
+    Average = mean(as.numeric(asleep)/3600, na.rm = TRUE),
+    StDev = sd(as.numeric(asleep)/3600, na.rm = TRUE),
+    SampleSize = n()
+  ) %>%
+  pander()
+```
+
+The difference in the mean sleep hours during `School` for when I had 2 sessions of sleep is significantly different than the `Summer` hours. We see here that instead of average hours increasing with a nap, they actually decreased. Average sleep hours with a nap are 6.19 and without one is 7.695. That's the most drastic difference we have seen-- a difference of more than 1 hour average.
+
+----------
+
+
+### Diagnostics
+
+```{r fig.height=3}
+par(mfrow=c(1,2))
+plot(sleep.aov, which=1:2, pch=16)
+```
+
+The residuals vs fitted values plot is not as appropriate as I would like since the values are showing some spread but not enough to invalidate the test.
+
+The normality of the error terms as shown in the Q-Q Plot can be determined to be satisfied. Overall the results of the test can be considered valid.
+
+------------
+
+## Interpretation
+
+There is no statistical significance in comparing `Summer` sleep hours and `School` sleep hours directly $\alpha$ < 0.892. There is also no significant difference in sleep hours depending on if I took a nap or not $\alpha$ < 0.482. 
+
+However we do see sufficient evidence to conclude that when I took a nap in the `Summer` I had more sleep that day than when I took a nap on a `School` day $\alpha$ > 0.0185. 
+
+I believe that largely has to do with the abundance of time I had in the summer so naps were more frequent and luxurious whereas my naps during school are out of necessity because I was up doing assignments the night before and staying up late. When I had a nap in the summer my average sleep was 7.72 hours in a day. The school naps were more to catch up to a normal sleep range not to exceed it. So the average sleep was only 6.2 hours when I napped during school. 
+
+The best bet for me while I'm in Rexburg, attending Brigham Young University - Idaho, is to get my full night's rest during the evening and not rely on a nap to refuel me. 
+
+-------
+: )
+

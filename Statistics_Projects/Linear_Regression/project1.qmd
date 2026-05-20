@@ -1,0 +1,230 @@
+---
+title: "Predicting the Weather - Rexburg, ID"
+subtitle: "Course MATH 435"
+author: "Lexi Soelberg"
+format:
+  html:
+    self-contained: true
+    page-layout: full
+    title-block-banner: true
+    toc: true
+    toc-depth: 3
+    toc-location: body
+    number-sections: false
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: wrap
+    code-copy: hover
+    code-tools:
+        source: false
+        toggle: true
+        caption: See code
+execute: 
+  warning: false
+---
+
+
+```{r, message=FALSE, warning=FALSE}
+# Load your libraries
+library(car)
+library(pander)
+library(tidyverse)
+library(dplyr)
+library(mosaic)
+library(ggplot2)
+library(plotly)
+library(DT)
+
+```
+
+
+## Background {.tabset .tabset-fade}
+
+
+### Intro
+
+I need to know the weather high for Rexburg on Monday January 13. I have early morning classes so I need to know how cold it will be in the morning and how much warmer it will be by the peak of the day. Should I bring a scarf? A viking beanie with a braided beard? Will I have enough space in my bag to stuff all of my extra gloves, jackets, and hats if it gets a little too warm? We shall see. 
+
+I will be using the low temperature from 10 days in January and December to predict the high temperature for the day. I know the temperature is trending to lower temperatures than most of the days in the past month. With that, I'm looking for days that are lower than 30 degrees with a low temp range of about 9-12 degrees colder than the day's high to predict Monday's weather. 
+
+### Data
+
+I collected the data for this linear model from [Time and Date](https://www.timeanddate.com/weather/@5605242/historic)
+
+```{r}
+predweather <- data.frame(
+  Day = c(19, 20, 31, 1, 2, 3, 6, 7, 8, 9, 10),
+  Month = c("Dec", "Dec", "Dec", "Jan", "Jan", "Jan", "Jan", "Jan", "Jan", "Jan", "Jan"),
+  HighTemp = c(28, 32, 28, 29, 29, 38, 33, 33, 22, 23, 24),
+  LowTemp = c(16, 20, 8, 9, 23, 29, 13, 7, 3, 18, 20)
+)
+
+datatable(predweather, options=list(lengthMenu = c(5,10,15)))
+```
+
+
+## Analysis {.tabset .tabset-fade}
+
+-----
+
+### Plot & Prediction
+
+```{r message=FALSE, warning=FALSE}
+library(ggplot2)
+library(plotly)
+
+predweathlm <- lm(HighTemp ~ LowTemp, data = predweather)
+n <- coef(predweathlm)
+
+mypred.c <- predict(predweathlm, data.frame(LowTemp=12), interval="confidence")
+mypred.p <- predict(predweathlm, data.frame(LowTemp=12), interval="prediction")
+
+weather.ggplot <- ggplot(predweather, aes(y = HighTemp, x = LowTemp, color = HighTemp, label = Day)) +
+  geom_point(pch = 16, bg = "white", size = 3) + 
+  stat_function(fun = function(x) n[1] + n[2] * x, color = "skyblue", size = 1.5) +
+  scale_color_gradient(low = "royalblue1", high = "royalblue4") +
+  labs(
+    title = "Rexburg's Beginning of Winter Temperatures<br><sup>December 19th 2024 - January 10th 2025</sup>",
+    x = "Low Temperature (°F)", 
+    y = "High Temperature (°F)"
+  ) +
+  ylim(min(predweather$HighTemp) - 5, max(predweather$HighTemp) + 5) +
+  theme_minimal() +
+  geom_point(
+    aes(x = 12, y = predict(predweathlm, data.frame(LowTemp = 12))),
+    color = "firebrick", size = 4
+  ) +
+  geom_text(
+    aes(x = 12, y = predict(predweathlm, data.frame(LowTemp = 12)), label = "Predicted Point (Jan 13th)"),
+    color = "firebrick", nudge_y = 3, size = 3
+  ) +
+  geom_text(
+    aes(x = 12, y = 23, label = "Actual High Temp on Jan 13th"),
+    color = "royalblue2", nudge_y = 2, size = 3
+  ) +
+  geom_point(
+    aes(x=12, y = 23), color = "royalblue2", size = 4
+  ) +
+  geom_point() + 
+  stat_function(fun=function(x) exp(n[1] + n[2]*x)) + 
+  geom_segment(aes(x=12, xend=12, y=mypred.c[2], yend=mypred.c[3]),
+               alpha=0.1, color="pink1", lwd=3) + 
+  geom_segment(aes(x=12, xend=12, y=mypred.p[2], yend=mypred.p[3]),
+               alpha=0.01, color="seagreen3", lwd=2)
+  
+
+ggplotly(weather.ggplot, tooltip = c("x", "y", "label"))
+
+```
+
+This graph shows a slight upward trend for the data. If the slope is significant this could signify that as low temperatures increase so do the high temperatures for the day. The change in the average y as shown by the line gives us about 10 degree average difference between the high and low temps. If its a 20 degree low day then it will likely be roughly a 30 degree high day. 
+
+
+**Prediction**
+
+```{r}
+predict(predweathlm, data.frame(LowTemp=12)) %>% pander()
+```
+
+From [Time and Date](https://www.timeanddate.com/weather/@5605242/historic) the predicted low temp for Monday (as of Saturday 1/11) is 12 so by taking 12 and multiplying it by the \beta_1 = 0.2399 and adding the Y-intercept \beta_0 = 25.3796 we get 28.25.
+
+
+
+<center> **Mathematical Model** </center>
+
+$$
+  \hat{Y}_i = 25.38 + 0.2399(12)
+$$
+
+The predicted temperature for Monday January 13th is around 28 degrees based on this linear regression model. The red dot on the plot demonstrates this.
+
+
+### Hypothesis
+
+This analysis attempts to model Rexburg's recent temperature highs and lows in order to predict Monday's weather using a simple linear regression.
+
+$$
+  \underbrace{Y_i}_\text{High Temp} = {\beta_0} + {\beta_1} \underbrace{X_i}_\text{Low Temp} + \epsilon_i \quad \text{where} \ \epsilon_i \sim N(0, \sigma^2)
+$$
+
+
+The hypotheses for my study consider the slope of the regression model $\beta_1$. If the slope is zero then there is not a meaningful relationship for low and high temperatures in Rexburg
+
+$$
+H_0: \beta_1 = 0 \\  
+H_a: \beta_1 \neq 0
+$$
+
+<center> $\alpha$ = 0.05 </center>
+
+### Linear Regression
+
+```{r}
+
+predweathlm <- lm(HighTemp ~ LowTemp, data=predweather)
+summary(predweathlm) %>% pander
+
+```
+
+For our \beta_1 hypothesis, we are checking with the linear model to see if the slope is different from 0. In this model, we don't see significance. \beta_1 = 0.2399 with $p$ = 0.2363. This $p$-value is greater than $\alpha$ and from this we can't say that the slope is significantly different than 0.
+
+The slope is 0.2399; if this were significant we predict to see a 0.2399 increase in the average high temperature of the day for every 1 degree increase of the low temperature. 
+
+
+### Appropriateness of Linear Regression
+
+<center>
+
+```{r fig.height=3}
+
+predweathlm <- lm(HighTemp ~ LowTemp, data=predweather)
+
+par(mfrow=c(1,3))
+
+plot(predweathlm, which=1)
+
+qqPlot(predweathlm$residuals, main="Q-Q Plot", col="steelblue3", col.lines="steelblue4", pch= 19, id=FALSE)
+
+plot(predweathlm$residuals, main = "Residuals vs. Order")
+
+```
+
+</center>
+
+There are 5 associated assumptions to the linear regression. All but #4 can be checked with these above plots. 
+
+**Assumption 1: Linear Relationship Between X and Y**
+
+The linearity as shown in the residuals/fitted plot is kinda funky. We should be seeing variance all over and I think we do.
+
+**Assumption 2: Normal Distribution of Error Terms**
+
+Most of the dots as shown in the Q-Q plot fall on or close to the line, within the bounds. We can conluse that there is normal distribution.
+
+**Assumption 3: Constant Variance (X values)**
+
+As the residuals vs fitted plot shows there does not seem to be a pattern in the data, showing constant variance.
+
+**Assumption 4: Fixed X**
+
+The $X_i$ values can be considered fixed and measured without error.
+
+
+**Assumption 5: Independent Error Terms**
+
+The Residuals vs Order plot shows the chaos in the data. Though the data is limited, error terms do not appear to be correlated. There is not a clear pattern in the plot. 
+
+**Assumption Conclusion**
+
+There is not sufficient evidence shown in the above plots to discredit the whole linear regression analysis. 
+
+## Conclusion
+
+Gathering data for this model was relatively difficult because not many days in the past month yielded a temperature close to what the weather apps were predicting. I think my prediction would have been more accurate for a day in December or for a day that was a bit warmer.
+
+It will be interesting to see if the weather on Monday is actually at 28, all the weather apps I checked predict the high to be 20. 
+
+------
+: )
+

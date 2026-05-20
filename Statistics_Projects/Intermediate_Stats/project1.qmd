@@ -1,7 +1,7 @@
 ---
-title: "Client Report - [Insert Project Title]"
-subtitle: "Course DS 250"
-author: "[STUDENT NAME]"
+title: "U.S. High School Girls Memory and Language"
+subtitle: "Course MATH 325"
+author: "Lexi Soelberg"
 format:
   html:
     self-contained: true
@@ -22,7 +22,220 @@ format:
         caption: See code
 execute: 
   warning: false
-    
 ---
 
-### Paste in a template
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(DT)
+library(pander)
+library(readr)
+library(plotly)
+library(car)
+
+
+HSS <- read_csv("../../data/HighSchoolSeniors.csv")
+#If this code does not work: 
+#Use the top menu from RStudio's window to select "Session, Set Working Directory, To Source File Location", and then play this R-chunk into your console to read the HSS data into R. 
+
+## In your Console run View(HSS) to ensure the data has loaded correctly.
+```
+
+## Background
+
+A [2022 U.S. census at school questionnaire](https://ww2.amstat.org/censusatschool/pdfs/C@SQuestionnaire.pdf) gathered data from 500 high schoolers from 15 states. With 40 questions there are a lot of options available for the study. One of the criteria was on if the students can hold a conversation in 1 language or more than one. As someone who fluently speaks two languages I wanted to see if language has an effect on memory. Students were also asked to perform a memory test and report in how many seconds they uncovered the matching pairs. To narrow it in, I also wanted to just look at female students. With all this in mind my hypothesis is:
+
+**Is there a difference in memory scores of female students who speak 2 or more languages than female students who only speak 1 language?**
+
+$$
+  H_0: \mu_\text{1 language} = \mu_\text{2+ langugages}
+$$
+
+
+$$ 
+  H_a: \mu_\text{1 language} \ne \mu_\text{2+ langugages}
+$$
+
+
+
+Significance level is 
+
+$$
+\alpha = 0.05
+$$ 
+
+<!-- Instructions
+
+1. Use the HSS dataset in R to come up with a question that can be answered with a t Test. 
+
+Here is a link to the survey given to the students that participated in the study:
+https://ww2.amstat.org/censusatschool/pdfs/C@SQuestionnaire.pdf
+(Use the link to learn about what each column of data in the data set represents.)
+
+2. Establish why your question is interesting and rephrase the question using a statistical "null" and "alternative" hypothesis. (Hint, see the "Math 325 Notebook -> R Help -> R-Markdown Hints" page of your textbook for instructions on how to write mathematical hypotheses.)
+
+3. Clearly answer your question using statistics. Be sure to compute a p-value and provide supporting numerical and graphical summaries. If your conclusions don't have numbers in them, they likely are not detailed enough to be meaningful conclusions.
+
+Note: you can create "groups" from the data in many ways. For example, suppose you wanted to create a variable that grouped people according to whether they thought recycling was more important than conserving water. You could do this by:
+
+```{r}
+HSS1 <- HSS %>%
+  mutate(recycling_than_water = ifelse(Importance_recycling_rubbish >	Importance_conserving_water, "Recycling More Important", "Water Conservation More Important"))
+```
+
+4. Include Q-Q Plots checking the normality of the data and discuss if the requirements of the test are satisfied for your data or not. Note that Q-Q Plots are not graphics, they are diagnostic plots diagnosing the normality of the data.
+
+
+-->
+
+```{r}
+HSSF <- select(HSS, Languages_spoken, Gender, ClassGrade, Ageyears, Region, Score_in_memory_game) %>%
+  filter(Gender == "Female")
+HSSF <- HSSF %>%
+  filter(Languages_spoken != 0)
+HSSF <- HSSF %>%
+  mutate(
+    SpokenLanguages = case_when(
+      Languages_spoken %in% c(1, 1.5) ~ "1 language",
+      Languages_spoken %in% c(2, 3, 4, 5) ~ "2 or more languages",
+      TRUE ~ "Not specified"  
+    )
+  )
+HSSF <- HSSF %>%
+  filter(complete.cases(select(., Languages_spoken, Score_in_memory_game)))
+
+HSSF <- HSSF %>%
+  filter(complete.cases(select(., Languages_spoken, Score_in_memory_game))) %>%
+  mutate(
+    ClassGrade = case_when(
+      ClassGrade == 9 ~ "Freshman",  
+      ClassGrade == 10 ~ "Sophomore", 
+      ClassGrade == 11 ~ "Junior",    
+      ClassGrade == 12 ~ "Senior"    
+    )
+  ) 
+HSSF <- HSSF %>%
+  rename(
+    SchoolYear = ClassGrade,
+    Age = Ageyears,
+    State = Region,
+    MemoryScore = Score_in_memory_game,
+    Languages = Languages_spoken,
+    Speaks = SpokenLanguages
+  ) %>%
+  select(
+    Speaks,
+    Languages,
+    MemoryScore,
+    SchoolYear,
+    Age,
+    State
+  )
+
+
+```
+
+#### High School Girls
+
+```{r}
+datatable(HSSF, 
+          options=list(scrollX= TRUE, 
+          lengthMenu = c(5, 10, 15)), 
+          extensions="Responsive")
+```
+
+-------
+
+## Analysis
+
+This boxplot shows the memory scores of the high school girls who speak 1 language (left) and the girls who speak 2 or more languages (right). There is a higher population of those who speak 1 language and also much more variation as we can see below. The mean scores are similar between the two. 
+
+```{r}
+plot_ly(data = HSSF, 
+        type = "box") %>%
+  add_trace(
+    y = ~MemoryScore[Speaks == "1 language"], 
+    name = "Speaks 1 Language", 
+    fillcolor = "indianred1", 
+    line = list(color = "indianred4", width = 4), 
+    marker = list(color = "indianred", line = list(color = "darkgray", width = 1))
+  ) %>%
+  add_trace(
+    y = ~MemoryScore[Speaks == "2 or more languages"], 
+    name = "Speaks 2 or More Languages", 
+    fillcolor = "steelblue1", 
+    line = list(color = "steelblue4", width = 4), 
+    marker = list(color = "steelblue", line = list(color = "darkgray", width = 1))
+  ) %>%
+  layout(
+    title = "Memory Proficiency Based on Language Competency", 
+    yaxis = list(title = "Memory Score (seconds)"),
+    xaxis = list(title = "High School Girls Language Mastery")
+  )
+
+```
+
+Hovering over the plots shows the quantile data and below the values are shown. The sample size for both is also shown. 138 for 1 language and 86 for 2 or more languages. We can see a tighter standard deviation but lower mean for the girls that speak 2 or more languages.
+
+-----
+
+#### Memory Score Summary Table
+
+```{r}
+HSSF %>%
+  group_by(Speaks) %>%
+  summarise(
+    Min = min(MemoryScore, na.rm = TRUE), 
+    Q1 = quantile(MemoryScore, 0.25, na.rm = TRUE), 
+    Med = median(MemoryScore, na.rm = TRUE), 
+    Q3 = quantile(MemoryScore, 0.75, na.rm = TRUE), 
+    Max = max(MemoryScore, na.rm = TRUE),
+    Average = mean(MemoryScore, na.rm = TRUE),
+    StDev = sd(MemoryScore, na.rm = TRUE),
+    SampleSize = n()
+  ) %>%
+  pander()
+
+
+```
+
+-----
+
+Using an independent samples t.test the true differences in the means will be tested. First, the normality of the distributions is shown using Q-Q Plots.
+
+#### Q-Q Plots
+
+```{r}
+car::qqPlot(MemoryScore ~ Speaks, data = HSSF, main = "Q-Q Plot of Memory Score by Language")       
+```
+
+The data for both is approximately normal, with a low outlier in the 1 language group. Proceeding to a t.test:
+
+-----
+
+#### T.Test Stats
+
+```{r}
+t.test(MemoryScore ~ Speaks, data=HSSF, mu=0)%>%
+  pander()
+```
+
+An independent samples t-test found a significantly higher average memory score speed of girls who speak 1 language compared to girls who speak 2 or more t(197)= 2.816, p = 0.005361<$\alpha$
+
+There is sufficient evidence to **reject the null hypothesis**.
+
+-----
+
+## Interpretation
+
+We can see that from this there is a difference in the average memory test speed. The two sided t-test demonstrates that the means are 42.38 seconds for the girls who speak 2+ languages, and 46.3 seconds for the girls who speak 1 language. 
+
+On average, that is a 4 seconds discrepancy, and with a p-value of 0.0054 we have sufficient evidence proving that the 4 second difference in the means is actually significant. 
+
+We can then conclude that girls who speak 2 languages have a quicker memory than those who speak 1. 
+
+While the inferential results are significant, the reliability of the memory test can be brought into question, how scientific is it? One girl had a score of just over 3 seconds. For more in depth results, an interview with the student who received such a different score would be very interesting, how did she do it?. If we were to remove her value the average scores would be much different. The sample size could also be more equal but there is sufficient evidence to reject the null and accept the alternative hypothesis. 
+
+-------------
+##### Credits
+
+I would like to credit ChatGPT for checking my codes, Brother Saunders for doing the same, my classmate for believing in me, and the previous student analyses for giving me direction in the layout of my analysis.

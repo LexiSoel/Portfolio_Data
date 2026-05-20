@@ -3,7 +3,7 @@ project:
   output-dir: docs
 
 website:
-  title: "Lexi Soelberg - Quantitative Research & Statistics Portfolio"
+  title: "Lexi Soelberg - Research & Statistics Portfolio"
   favicon: Images/favicon.png
   back-to-top-navigation: true
   repo-url: https://github.com/username/username.github.io
@@ -30,7 +30,7 @@ website:
         href: Research_Papers.qmd
       - text: "Temporal Envy"
         href: Temporal_Envy.qmd
-      - text: "Married_Differences"
+      - text: "Married Differences"
         href: Married_Differences.qmd
       - text: "Industrial-Organizational Data"
         href: Industrial_Organizational_Data.qmd
@@ -54,40 +54,35 @@ website:
           id: "intermediate-stats"
           collapsed: true
           contents:
-            - text: "Project 1: Descriptive Analysis"
+            - text: "Project 1: T-Test"
               href: Statistics_Projects/Intermediate_Stats/project1.qmd
-            - text: "Project 2: Hypothesis Testing"
+            - text: "Project 2: Wilcoxon Test"
               href: Statistics_Projects/Intermediate_Stats/project2.qmd
-            - text: "Project 3"
+            - text: "Project 3: Kruskall-Wallis Test"
               href: Statistics_Projects/Intermediate_Stats/project3.qmd
-        #     - text: "Project 4"
-        #       href: Statistics_Projects/Intermediate_Stats/project4.qmd
-        #     - text: "Project 5"
-        #       href: Statistics_Projects/Intermediate_Stats/project5.qmd
-        #     - text: "Project 6"
-        #       href: Statistics_Projects/Intermediate_Stats/project6.qmd
-        #     - text: "Project 7"
-        #       href: Statistics_Projects/Intermediate_Stats/project7.qmd
-        #     - text: "Project 8"
-        #       href: Statistics_Projects/Intermediate_Stats/project8.qmd
-        #     - text: "Project 9"
-        #       href: Statistics_Projects/Intermediate_Stats/project9.qmd
-        #     - text: "Project 10"
-        #       href: Statistics_Projects/Intermediate_Stats/project10.qmd
-        #     - text: "Project 11"
-        #       href: Statistics_Projects/Intermediate_Stats/project11.qmd
-        #     - text: "Project 12"
-        #       href: Statistics_Projects/Intermediate_Stats/project12.qmd
-            
-        - text: "---"
+            - text: "Project 4: Two-Way ANOVA"
+              href: Statistics_Projects/Intermediate_Stats/project4.qmd
+            - text: "Project 5: Simple Linear Regression"
+              href: Statistics_Projects/Intermediate_Stats/project5.qmd
+            - text: "Project 6: Logistic Regression"
+              href: Statistics_Projects/Intermediate_Stats/project6.qmd
+            - text: "Project 7: Chi-Squared Test"
+              href: Statistics_Projects/Intermediate_Stats/project7.qmd
+            - text: "Project 8: Client Project - Rent"
+              href: Statistics_Projects/Intermediate_Stats/project8.qmd
+            - text: "Project 9: Multiple Linear Regression"
+              href: Statistics_Projects/Intermediate_Stats/project9.qmd
+            - text: "Project 10: Consulting Project"
+              href: Statistics_Projects/Intermediate_Stats/project10.qmd
+            - text: "---"
         
         # --- SECTION 2: EXPERIMENTAL DESIGN ---
         - section: "Experimental Design"
           id: "experimental-design"
           collapsed: true
           contents:
-        #     - text: "Project 1: Randomized Blocks"
-        #       href: Statistics_Projects/Experimental_Design/project1.qmd
+             - text: "Project 1: Randomized Blocks"
+               href: Statistics_Projects/Experimental_Design/project1.qmd
         #     - text: "Project 2: Factorial ANOVA"
         #       href: Statistics_Projects/Experimental_Design/project2.qmd
         #     - text: "Project 3"
@@ -110,8 +105,6 @@ website:
         #       href: Statistics_Projects/Experimental_Design/project11.qmd
         #     - text: "Project 12"
         #       href: Statistics_Projects/Experimental_Design/project12.qmd
-            pass
-            
         - text: "---"
         
         # --- SECTION 3: APPLIED LINEAR REGRESSION ---
@@ -119,33 +112,23 @@ website:
           id: "linear-regression"
           collapsed: true
           contents:
-        #     - text: "Project 1: Simple Linear Models"
-        #       href: Statistics_Projects/Linear_Regression/project1.qmd
-        #     - text: "Project 2: Multiple Regression"
-        #       href: Statistics_Projects/Linear_Regression/project2.qmd
-        #     - text: "Project 3"
-        #       href: Statistics_Projects/Linear_Regression/project3.qmd
-        #     - text: "Project 4"
-        #       href: Statistics_Projects/Linear_Regression/project4.qmd
-        #     - text: "Project 5"
-        #       href: Statistics_Projects/Linear_Regression/project5.qmd
-        #     - text: "Project 6"
-        #       href: Statistics_Projects/Linear_Regression/project6.qmd
-        #     - text: "Project 7"
-        #       href: Statistics_Projects/Linear_Regression/project7.qmd
-        #     - text: "Project 8"
-        #       href: Statistics_Projects/Linear_Regression/project8.qmd
-        #     - text: "Project 9"
-        #       href: Statistics_Projects/Linear_Regression/project9.qmd
-        #     - text: "Project 10"
-        #       href: Statistics_Projects/Linear_Regression/project10.qmd
-        #     - text: "Project 11"
-        #       href: Statistics_Projects/Linear_Regression/project11.qmd
-        #     - text: "Project 12"
-        #       href: Statistics_Projects/Linear_Regression/project12.qmd
-            pass
-            
-        - text: "---"
+             - text: "Project 1: Predicting the Weather"
+               href: Statistics_Projects/Linear_Regression/project1.qmd
+             - text: "Project 2: Residuals, Sum of Squares, & R-Squared"
+               href: Statistics_Projects/Linear_Regression/project2.qmd
+             - text: "Project 3: Car Selling Price"
+               href: Statistics_Projects/Linear_Regression/project3.qmd
+             - text: "Project 4: Midterm Decision"
+               href: Statistics_Projects/Linear_Regression/project4.qmd
+             - text: "Project 5: Regression Battleship"
+               href: Statistics_Projects/Linear_Regression/project5.qmd
+             - text: "Project 6: House Selling Price"
+               href: Statistics_Projects/Linear_Regression/project6.qmd
+             - text: "Project 7: Logistic Regression"
+               href: Statistics_Projects/Linear_Regression/project7.qmd
+             - text: "Project 8: Consulting Project"
+               href: Statistics_Projects/Linear_Regression/project8.qmd
+             - text: "---"
         
         # --- SECTION 4: DATA WRANGLING & VISUALIZATION ---
         - section: "Data Wrangling & Visualizations"
@@ -176,7 +159,7 @@ website:
         #       href: Statistics_Projects/Data_Wrangling/project11.qmd
         #     - text: "Project 12"
         #       href: Statistics_Projects/Data_Wrangling/project12.qmd
-            pass
+              - text: "---"
               
     - title: "Research Papers"
       style: "docked"
