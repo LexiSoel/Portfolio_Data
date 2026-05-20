@@ -1,10 +1,19 @@
 ---
-title: "about me"
-subtitle: "my data science portfolio"
+title: "Lexi's Research & Statitics Project Portfolio"
+subtitle: "All projects done at BYUI in my undergraduate career"
 # use quarto markdown to 
 ---
 
-# Title 1 Header
-## Title 2 Header
+# About
+
+I am a Senior at Brigham Young University - Idaho with aspirations to obtain a PhD in Psychology. I have been proficient at data analysis and have placed in this portfolio all of my major projects over my years at BYUI.
+
+## Statistical Projects
+
+My minor is in Statistics and I have 2 years worth of projects in my different classes that I have compiled into this portfolio
+
+## Research Projects
+
+My major is Psychology and I have been obsessed with research since my freshman year. I have compiled 3 of my major projects with the data that I collectec, cleaned, and ran analyses on. I have also included some of my Literature Reviews in my Research Papers section
 
 [MarkDown Basics](https://quarto.org/docs/authoring/markdown-basics.html#links-images)

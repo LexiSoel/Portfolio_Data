@@ -1,10 +1,30 @@
 ---
-title: "about me"
-subtitle: "my data science portfolio"
+title: "Research Conferences!"
+subtitle: "all of my current and future research conferences"
 # use quarto markdown to 
 ---
 
-# Title 1 Header
-## Title 2 Header
+# Conferences Intro
+
+
+The Research & Creative Works Conference [at BYUI] provides the event and venue for students to present original research and creative or artistic works for peers and expert evaluators. Held every semester at BYU-Idaho, the conference provides opportunities for students to network with professionals from a wide variety of backgrounds and skill sets. Our mission is to foster an environment for students to develop and share their creative and academic achievements for personal progress and benefit of others.
+
+
+| [Research and Creative Works Conference](https://www.byui.edu/research-and-creative-works-conference/)
+
+-------------
+
+Rocky Mountain Psychological Association (RMPA) is a regional psychological association affiliated with the American Psychological Association (APA). RMPA’s region includes Colorado, Arizona, Idaho, Montana, Nevada, New Mexico, Utah, and Wyoming. RMPA’s purpose is “to advance psychology as a science, as a profession, as a means of promoting human welfare.” 
+
+
+| [Rocky Mountain Psychological Association](https://www.rockymountainpsych.com/) 
+
+
+
+## My Conference Experiences
+
+I have presented a research project at RCW 
+
+I've attended RMPA 2026 in Boise, ID and I will attend RMPA 2027 in SLC, UT
 
 [MarkDown Basics](https://quarto.org/docs/authoring/markdown-basics.html#links-images)

@@ -498,9 +498,9 @@
   {
     "objectID": "Conferences.html",
     "href": "Conferences.html",
-    "title": "about me",
+    "title": "Research Conferences!",
     "section": "",
-    "text": "MarkDown Basics",
+    "text": "The Research & Creative Works Conference [at BYUI] provides the event and venue for students to present original research and creative or artistic works for peers and expert evaluators. Held every semester at BYU-Idaho, the conference provides opportunities for students to network with professionals from a wide variety of backgrounds and skill sets. Our mission is to foster an environment for students to develop and share their creative and academic achievements for personal progress and benefit of others.\nResearch and Creative Works Conference\n\nRocky Mountain Psychological Association (RMPA) is a regional psychological association affiliated with the American Psychological Association (APA). RMPA’s region includes Colorado, Arizona, Idaho, Montana, Nevada, New Mexico, Utah, and Wyoming. RMPA’s purpose is “to advance psychology as a science, as a profession, as a means of promoting human welfare.”\nRocky Mountain Psychological Association\n\n\nI have presented a research project at RCW\nI’ve attended RMPA 2026 in Boise, ID and I will attend RMPA 2027 in SLC, UT\nMarkDown Basics",
     "crumbs": [
       "Conferences"
     ]
@@ -508,7 +508,7 @@
   {
     "objectID": "Conferences.html#title-2-header",
     "href": "Conferences.html#title-2-header",
-    "title": "about me",
+    "title": "Research Conferences!",
     "section": "",
     "text": "MarkDown Basics",
     "crumbs": [
@@ -695,14 +695,14 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "about me",
+    "title": "Lexi’s Research & Statitics Project Portfolio",
     "section": "",
-    "text": "MarkDown Basics"
+    "text": "I am a Senior at Brigham Young University - Idaho with aspirations to obtain a PhD in Psychology. I have been proficient at data analysis and have placed in this portfolio all of my major projects over my years at BYUI.\n\n\nMy minor is in Statistics and I have 2 years worth of projects in my different classes that I have compiled into this portfolio\n\n\n\nMy major is Psychology and I have been obsessed with research since my freshman year. I have compiled 3 of my major projects with the data that I collectec, cleaned, and ran analyses on. I have also included some of my Literature Reviews in my Research Papers section\nMarkDown Basics"
   },
   {
     "objectID": "index.html#title-2-header",
     "href": "index.html#title-2-header",
-    "title": "about me",
+    "title": "Lexi’s Research & Statitics Project Portfolio",
     "section": "",
     "text": "MarkDown Basics"
   },
@@ -1560,6 +1560,30 @@
       "Statistics Projects",
       "Applied Linear Regression",
       "Project 8: Consulting Project"
+    ]
+  },
+  {
+    "objectID": "index.html#statistical-projects",
+    "href": "index.html#statistical-projects",
+    "title": "Lexi’s Research & Statitics Project Portfolio",
+    "section": "",
+    "text": "My minor is in Statistics and I have 2 years worth of projects in my different classes that I have compiled into this portfolio"
+  },
+  {
+    "objectID": "index.html#research-projects",
+    "href": "index.html#research-projects",
+    "title": "Lexi’s Research & Statitics Project Portfolio",
+    "section": "",
+    "text": "My major is Psychology and I have been obsessed with research since my freshman year. I have compiled 3 of my major projects with the data that I collectec, cleaned, and ran analyses on. I have also included some of my Literature Reviews in my Research Papers section\nMarkDown Basics"
+  },
+  {
+    "objectID": "Conferences.html#my-conference-experiences",
+    "href": "Conferences.html#my-conference-experiences",
+    "title": "Research Conferences!",
+    "section": "",
+    "text": "I have presented a research project at RCW\nI’ve attended RMPA 2026 in Boise, ID and I will attend RMPA 2027 in SLC, UT\nMarkDown Basics",
+    "crumbs": [
+      "Conferences"
     ]
   }
 ]
