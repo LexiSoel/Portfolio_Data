@@ -1,11 +1,29 @@
 ---
-title: "**Residuals, Sum of Squares, & R-Squared**"
-output: 
-  html_document:
-    theme: cosmo
-    code_folding: hide
-  
+title: "Residuals, Sum of Squares, & R-Squared"
+subtitle: "Course MATH 425"
+author: "Lexi Soelberg"
+format:
+  html:
+    self-contained: true
+    page-layout: full
+    title-block-banner: true
+    toc: true
+    toc-depth: 3
+    toc-location: body
+    number-sections: false
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: wrap
+    code-copy: hover
+    code-tools:
+        source: false
+        toggle: true
+        caption: See code
+execute: 
+  warning: false
 ---
+
 
 ```{r, message=FALSE, warning=FALSE}
 library(car)
@@ -39,7 +57,9 @@ predweathlm <- lm(HighTemp ~ LowTemp, data=predweather)
 summary(predweathlm) %>% pander
 ```
 
-# **Analyses** {.tabset .tabset-fade}
+# **Analyses** 
+
+::: {.panel-tabset .nav-fill group="linear-metrics"}
 
 ## **Residual**
 
@@ -462,6 +482,7 @@ RSE is similar to the MSE in that smaller values shows that our model is better 
 
 We are checking how well the data fits within the linear model. 
 
+:::
 
 ----------
 

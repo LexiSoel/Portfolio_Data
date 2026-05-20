@@ -54,7 +54,9 @@ While you should use the warpbreaks example analyses as your guide on how to pro
 -->
 
 
-## Background {.tabset .tabset-fade}
+## Background
+
+::: {.panel-tabset}
 
 ### Intro
 
@@ -77,8 +79,11 @@ MySleepANOVA <- select(aovsleep, c(toDate, SEASON, asleep, sessions)) %>%
 datatable(MySleepANOVA, options=list(lengthMenu = c(3,10,30)))
 ```
 
+:::
 
-## Analysis {.tabset .tabset-fade}
+## Analysis
+
+::: {.panel-tabset}
 
 ### Hypotheses
 
@@ -278,6 +283,8 @@ The residuals vs fitted values plot is not as appropriate as I would like since 
 The normality of the error terms as shown in the Q-Q Plot can be determined to be satisfied. Overall the results of the test can be considered valid.
 
 ------------
+
+:::
 
 ## Interpretation
 

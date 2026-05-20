@@ -1,6 +1,6 @@
 ---
 title: "Logistic Regression - Predicting Grades"
-subtitle: "Course MATH 435"
+subtitle: "Course MATH 425"
 author: "Lexi Soelberg"
 format:
   html:
@@ -42,9 +42,9 @@ library(DT)
 library()
 
 test <- read_csv("../../data/math325grades_test.csv")
-spec(test)
+#spec(test)
 train <- read_csv("../../data/math325grades_train.csv")
-spec(train)
+#spec(train)
 
 
 # pairs(m425, panel=panel.smooth, col=rgb(.2,.2,.2,.2))
@@ -97,9 +97,11 @@ spec(train)
 
 
 
-### Math 325, Predicting your Grades
+# Math 325, Predicting your Grades
 
-# Analysis {.tabset .tabset-fade}
+# Analysis 
+
+::: {.panel-tabset}
 
 
 ## Logistic Regression
@@ -111,6 +113,8 @@ train <- train %>%
 
 
 m325.glm <- glm(f90 ~ FinalExamCurrentScore + AnalysesCurrentScore + SkillsQuizzesTotalFinalScore, data=train, family=binomial)
+
+m325.glm
 ```
 
 
@@ -328,6 +332,6 @@ test$FinalGrade <- ifelse(predict(m325.glm, test, type="response") > 90, "A", "O
 write.csv(test, "testm325.csv", row.names=FALSE)
 ```
 
-
+:::
 ------
 : )

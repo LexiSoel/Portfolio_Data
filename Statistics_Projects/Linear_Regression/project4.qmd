@@ -1,6 +1,6 @@
 ---
 title: "Midterm Decision"
-subtitle: "Course MATH 435"
+subtitle: "Course MATH 425"
 author: "Lexi Soelberg"
 format:
   html:
@@ -60,7 +60,9 @@ M425P2 <- M425P %>%
 
 ### Decision: Keep My Midterm Score
 
-# Analysis {.tabset .tabset-fade}
+# Analysis 
+
+::: {.panel-tabset}
 
 I have filtered the data for the Midterm and Final scores based on criteria that most aligns with my performance in the class thus far. Not touching any scores but filtering by Attendance, Class Activity and Sk ills Quiz Completion, as well as the Magic Group I have the best chance of finding a significant prediction for my Final Exam score based on the students who match best to my work ethic in this class so far. 
 
@@ -253,7 +255,9 @@ pander(paste(0.7*62.37 + 0.3*68))
 ```
 
 
-### Other Models {.tabset .tabset-fade}
+### Other Models 
+
+::: {.panel-tabset}
 
 I noticed the data bending at certain points and I wanted to check that possibility. I ultimately settled on the Cubic model because it produced the best adjusted $R^2$ **with an acurate graph** as well as the tightest confidence and prediction intervals.
 
@@ -580,11 +584,12 @@ confintv6 <- predict(midpred6.lm, data.frame(Midterm = 68), interval = "confiden
 pander(data.frame(`Confidence Interval` = confintv6))
 ```
 
-
+:::
 
 
 
 I have selected the cubic model because although the $R^2$ and RSE is better in the "quinto" and "sexto" models in the appendix, they are also unreasonable. the curves are disproportionate to reality. 
 
+:::
 --------
 : )

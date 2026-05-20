@@ -59,7 +59,7 @@ Many teachers and other educators are interested in understanding how to best de
 A study was performed to determine whether the *Meshed* or *Before* approaches to delivering content had any positive benefits on memory recall. 
 
 
-## {.tabset .tabset-pills}
+::: {.panel-tabset}
 
 ### Hide
 
@@ -81,9 +81,9 @@ The `Meshed` group also used the same 40 words during each trial. However, words
 
 The data records the number of correctly recalled words (out of the 40 possible) from the fourth trial. Results were obtained for 30 students, 10 in each of the three treatment groups: `SFR`, `Before`, and `Meshed`. 
 
+:::
 
-
-## {.tabset .tabset-pills}
+::: {.panel-tabset}
 
 ### Hide
 
@@ -98,6 +98,8 @@ Click the "Code" button to see the data.
 datatable(Friendly, options=list(lengthMenu = c(3,10,30)))
 ```
 
+:::
+
 ## Introduction
 
 The above background gives some great detailed information on a study taken of 30 participants tasked with remembering words. These participants were placed in 3 groups of reviewed before (`Before`), reviewed throughout (`Meshed`), and not reviewed (`SFR`).
@@ -106,9 +108,11 @@ I am really interested to see if the `Meshed` approach, which I feel may have be
 
 I am also curious to see if any form of test reviewing is proven more effective than leaving the participant to their own devices. So, **my 2nd section of testing** will be viewing a `Control` group (`SFR`) and a `Test` group (`Before` & `Meshed`).
 
+:::
+
 ## Hypothesis 
  
-## {.tabset .tabset-pills}
+::: {.panel-tabset}
 
 ### Hypothesis 1
 
@@ -150,11 +154,11 @@ Significance level is
 $$
 \alpha = 0.05
 $$ 
-
+:::
 
 ## Analysis
 
-## {.tabset .tabset-pills}
+::: {.panel-tabset}
 
 ### Analysis 1
 
@@ -289,7 +293,7 @@ FriendlyH2 %>%
 ---------
 
 
-The Wilcoxon Rank Sum (Mann-Whitney) one sided less than test to see if the `Test` group has a signifigant difference over the in the medians of the `Control` group. 
+The Wilcoxon Rank Sum (Mann-Whitney) one sided less than test to see if the `Test` group has a significant difference over the in the medians of the `Control` group. 
 
 ```{r message=FALSE, warning=FALSE}
 wilcox.test(CorrectWords ~ TestCondition, data=FriendlyH2, mu=0, alternative ="less")%>%
@@ -298,6 +302,7 @@ wilcox.test(CorrectWords ~ TestCondition, data=FriendlyH2, mu=0, alternative ="l
 
 Test statistic is W = 51.5 with a p-value of 0.01644<$\alpha$ . The results of the Wilcoxon test are significant. We **reject the null hypothesis**.
 
+:::
 
 ## Interpretation
 
@@ -315,6 +320,7 @@ We do see significant evidence to prove that any form of test review is powerful
 Therefore, if we want to see better memory retention as we do when comparing these three groups we can employ methods of review, either before starting the new content or have the old intertwined with the new. 
 
 This can be applied and tested in many different settings to see if the same or similar results can be found. 
+
 
 
 -------

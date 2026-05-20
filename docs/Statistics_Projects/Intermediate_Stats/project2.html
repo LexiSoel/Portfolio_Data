@@ -8025,29 +8025,9 @@ window.Quarto = {
    
   <ul>
   <li><a href="#background" id="toc-background">Background</a></li>
-  <li><a href="#section" id="toc-section"></a>
-  <ul>
-  <li><a href="#hide" id="toc-hide">Hide</a></li>
-  <li><a href="#show-the-experiment-details" id="toc-show-the-experiment-details">Show the Experiment Details</a></li>
-  </ul></li>
-  <li><a href="#section-1" id="toc-section-1"></a>
-  <ul>
-  <li><a href="#hide-1" id="toc-hide-1">Hide</a></li>
-  <li><a href="#show-the-data" id="toc-show-the-data">Show the Data</a></li>
-  </ul></li>
   <li><a href="#introduction" id="toc-introduction">Introduction</a></li>
   <li><a href="#hypothesis" id="toc-hypothesis">Hypothesis</a></li>
-  <li><a href="#section-2" id="toc-section-2"></a>
-  <ul>
-  <li><a href="#hypothesis-1" id="toc-hypothesis-1">Hypothesis 1</a></li>
-  <li><a href="#hypothesis-2" id="toc-hypothesis-2">Hypothesis 2</a></li>
-  </ul></li>
   <li><a href="#analysis" id="toc-analysis">Analysis</a></li>
-  <li><a href="#section-3" id="toc-section-3"></a>
-  <ul>
-  <li><a href="#analysis-1" id="toc-analysis-1">Analysis 1</a></li>
-  <li><a href="#analysis-2" id="toc-analysis-2">Analysis 2</a></li>
-  </ul></li>
   <li><a href="#interpretation" id="toc-interpretation">Interpretation</a></li>
   <li><a href="#conclusion" id="toc-conclusion">Conclusion</a></li>
   </ul>
@@ -8088,14 +8068,13 @@ window.Quarto = {
 </ul></li>
 </ol>
 <p>A study was performed to determine whether the <em>Meshed</em> or <em>Before</em> approaches to delivering content had any positive benefits on memory recall.</p>
-</section>
-<section id="section" class="level2 tabset tabset-pills">
-<h2 class="tabset tabset-pills anchored" data-anchor-id="section"></h2>
-<section id="hide" class="level3">
-<h3 class="anchored" data-anchor-id="hide">Hide</h3>
-</section>
-<section id="show-the-experiment-details" class="level3">
-<h3 class="anchored" data-anchor-id="show-the-experiment-details">Show the Experiment Details</h3>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href>Hide</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href>Show the Experiment Details</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <p>Individuals were seated at a computer and shown a list of words. Words appeared on the screen one at a time, for two seconds each, until all words had been shown (40 total). After all words were shown, they were required to perform a few two-digit mathematical additions (like 15 + 25) for 15 seconds to avoid immediate memory recall of the words. They were then asked to write down as many of the 40 words as they could remember. They were given a maximum of 5.3 minutes to recall words.</p>
 <p>The process of showing words and recalling words was repeated four times with the same list of words each time (four chances to get it right). The presentation of the first trial was the same for all treatment conditions. However, trials 2, 3, and 4 were slightly different for each treatment condition.</p>
 <div style="padding-left:15px;">
@@ -8104,15 +8083,16 @@ window.Quarto = {
 <p>The <code>Meshed</code> group also used the same 40 words during each trial. However, words that were correctly recalled in a previous trial were alternated with a missed word during the next presentation order.</p>
 </div>
 <p>The data records the number of correctly recalled words (out of the 40 possible) from the fourth trial. Results were obtained for 30 students, 10 in each of the three treatment groups: <code>SFR</code>, <code>Before</code>, and <code>Meshed</code>.</p>
-</section>
-</section>
-<section id="section-1" class="level2 tabset tabset-pills">
-<h2 class="tabset tabset-pills anchored" data-anchor-id="section-1"></h2>
-<section id="hide-1" class="level3">
-<h3 class="anchored" data-anchor-id="hide-1">Hide</h3>
-</section>
-<section id="show-the-data" class="level3">
-<h3 class="anchored" data-anchor-id="show-the-data">Show the Data</h3>
+</div>
+</div>
+</div>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href>Hide</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href>Show the Data</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <p>The results from the study can be found in the <code>Friendly</code> data set in R after loading <code>library(car)</code>.</p>
 <p>Click the “Code” button to see the data.</p>
 <div class="cell">
@@ -8121,25 +8101,27 @@ window.Quarto = {
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">datatable</span>(Friendly, <span class="at">options=</span><span class="fu">list</span>(<span class="at">lengthMenu =</span> <span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">10</span>,<span class="dv">30</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
-<div class="datatables html-widget html-fill-item" id="htmlwidget-8de44ddef9422a1e6c83" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-8de44ddef9422a1e6c83">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30"],["SFR","SFR","SFR","SFR","SFR","SFR","SFR","SFR","SFR","SFR","Before","Before","Before","Before","Before","Before","Before","Before","Before","Before","Meshed","Meshed","Meshed","Meshed","Meshed","Meshed","Meshed","Meshed","Meshed","Meshed"],[39,25,37,25,29,39,21,39,24,25,40,38,39,37,39,24,30,39,40,40,40,39,34,37,40,36,36,38,36,30]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>condition<\/th>\n      <th>correct<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"lengthMenu":[3,10,30],"columnDefs":[{"className":"dt-right","targets":2},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"condition","targets":1},{"name":"correct","targets":2}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-b7d3c693e3851156dbf5" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-b7d3c693e3851156dbf5">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30"],["SFR","SFR","SFR","SFR","SFR","SFR","SFR","SFR","SFR","SFR","Before","Before","Before","Before","Before","Before","Before","Before","Before","Before","Meshed","Meshed","Meshed","Meshed","Meshed","Meshed","Meshed","Meshed","Meshed","Meshed"],[39,25,37,25,29,39,21,39,24,25,40,38,39,37,39,24,30,39,40,40,40,39,34,37,40,36,36,38,36,30]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>condition<\/th>\n      <th>correct<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"lengthMenu":[3,10,30],"columnDefs":[{"className":"dt-right","targets":2},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"condition","targets":1},{"name":"correct","targets":2}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
-</section>
+</div>
+</div>
+</div>
 </section>
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>The above background gives some great detailed information on a study taken of 30 participants tasked with remembering words. These participants were placed in 3 groups of reviewed before (<code>Before</code>), reviewed throughout (<code>Meshed</code>), and not reviewed (<code>SFR</code>).</p>
 <p>I am really interested to see if the <code>Meshed</code> approach, which I feel may have been beneficial to me during my schooling, is more effective than the <code>Before</code> approach. I want to see if there is a significance in the medians of these two groups. <strong>This is my 1st section of testing.</strong></p>
 <p>I am also curious to see if any form of test reviewing is proven more effective than leaving the participant to their own devices. So, <strong>my 2nd section of testing</strong> will be viewing a <code>Control</code> group (<code>SFR</code>) and a <code>Test</code> group (<code>Before</code> &amp; <code>Meshed</code>).</p>
+<p>:::</p>
 </section>
 <section id="hypothesis" class="level2">
 <h2 class="anchored" data-anchor-id="hypothesis">Hypothesis</h2>
-</section>
-<section id="section-2" class="level2 tabset tabset-pills">
-<h2 class="tabset tabset-pills anchored" data-anchor-id="section-2"></h2>
-<section id="hypothesis-1" class="level3">
-<h3 class="anchored" data-anchor-id="hypothesis-1">Hypothesis 1</h3>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true" href>Hypothesis 1</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false" href>Hypothesis 2</a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <p>The 1st hypothesis is that the <code>Meshed</code> group will remember more than the remember more words than the <code>Before</code> group.</p>
 <p><span class="math display">
   H_0: \text{difference in the medians} = 0
@@ -8151,9 +8133,8 @@ window.Quarto = {
 <p><span class="math display">
 \alpha = 0.05
 </span></p>
-</section>
-<section id="hypothesis-2" class="level3">
-<h3 class="anchored" data-anchor-id="hypothesis-2">Hypothesis 2</h3>
+</div>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
 <p>The 2nd hypothesis is that both the <code>Meshed</code> and <code>Before</code> tested groups together will score differently than the <code>SFR</code> control group.</p>
 <p><span class="math display">
   H_0: \text{difference in the medians} = 0
@@ -8165,15 +8146,16 @@ window.Quarto = {
 <p><span class="math display">
 \alpha = 0.05
 </span></p>
-</section>
+</div>
+</div>
+</div>
 </section>
 <section id="analysis" class="level2">
 <h2 class="anchored" data-anchor-id="analysis">Analysis</h2>
-</section>
-<section id="section-3" class="level2 tabset tabset-pills">
-<h2 class="tabset tabset-pills anchored" data-anchor-id="section-3"></h2>
-<section id="analysis-1" class="level3">
-<h3 class="anchored" data-anchor-id="analysis-1">Analysis 1</h3>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true" href>Analysis 1</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false" href>Analysis 2</a></li></ul>
+<div class="tab-content">
+<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
@@ -8192,8 +8174,8 @@ window.Quarto = {
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">datatable</span>(FriendlyH1, <span class="at">options=</span><span class="fu">list</span>(<span class="at">lengthMenu =</span> <span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">10</span>,<span class="dv">30</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
-<div class="datatables html-widget html-fill-item" id="htmlwidget-9c6e0f077c0f417af7cf" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-9c6e0f077c0f417af7cf">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"],["Before","Before","Before","Before","Before","Before","Before","Before","Before","Before","Meshed","Meshed","Meshed","Meshed","Meshed","Meshed","Meshed","Meshed","Meshed","Meshed"],[40,38,39,37,39,24,30,39,40,40,40,39,34,37,40,36,36,38,36,30]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>TestCondition<\/th>\n      <th>CorrectWords<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"lengthMenu":[3,10,30],"columnDefs":[{"className":"dt-right","targets":2},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"TestCondition","targets":1},{"name":"CorrectWords","targets":2}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-b4f7f6ef5a1916b85db8" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-b4f7f6ef5a1916b85db8">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"],["Before","Before","Before","Before","Before","Before","Before","Before","Before","Before","Meshed","Meshed","Meshed","Meshed","Meshed","Meshed","Meshed","Meshed","Meshed","Meshed"],[40,38,39,37,39,24,30,39,40,40,40,39,34,37,40,36,36,38,36,30]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>TestCondition<\/th>\n      <th>CorrectWords<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"lengthMenu":[3,10,30],"columnDefs":[{"className":"dt-right","targets":2},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"TestCondition","targets":1},{"name":"CorrectWords","targets":2}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>The box plot below depicts the 5 number summary of the two sample sizes. The numbers are also listed in the numerical summary just below.</p>
@@ -8213,8 +8195,8 @@ window.Quarto = {
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">yaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">&quot;Correct Words (out of 40)&quot;</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
-<div class="plotly html-widget html-fill-item" id="htmlwidget-19cc43003ad73e557b0d" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-19cc43003ad73e557b0d">{"x":{"visdat":{"772021830bab":["function () ","plotlyVisDat"]},"cur_data":"772021830bab","attrs":{"772021830bab":{"y":{},"x":{},"line":{"color":"gray21","width":2},"marker":{"line":{"color":"gray21","width":1}},"color":{},"colors":["royalblue4","red"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"box"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Effect of Test Conditions on Memory Recall","xaxis":{"domain":[0,1],"automargin":true,"title":"Experimental Test Groups","type":"category","categoryorder":"array","categoryarray":["Before","Meshed","SFR"]},"yaxis":{"domain":[0,1],"automargin":true,"title":"Correct Words (out of 40)"},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"fillcolor":"rgba(39,64,139,0.5)","y":[40,38,39,37,39,24,30,39,40,40],"x":["Before","Before","Before","Before","Before","Before","Before","Before","Before","Before"],"line":{"color":"gray21","width":2},"marker":{"color":"rgba(39,64,139,1)","line":{"color":"gray21","width":1}},"type":"box","name":"Before","xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(171,56,81,0.5)","y":[40,39,34,37,40,36,36,38,36,30],"x":["Meshed","Meshed","Meshed","Meshed","Meshed","Meshed","Meshed","Meshed","Meshed","Meshed"],"line":{"color":"gray21","width":2},"marker":{"color":"rgba(171,56,81,1)","line":{"color":"gray21","width":1}},"type":"box","name":"Meshed","xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-b8096f531a9280bd6df0" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-b8096f531a9280bd6df0">{"x":{"visdat":{"a9a437bcc224":["function () ","plotlyVisDat"]},"cur_data":"a9a437bcc224","attrs":{"a9a437bcc224":{"y":{},"x":{},"line":{"color":"gray21","width":2},"marker":{"line":{"color":"gray21","width":1}},"color":{},"colors":["royalblue4","red"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"box"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Effect of Test Conditions on Memory Recall","xaxis":{"domain":[0,1],"automargin":true,"title":"Experimental Test Groups","type":"category","categoryorder":"array","categoryarray":["Before","Meshed","SFR"]},"yaxis":{"domain":[0,1],"automargin":true,"title":"Correct Words (out of 40)"},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"fillcolor":"rgba(39,64,139,0.5)","y":[40,38,39,37,39,24,30,39,40,40],"x":["Before","Before","Before","Before","Before","Before","Before","Before","Before","Before"],"line":{"color":"gray21","width":2},"marker":{"color":"rgba(39,64,139,1)","line":{"color":"gray21","width":1}},"type":"box","name":"Before","xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(171,56,81,0.5)","y":[40,39,34,37,40,36,36,38,36,30],"x":["Meshed","Meshed","Meshed","Meshed","Meshed","Meshed","Meshed","Meshed","Meshed","Meshed"],"line":{"color":"gray21","width":2},"marker":{"color":"rgba(171,56,81,1)","line":{"color":"gray21","width":1}},"type":"box","name":"Meshed","xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>We can see that the median of the <code>Meshed</code> group is a couple points lower, at 36.5 and the <code>Before</code> group’s median is 39.</p>
@@ -8325,9 +8307,8 @@ window.Quarto = {
 </div>
 </div>
 <p>Test statistic is W = 62 with a p-value of 0.378&gt;<span class="math inline">\alpha</span> . The results of the Wilcoxon test are not significant. We <strong>fail to reject the null hypothesis</strong>.</p>
-</section>
-<section id="analysis-2" class="level3">
-<h3 class="anchored" data-anchor-id="analysis-2">Analysis 2</h3>
+</div>
+<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
@@ -8346,8 +8327,8 @@ window.Quarto = {
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">datatable</span>(FriendlyH2, <span class="at">options=</span><span class="fu">list</span>(<span class="at">lengthMenu =</span> <span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">10</span>,<span class="dv">30</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
-<div class="datatables html-widget html-fill-item" id="htmlwidget-39ea4cf5f554014224d2" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-39ea4cf5f554014224d2">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30"],["Control","Control","Control","Control","Control","Control","Control","Control","Control","Control","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test"],[39,25,37,25,29,39,21,39,24,25,40,38,39,37,39,24,30,39,40,40,40,39,34,37,40,36,36,38,36,30]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>TestCondition<\/th>\n      <th>CorrectWords<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"lengthMenu":[3,10,30],"columnDefs":[{"className":"dt-right","targets":2},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"TestCondition","targets":1},{"name":"CorrectWords","targets":2}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-86075e7ac0b4cb675676" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-86075e7ac0b4cb675676">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30"],["Control","Control","Control","Control","Control","Control","Control","Control","Control","Control","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test"],[39,25,37,25,29,39,21,39,24,25,40,38,39,37,39,24,30,39,40,40,40,39,34,37,40,36,36,38,36,30]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>TestCondition<\/th>\n      <th>CorrectWords<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"lengthMenu":[3,10,30],"columnDefs":[{"className":"dt-right","targets":2},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"TestCondition","targets":1},{"name":"CorrectWords","targets":2}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>A boxplot chart and numerical summary of the control group (<code>SFR</code>) of 10 participants and the 20 who received a test condition (either <code>Before</code> or <code>Meshed</code>).</p>
@@ -8367,8 +8348,8 @@ window.Quarto = {
 <span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">yaxis =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">&quot;Correct Words (out of 40)&quot;</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
-<div class="plotly html-widget html-fill-item" id="htmlwidget-ebf617a86235bd366843" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-ebf617a86235bd366843">{"x":{"visdat":{"77207d488a78":["function () ","plotlyVisDat"]},"cur_data":"77207d488a78","attrs":{"77207d488a78":{"y":{},"x":{},"line":{"color":"gray21","width":2},"marker":{"line":{"color":"gray21","width":1}},"color":{},"colors":["olivedrab4","mediumpurple4"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"box"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Memory Recall: Control vs Test","xaxis":{"domain":[0,1],"automargin":true,"title":"Benefits of Test Conditions on Memory Scores","type":"category","categoryorder":"array","categoryarray":["Control","Test"]},"yaxis":{"domain":[0,1],"automargin":true,"title":"Correct Words (out of 40)"},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"fillcolor":"rgba(105,139,34,0.5)","y":[39,25,37,25,29,39,21,39,24,25],"x":["Control","Control","Control","Control","Control","Control","Control","Control","Control","Control"],"line":{"color":"gray21","width":2},"marker":{"color":"rgba(105,139,34,1)","line":{"color":"gray21","width":1}},"type":"box","name":"Control","xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(93,71,139,0.5)","y":[40,38,39,37,39,24,30,39,40,40,40,39,34,37,40,36,36,38,36,30],"x":["Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test"],"line":{"color":"gray21","width":2},"marker":{"color":"rgba(93,71,139,1)","line":{"color":"gray21","width":1}},"type":"box","name":"Test","xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-aa456f9c730e6b25307e" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-aa456f9c730e6b25307e">{"x":{"visdat":{"a9a453d0be95":["function () ","plotlyVisDat"]},"cur_data":"a9a453d0be95","attrs":{"a9a453d0be95":{"y":{},"x":{},"line":{"color":"gray21","width":2},"marker":{"line":{"color":"gray21","width":1}},"color":{},"colors":["olivedrab4","mediumpurple4"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"box"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Memory Recall: Control vs Test","xaxis":{"domain":[0,1],"automargin":true,"title":"Benefits of Test Conditions on Memory Scores","type":"category","categoryorder":"array","categoryarray":["Control","Test"]},"yaxis":{"domain":[0,1],"automargin":true,"title":"Correct Words (out of 40)"},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"fillcolor":"rgba(105,139,34,0.5)","y":[39,25,37,25,29,39,21,39,24,25],"x":["Control","Control","Control","Control","Control","Control","Control","Control","Control","Control"],"line":{"color":"gray21","width":2},"marker":{"color":"rgba(105,139,34,1)","line":{"color":"gray21","width":1}},"type":"box","name":"Control","xaxis":"x","yaxis":"y","frame":null},{"fillcolor":"rgba(93,71,139,0.5)","y":[40,38,39,37,39,24,30,39,40,40,40,39,34,37,40,36,36,38,36,30],"x":["Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test","Test"],"line":{"color":"gray21","width":2},"marker":{"color":"rgba(93,71,139,1)","line":{"color":"gray21","width":1}},"type":"box","name":"Test","xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>We see a lot of spread in the Control (<code>SFR</code>) group despite the sample size being half that of the Test (<code>Before</code> and <code>Meshed</code>) group.</p>
@@ -8446,7 +8427,7 @@ window.Quarto = {
 </div>
 <hr>
 <hr>
-<p>The Wilcoxon Rank Sum (Mann-Whitney) one sided less than test to see if the <code>Test</code> group has a signifigant difference over the in the medians of the <code>Control</code> group.</p>
+<p>The Wilcoxon Rank Sum (Mann-Whitney) one sided less than test to see if the <code>Test</code> group has a significant difference over the in the medians of the <code>Control</code> group.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
@@ -8479,7 +8460,9 @@ window.Quarto = {
 </div>
 </div>
 <p>Test statistic is W = 51.5 with a p-value of 0.01644&lt;<span class="math inline">\alpha</span> . The results of the Wilcoxon test are significant. We <strong>reject the null hypothesis</strong>.</p>
-</section>
+</div>
+</div>
+</div>
 </section>
 <section id="interpretation" class="level2">
 <h2 class="anchored" data-anchor-id="interpretation">Interpretation</h2>

@@ -69,7 +69,9 @@ Come up with a simple linear regression of your own creation.
 -->
 
 
-## Background {.tabset .tabset-fade}
+## Background
+
+::: {.panel-tabset}
 
 
 ### Intro
@@ -203,6 +205,8 @@ There is not sufficient evidence shown in the above plots to discredit the whole
 
 ------
 : )
+
+:::
 
 ###### Credits
 

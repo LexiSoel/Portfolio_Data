@@ -44,7 +44,9 @@ EnvyData <- read_csv("../../data/EnvyData.csv")
 ## In your Console run View(HSS) to ensure the data has loaded correctly.
 ```
 
-# Background {.tabset .tabset-fade}
+# Background 
+
+::: {.panel-tabset}
 
 ## Intro
 
@@ -68,7 +70,11 @@ datatable(Envy,
           extensions="Responsive")
 ```
 
-# Analyses {.tabset .tabset-fade}
+:::
+
+# Analyses
+
+::: {.panel-tabset}
 
 In all of these analyses I am presenting the data to my fellow classmates. They know statistics well, I am just showing this data to them in R. 
 
@@ -448,11 +454,13 @@ suppressWarnings(
 car::qqPlot(`Car_Avg` ~ Tense, data = Envy, main = "Q-Q Plot of Dream Car Envy on Tense")  
 ```
 
-
+:::
 
 -----
 
-# T.Test Stats {.tabset .tabset-fade}
+# T.Test Stats
+
+::: {.panel-tabset}
 
 ## Total t.test
 
@@ -497,7 +505,11 @@ t.test(Car_Avg ~ Tense, data=Envy, mu=0, alternative = "greater") %>%
   pander()
 ```
 
-# ANOVA {.tabset .tabset-fade}
+:::
+
+# ANOVA 
+
+::: {.panel-tabset}
 
 We have run and checked the above t.tests in R already. Now, for some extra curricular inferential analyses I wanted to test our demographics, particularly of males and females, and age groups.
 
@@ -799,6 +811,8 @@ xyplot(`Total Average` ~ as.factor(Tense), data = EnvyData, groups=Ethnicity, ty
 ```
 
 -----
+
+:::
 
 # Interpretation
 

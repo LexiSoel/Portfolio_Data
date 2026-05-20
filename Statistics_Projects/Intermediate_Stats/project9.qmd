@@ -37,7 +37,9 @@ I picked two cities in Argentina, Junín is a city in the Rosario Argentina miss
 
 I served my mission speaking Spanish and I've always felt connected to Argentina because of my dad and the people I've met from there. I'd love to study the weather for these cities in this beautiful country. I picked these two cities to compare for the year of 1996, when my father arrived in his mission. 
 
-## Intro {.tabset .tabset-fade}
+## Intro 
+
+::: {.panel-tabset}
 
 ### Map
 
@@ -253,6 +255,8 @@ The Residuals vs Order plot shows the chaos in the data, although there is almos
 There is not overwhelming evidence shown in the above plots to discredit the whole linear regression analysis. 
 
 -------
+
+:::
 
 ##### Credits
 

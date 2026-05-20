@@ -1,6 +1,6 @@
 ---
 title: "House Selling Price"
-subtitle: "Course MATH 435"
+subtitle: "Course MATH 425"
 author: "Lexi Soelberg"
 format:
   html:
@@ -146,7 +146,7 @@ knitr::kable(my_output_table, escape = TRUE, digits = 4)
 
 ```
 
-## Graphs {.tabset .tabset-fade}
+## Graphs
 
 
 ```{r message=FALSE, warning=FALSE}

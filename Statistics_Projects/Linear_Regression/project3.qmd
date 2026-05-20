@@ -1,6 +1,6 @@
 ---
 title: "Car Selling Price - Honda HR-V"
-subtitle: "Course MATH 435"
+subtitle: "Course MATH 425"
 author: "Lexi Soelberg"
 format:
   html:
@@ -56,7 +56,7 @@ carselling <- data.frame(
 ```
 
 
-#### Background {.tabset .tabset-fade}
+#### Background 
 
 The Honda HR-V was introduced as a compact crossover vehicle in 2016 and therefore finding a vehicle with 200k miles is nearly impossible. This vehicle has existed for less than a decade. The data is limited but interesting. Even the oldest models seem to have upheld their value pretty well over the years. The trim for my car specifically the EX-L has great value. 
 
@@ -66,7 +66,12 @@ I collected 30 cars, from 5 miles to 192k and from $11k to $32k, years ranging f
 
 My Car is a 2021 Honda HR-V EX-L AWD. Her name is Rexie.
 
+--------------
+
+::: {.panel-tabset}
+
 ##### Hide Data
+
 
 
 ##### Show Data
@@ -84,7 +89,10 @@ formatStyle(names(carselling), color="mediumseagreen")
 
 -----
 
+:::
+
 #### Hypothesis
+
 
 This analysis attempts to model the price I can expect to sell my car at based on the mileage using a simple linear regression.
 
@@ -103,7 +111,9 @@ $$
 <center> $\alpha$ = 0.05 </center>
 
 
-# HR-V Linear Regression {.tabset .tabset-fade}
+# HR-V Linear Regression
+
+::: {.panel-tabset}
 
 ## Normal Regression
 
@@ -335,3 +345,5 @@ I'm going to run a log because of this boxCox assumption
 ###### Credits
 
 Thank you Brother Saunders for helping with the codes on Friday to make the boxCox and different lines. 
+
+:::

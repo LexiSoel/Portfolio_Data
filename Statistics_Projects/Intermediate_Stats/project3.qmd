@@ -452,7 +452,9 @@ If you want to give your critiquers some ideas about what you have questions on 
 
 </center>
 
-## Background {.tabset .tabset-fade}
+## Background 
+
+::: {.panel-tabset}
 
 
 Data was collected on 126 college students and compiled into this data set  [Food choices on Kaggle](https://www.kaggle.com/borapajo/food-choices?select=food_coded.csv).
@@ -476,7 +478,11 @@ foodE <- food %>%
 datatable(foodE, options=list(lengthMenu = c(5,10,15)))
 ```
 
-## Analysis {.tabset .tabset-fade}
+:::
+
+## Analysis 
+
+::: {.panel-tabset}
 
 ### Hypothesis
 
@@ -546,6 +552,8 @@ kruskal.test(weight~ exercise, data=foodE) %>%
 The Kruskal-Wallis test compares the ranks of all of the people in each group, and makes it possible to study more than 2 ranked groups. This test orders each value from lowest to smallest, adds up the total ranks in each group and divides by each group's total values. 
 
 We can see that the p-value is not significant $\alpha$ > 0.1859. All groups show a similar enough average to not be significant. We **fail to reject the null hypothesis**
+
+:::
 
 ## Interpretation / Conclusion
 

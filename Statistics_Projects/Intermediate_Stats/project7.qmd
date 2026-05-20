@@ -61,7 +61,9 @@ Come up with a chi squared test analysis of your own creation.
 -->
 
 
-# Background {.tabset}
+# Background
+
+::: {.panel-tabset}
 
 The 2021 GSS survey sent to Americans had two different questions: [Have you ever had a 'born again' experience?](https://gssdataexplorer.norc.org/variables/1077/vshow) and [Do you try to convince others to accept Jesus?](https://gssdataexplorer.norc.org/variables/1078/vshow) I found these questions with just two responses each `Yes` or `No` to be quite interesting and I wanted to see how they correlated to each other. 
 
@@ -198,6 +200,7 @@ The test statistic is decently big and the $p$-value is minuscule. This test giv
 
 --------
 
+:::
 
 # Interpretation
 
