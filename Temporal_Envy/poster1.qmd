@@ -1,7 +1,7 @@
 ---
-title: "Client Report - [Insert Project Title]"
-subtitle: "Course DS 250"
-author: "[STUDENT NAME]"
+title: "From Anticipation to Reflection: How Time Alters Perceptions of Enviable Experiences - Poster"
+subtitle: "RCW Poster"
+author: "Lexi Soelberg"
 format:
   html:
     self-contained: true
@@ -25,4 +25,4 @@ execute:
     
 ---
 
-### Paste in a template
+<iframe src="envy_poster.pdf" width="100%" height="800px" style="border: none;"></iframe>

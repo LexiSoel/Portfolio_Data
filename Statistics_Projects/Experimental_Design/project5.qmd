@@ -1,0 +1,628 @@
+---
+title: "Three Way Anova (BF4) - Semester Project Mario Kart"
+subtitle: "Course MATH 326"
+author: "Lexi Soelberg"
+format:
+  html:
+    self-contained: true
+    page-layout: full
+    title-block-banner: true
+    toc: true
+    toc-depth: 3
+    toc-location: body
+    number-sections: false
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: wrap
+    code-copy: hover
+    code-tools:
+        source: false
+        toggle: true
+        caption: See code
+execute: 
+  warning: false
+---
+
+
+```{r, warning=FALSE, message=FALSE}
+library(mosaic)
+library(DT)
+library(pander)
+library(car)
+library(tidyverse)
+library(lattice)
+library(dplyr)
+library(ggplot2)
+library(knitr)
+
+# Read.csv
+
+
+mario <- read_csv("../../data/MarioKartGroupProject.csv")
+
+
+mario$track <- as.factor(mario$track)
+
+mario$person <- as.factor(mario$person)
+
+mario$kart <- as.factor(mario$kart)
+
+mario$weight <- as.factor(mario$weight)
+
+library(dplyr)
+
+mario <- mario %>%
+  filter(person != "", person != " ") %>%
+  filter(time != "", time != " ") %>%
+  filter(kart != "", kart != " ") %>%
+  filter(weight != "", weight != " ") %>%
+  filter(track != "", track != " ")
+
+```
+
+
+
+<img src="MarioKart.jpeg" alt="Finger Football Data Collection" width="600" length="400" style="display: block; margin: auto;"/>
+
+
+## Background 
+
+:::{.panel-tabset}
+
+### Introduction & Methods
+For our experiment, we are looking into what factors could affect the race time of an individual.  
+
+For this study, 4 different players were chosen:
+
+- **Cali** 
+
+- **Lexi** 
+
+- **Stephanie**
+
+- **Lauren**
+
+Each of these Players raced the different vehicles.  We used 4 different Tracks:
+
+- **Paris Promenade** 
+
+- **Dolphin Shoals** 
+
+- **Yoshi Island** 
+
+- **Rainbow Road** 
+
+Two weight class of the digital racer were randomly chosen for each run:
+
+- **Light**
+
+- **Heavy**
+
+Two different vehicle types were chosen for each run:
+
+- **Kart**
+
+- **Motorcycle**
+
+For the vehicles we all used the Standard Motorcylce and the Standard Kart.
+
+Our outcome for this analysis should show us which factors have a significant impact on our race time.
+
+For the design setup, we made sure the controls for each player were the same.  We used the 100cc team races and all were on the same team.  We each had to be responsible recording our own time which probably added some inconsistency in the recording of the time.  All players raced at the same time.  The track could not be randomized with the weight class and vehicle type but we did randomize the order in which we played the tracks.  Each weight class and vehicle type were then weighted for each individual.  So while we all played the same track and at the same time, we randomized the light and heavy characters and the kart and motorcycle vehicle types.
+
+No replications were made. For that we will pool the 3 way interactions into the residuals. 
+
+
+### Data
+
+Our data was recorded in minutes and seconds in separate columns but later combined in seconds to the **time** column.
+
+```{r, warning=FALSE, message=FALSE}
+
+datatable(mario[, -c(8, 9, 10, 11, 12, 13)], options=list(lengthMenu = c(5,10,20)), caption="Mario Kart Race Data")
+
+```
+
+:::
+
+## 4 Way ANOVA Analysis 
+
+:::{.panel-tabset}
+
+### Mathematical Model & Hypotheses
+
+**Basic Factorial 4 Mathematical Model**
+
+$$
+y_{ijkm} = \mu + \alpha_i + \beta_j + \gamma_k + \delta_m + (\alpha\beta)_\text{ij} + (\alpha\gamma)_{ik} + (\alpha\delta)_{im} + (\beta\gamma)_{jk} + (\beta\delta)_{jm} + (\gamma\delta)_{km} + \epsilon_{ijkm}
+$$
+
+<div style="display: flex; justify-content: center; align-content: center; max-width: 100%">
+<div>
+- $y_{ijkm}$ represents the level $i$ of factor $\alpha$, level $j$ of factor factor $\beta$, level $k$ of factor $\gamma$, and level $m$ of factor $\delta$
+- $\mu$ is the grand mean of every observation
+- $\epsilon_{ijkm}$ is the error term. There are 64 observations with 1 observation in each 4-way factor combo.
+</div>
+<div style="min-width: 50%">
+- $\alpha_i$ is the effect of the individuals 
+  - 1 = Cali
+  - 2 = Lexi
+  - 3 = Stephanie
+  - 4 = Lauren
+  
+- $\beta_j$ is the effect of the race track
+  - 1 = Paris Promenade
+  - 2 = Dolphin Shoals 
+  - 3 = Yoshi Island
+  - 4 = Rainbow Road
+  
+- $\gamma_k$ is the effect of the weight class of chosen racer
+  - 1 = Light
+  - 2 = Heavy
+  
+- $\delta_m$ is the effect of the vehicle type
+  - 1 = Kart
+  - 2 = Motorcycle
+</div>
+</div>
+
+--------------
+
+**EFFECT HYPOTHESES**
+
+$$
+H_0: \text{Person} (\alpha_\text{i}) = 0 \text{ for all } i \\
+$$
+$$
+H_a:  \text{Person} (\alpha_\text{i}) \ne 0 \text{ for some } i 
+$$
+----
+$$
+H_0: \text{Track}(\beta_\text{j}) = 0 \text{ for all } j \\
+$$
+
+$$
+H_a: \text{Track}(\beta_\text{j}) \ne 0 \text{ for some } j 
+$$
+----
+$$
+H_0: \text{Weight}(\gamma_k) = 0 \text{ for all } k \\
+$$
+
+$$
+H_a: \text{Weight}(\gamma_k) \ne 0 \text{ for some } k
+$$
+----
+$$
+H_0: \text{VehicleType}(\delta_m) = 0 \text{ for all } m \\
+$$
+
+$$
+H_a: \text{VehicleType}(\delta_m) \ne 0 \text{ for some } m
+$$
+----
+$$
+H_0: \text{Person x RaceTrack}((\alpha\beta)_{ij}) = 0 \text{ for all } ij \\
+$$
+
+$$
+H_a: \text{Person x RaceTrack}((\alpha\beta)_{ij}) \ne 0 \text{ for some } ij 
+$$
+----
+$$
+H_0: \text{Person x VehicleType}((\alpha\delta)_{im}) = 0 \text{ for all } im \\
+$$
+
+$$
+H_a: \text{Person x VehicleType}((\alpha\delta)_{im}) \ne 0 \text{ for some } im 
+$$
+----
+$$
+H_0: \text{Weight x VehicleType}((\gamma\delta)_{km}) = 0 \text{ for all } km \\
+$$
+
+$$
+H_a: \text{Weight x VehicleType}((\gamma\delta)_{km}) \ne 0 \text{ for some } km
+$$
+----
+$$
+H_0: \text{Person x Weight}((\alpha\gamma)_{ik}) = 0 \text{ for all } ik \\
+$$
+
+$$
+H_a: \text{Person x Weight}((\alpha\gamma)_{ik}) \ne 0 \text{ for some } ik 
+$$
+----
+$$
+H_0: \text{Race Track x Weight}((\beta\gamma)_{jk}) = 0 \text{ for all } jk \\
+$$
+
+$$
+H_a: \text{Race Track x Weight}((\beta\gamma)_{jk}) \ne 0 \text{ for some } jk 
+$$
+----
+$$
+H_0: \text{Race Track x VehicleType}((\beta\delta)_{jm}) = 0 \text{ for all } jm \\
+$$
+
+$$
+H_a: \text{Race Track x VehicleType}((\beta\delta)_{jm}) \ne 0 \text{ for some } jm 
+$$
+
+------------------------------------------------------------------------
+
+
+**Significance level is**
+
+$$
+\alpha = 0.05
+$$
+
+------------------------------------------------------------------------
+
+### 4 Way ANOVA (BF[4])
+
+```{r}
+mario.aov <- aov(time ~ person + track + weight + kart + person:weight + person:kart + track:weight + track:kart + weight:kart, data = mario)
+summary(mario.aov) %>% pander
+```
+
+
+The analysis revealed that track was the only main effect that reached statistical significance (p = 0.031), suggesting that the choice of track has a meaningful impact on the outcome. The main effects of person (p = 0.972), weight (p = 0.056), and kart (p = 0.755) were not statistically significant at the α = 0.05 level, though weight approached significance and may warrant further investigation. Among the two-way interactions, only the track:weight interaction was statistically significant (p = 0.024), indicating that the effect of track on the response depends on the weight category. The remaining two-way interactions; person:weight, person:kart, track:kart, and weight:kart were all non-significant (all p-values > 0.13), suggesting that these factors do not interact in meaningful ways to influence the outcome. Overall, the results suggest that track selection is the primary factor driving differences in the response variable, with this effect being moderated by weight.
+
+------------------------------------------------------------------------
+
+### Variable Graphs
+
+------------------------------------------------------------------------
+
+**Nintendo Switch MarioKart Racing Person Graph**
+
+```{r, warning=FALSE, message=FALSE}
+library(ggplot2)
+library(dplyr)
+
+ggplot(mario, aes(x=person, y=time)) +
+  geom_boxplot(aes(fill = person)) +
+  theme_minimal() +
+  scale_fill_manual(values = c("#FE0002", "#fBD000", "#0001FC", "#43B047")) +
+  labs(title = "Nintendo Switch MarioKart Racing Racers' Time To Finish",
+       fill = "Person aka Racer",
+       x = "Person",
+       y = "Time to Finish (seconds)")
+
+```
+
+When we look at the race times by individual, we notice that there isn't much variation.  The person doesn't seem to have a huge effect on the race time.
+
+
+**Nintendo Switch MarioKart Racing Person Numerical Summary**
+
+```{r, warning=FALSE, message=FALSE}
+mario %>%
+  group_by(person) %>%
+  summarise(
+    Average = mean(time, na.rm = TRUE),
+    Min = min(time, na.rm = TRUE), 
+    Med = median(time, na.rm = TRUE), 
+    Max = max(time, na.rm = TRUE),
+    StDev = sd(time, na.rm = TRUE), 
+    SampleSize = n()
+  ) %>%
+  pander()
+```
+
+------------------------------------------------------------------------
+
+**Nintendo Switch MarioKart Racing RaceTrack Mass Graph**
+
+```{r, warning=FALSE, message=FALSE}
+## lets go a ggplot that's real sexy like
+
+library(ggplot2)
+library(dplyr)
+
+mario$track <- as.factor(mario$track)
+
+ggplot(mario, aes(x=track, y=time)) +
+  geom_boxplot(aes(fill = track)) +
+  theme_bw() +
+  scale_fill_manual(values = c("azure", "cyan2", "chartreuse2", "darkslateblue")) +
+  labs(title = "Nintendo Switch MarioKart Racing Times per Track ",
+       fill = "Racetrack",
+       x = "Track",
+       y = "Time to Finish (seconds)")
+
+```
+
+The race tracks definitely have more variation.  It appears that Track Number 3, Yoshi Island, has the least amount of variation.  Track 4, Rainbow Road, shows a lot of difference in the race time.  It could be due to the fact that we each got better as we played it.
+
+**RaceTrack Numerical Summary**
+
+```{r, warning=FALSE, message=FALSE}
+mario %>%
+  group_by(track) %>%
+  summarise(
+    Average = mean(time, na.rm = TRUE),
+    Min = min(time, na.rm = TRUE), 
+    Med = median(time, na.rm = TRUE), 
+    Max = max(time, na.rm = TRUE),
+    StDev = sd(time, na.rm = TRUE), 
+    SampleSize = n()
+  ) %>%
+  pander()
+```
+
+------------------------------------------------------------------------
+
+**Nintendo Switch MarioKart Racing Weight Graph**
+
+```{r, warning=FALSE, message=FALSE}
+## lets go a ggplot that's real sexy like
+
+library(ggplot2)
+library(dplyr)
+
+mario$weight <- as.factor(mario$weight)
+
+ggplot(mario, aes(x=weight, y=time)) +
+  geom_boxplot(aes(fill = weight)) +
+  theme_bw() +
+  scale_fill_manual(values = c("#FF7810", "seagreen")) +
+  labs(title = "Nintendo Switch MarioKart Racing Time That Each Class Took to Finish",
+       fill = "Character Weight Class",
+       x = "Weight Class",
+       y = "Time to Finish (seconds)")
+
+```
+
+The mass of the racer does show more difference than we expected to see.  In fact, we would have assumed that the lighter character would have been faster, but in fact the heavy character has less variability. 
+
+**Nintendo Switch MarioKart Racing Weight Numerical Summary**
+
+```{r, warning=FALSE, message=FALSE}
+mario %>%
+  group_by(weight) %>%
+  summarise(
+    Average = mean(time, na.rm = TRUE),
+    Min = min(time, na.rm = TRUE), 
+    Med = median(time, na.rm = TRUE), 
+    Max = max(time, na.rm = TRUE),
+    StDev = sd(time, na.rm = TRUE), 
+    SampleSize = n()
+  ) %>%
+  pander()
+```
+
+------------------------------------------------------------------------
+
+**Nintendo Switch MarioKart Racing Kart Mass Graph**
+
+```{r, warning=FALSE, message=FALSE}
+## lets go a ggplot that's real sexy like
+
+library(ggplot2)
+library(dplyr)
+
+mario$weight <- as.factor(mario$weight)
+
+ggplot(mario, aes(x=kart, y=time)) +
+  geom_boxplot(aes(fill = kart)) +
+  theme_bw() +
+  scale_fill_manual(values = c("green3", "firebrick2")) +
+  labs(title = "Nintendo Switch MarioKart Racing Time That Each Kart Took to Finish",
+       fill = "Kart Type",
+       x = "Vehicle Type",
+       y = "Time to Finish (seconds)")
+
+```
+
+ The Kart and Motorcylce didn't seem to affect the race time, however we only used one type of Kart and one type of Motorcycle.  Changing the Kart and Motorcycle to have faster acceleration or speed could affect race time but that was not a aprt of this study.
+
+**Nintendo Switch MarioKart Racing Kart Numerical Summary**
+
+```{r, warning=FALSE, message=FALSE}
+mario %>%
+  group_by(kart) %>%
+  summarise(
+    Average = mean(time, na.rm = TRUE),
+    Min = min(time, na.rm = TRUE), 
+    Med = median(time, na.rm = TRUE), 
+    Max = max(time, na.rm = TRUE),
+    StDev = sd(time, na.rm = TRUE), 
+    SampleSize = n()
+  ) %>%
+  pander()
+```
+
+------------------------------------------------------------------------
+
+### Nintendo Switch MarioKart Racing Interaction Plots
+
+**Nintendo Switch MarioKart Racing Person x Racetrack Interaction Graph**
+
+
+```{r, warning=FALSE, message=FALSE}
+library(ggplot2)
+
+ggplot(mario, aes(x = track, y = time, color = person, group = person)) +
+  geom_jitter(alpha = 0.3, width = 0.1) + 
+  
+  stat_summary(fun = mean, geom = "point", size = 3, shape = 18) +
+  stat_summary(fun = mean, geom = "line", size = 1) +
+  
+  theme_minimal() +
+  scale_color_manual(values = c("#FE0002", "#fBD000", "#0001FC", "#43B047")) +
+  labs(title = "Nintendo Switch MarioKart Racing Interaction Plot: Track vs. Person",
+       subtitle = "Dots show raw times; Lines show the average time",
+       y = "Time to Complete (seconds)",
+       x = "Track",
+       color = "Racer")
+```
+
+We can see that the race track times by person are consistent, this plot is not showing any obvious differences in the people based on track. 
+
+**Nintendo Switch MarioKart Racing Person x Racetrack Interaction Numerical Summary**
+
+```{r, warning=FALSE, message=FALSE}
+mario %>%
+  group_by(person, track) %>%
+  summarise(
+    Average = mean(time, na.rm = TRUE),
+    Min = min(time, na.rm = TRUE), 
+    Med = median(time, na.rm = TRUE), 
+    Max = max(time, na.rm = TRUE),
+    StDev = sd(time, na.rm = TRUE), 
+    SampleSize = n()
+  ) %>%
+  pander()
+```
+
+We'll take a closer look with the post hocs but even in the numerical summary, obvious differences are not easily shown. 
+
+-----------------------------
+
+**Nintendo Switch MarioKart Racing Weight x Kart Interaction Graph**
+
+```{r, warning=FALSE, message=FALSE}
+library(ggplot2)
+
+ ggplot(mario, aes(x = kart, y = time, color = factor(weight), group = weight)) +
+  geom_jitter(alpha = 0.4, width = 0.1) +
+  stat_summary(fun = mean, geom = "point", size = 3) +
+  stat_summary(fun = mean, geom = "line", size = 1.2) +
+  theme_minimal() +
+  
+  scale_color_manual(values = c("#FF7810", "seagreen")) +
+  
+  labs(
+    title = "Nintendo Switch MarioKart Racing Impact of Weight and Kart on Performance",
+    x = "Kart",
+    y = "Completion Time (seconds)",
+    color = "Weight Class"
+  )
+```
+
+The linear trend between kart type is nearly identical. Light class is almost exactly the same with a kart or a motorcycle but Heavy shows a little bit of a difference with a kart or a motorcycle. 
+
+**Weight x Kart Interaction Numerical Summary**
+
+```{r, warning=FALSE, message=FALSE}
+mario %>%
+  group_by(weight, kart) %>%
+  summarise(
+    Average = mean(time, na.rm = TRUE),
+    Min = min(time, na.rm = TRUE), 
+    Med = median(time, na.rm = TRUE), 
+    Max = max(time, na.rm = TRUE),
+    StDev = sd(time, na.rm = TRUE), 
+    SampleSize = n()
+  ) %>%
+  pander()
+```
+
+There's the 1 point difference in the averages for light kart vs motorcycle. Heavy shows a little bit more variation but we'll take a look at the post hoc to really see. 
+
+----------------------
+
+**Nintendo Switch MarioKart Racing Weight x Track Interaction Graph**
+
+```{r}
+library(ggplot2)
+
+ggplot(mario, aes(x = track, y = time, color = factor(weight), group = weight)) +
+  geom_jitter(alpha = 0.4, width = 0.1) +
+  stat_summary(fun = mean, geom = "point", size = 3) +
+  stat_summary(fun = mean, geom = "line", size = 1.2) +
+  theme_minimal() +
+  
+  scale_color_manual(values = c("#FF7810", "seagreen")) +
+  
+  labs(
+    title = "Nintendo Switch MarioKart Racing Impact of Track and Weight on Performance",
+    x = "Track",
+    y = "Completion Time (seconds)",
+    color = "Weight Class"
+  )
+```
+
+This is the most interesting interaction plot. There is a steep drop in time for the light weight class when we get to track 4 (Rainbow Road) from the heavy weight class for rainbow road. 
+
+**Nintendo Switch MarioKart Racing Weight x Track Interaction Numerical Summary**
+
+```{r, warning=FALSE, message=FALSE}
+mario %>%
+  group_by(weight, track) %>%
+  summarise(
+    Average = mean(time, na.rm = TRUE),
+    Min = min(time, na.rm = TRUE), 
+    Med = median(time, na.rm = TRUE), 
+    Max = max(time, na.rm = TRUE),
+    StDev = sd(time, na.rm = TRUE), 
+    SampleSize = n()
+  ) %>%
+  pander()
+```
+This numerical summary shows the individual differences for each weight class and each track. 
+
+------------------------------------------------------------------------
+
+### Nintendo Switch MarioKart Racing Diagnostic Plots
+
+```{r, warning = FALSE,message = FALSE}
+library(car)
+
+par(mfrow=c(1,3))
+
+qqPlot(mario.aov$residuals,  main="Residuals - Normality", id=FALSE)
+
+plot(mario.aov$fitted.values, mario.aov$residuals, main="Residuals - Constant Variance",pch=16)
+
+plot(mario.aov$residuals, main="Residuals - Independence", id=FALSE)
+
+```
+
+In the Residuals vs Fitted chart there are some outliers, but each of the dots are mostly evenly spread which means constant variance. The Q-Q plot has a few outliers as well but most of the points fall on, or close to the line so we can conclude the residuals look normal. In the Residuals chart there doesn't appear to be any trends so we can assume independence. 
+
+------------------------------------------------------------------------
+
+### Post Hoc Tests
+
+Since a significant interaction between weight and track was observed, along with significant main effects for both factors, Tukey's Honestly Significant Difference (HSD) post-hoc tests were conducted to examine pairwise differences between tracks and the weight × track interaction. No post-hoc test was performed for weight alone, as it contained only two levels.
+
+```{r}
+library(emmeans)
+
+my_means <- emmeans(mario.aov, ~ weight | track)
+
+contrast <- contrast(my_means, method = "pairwise", adjust = "tukey")
+
+summary(contrast) %>% pander()
+```
+
+A Tukey post-hoc comparison revealed that the Heavy condition differed significantly from the Light condition only on Track 4 (p < 0.001). No significant differences were found between Heavy and Light conditions on Tracks 1, 2, or 3 (all p > 0.05). This confirms what we could see earlier on the interaction plot when looking at the track and weight of the characters.
+
+```{r}
+my_means <- emmeans(mario.aov, ~ track)
+
+contrast <- contrast(my_means, method = "pairwise", adjust = "tukey")
+
+summary(contrast) %>% pander()
+```
+There appears to be a statistically significant difference between the track 3 and all other tracks. No other tracks seem to differ.
+
+
+------------------------------------------------------------------------
+
+:::
+
+## Conclusion & Follow Up
+
+In this analysis we learned that out of our factors, track was the only one to impact race time, which as we played 4 different tracks that were not the same length, this made sense. We also learned that heavy vs light characters had slightly different mean race times, but not enough to be significant at the 0.05 significance level.
+
+In the future it would be interesting to test different types of karts and motorcycles to see if they affect the race time. We could also consider removing person as a fixed factor and randomizing a larger sample of people while using their experience level for our blocking factor.
+
+------------------------------------------------------------------------
+
+: )

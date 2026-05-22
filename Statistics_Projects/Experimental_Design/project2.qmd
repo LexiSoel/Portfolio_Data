@@ -1,0 +1,436 @@
+---
+title: "Basic Factorial 2 - Balloon Drop"
+subtitle: "Course MATH 326"
+author: "Lexi Soelberg"
+format:
+  html:
+    self-contained: true
+    page-layout: full
+    title-block-banner: true
+    toc: true
+    toc-depth: 3
+    toc-location: body
+    number-sections: false
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: wrap
+    code-copy: hover
+    code-tools:
+        source: false
+        toggle: true
+        caption: See code
+execute: 
+  warning: false
+---
+
+```{r, warning=FALSE, message=FALSE}
+library(mosaic)
+library(DT)
+library(pander)
+library(car)
+library(tidyverse)
+library(lattice)
+library(dplyr)
+library(ggplot2)
+library(knitr)
+
+# Record your data from your own mini experiment in Excel.
+# Save the data as a .csv file in the Data folder of the Statistics-Notebook.
+
+
+balloon <- read_csv("../../data/BalloonsTwoFactorData.csv")
+
+```
+
+<!-- Instructions:
+
+Perform your own mini experiment using two factors that each have at least two levels. Analyze your data using a ANOVA.
+
+Studying reaction time is recommended because the data is quickly collected.
+
+While you should use the warpbreaks example analyses as your guide on how to properly complete this analysis, you should also be creative in your final delivery of this analysis. If you copy the format and approach of the example analyses, be sure to give credit in your document to these example analyses. You could write something like, "This work is modeled after the [warpbreaks](https://byuistats.github.io/Statistics-Notebook/Analyses/ANOVA/Examples/warpbreaksTwoWayANOVA.html) analysis." Whatever you do, DO NOT use any of the written statements from the example analyses in your analysis unless you quote them directly and give credit. Using someone else's writing as your own without giving credit to the original author is plagiarism and is an Honor Code Violation. So do your own work. Plus, the more you try to write things in your own words, the more you will learn. Also, note that there aren't really any "rules" about exactly how your document should be organized. So be creative and organize your file in a way that makes sense to you, but still has all important elements.
+
+-->
+
+
+
+<img src="balloons.jpeg" alt="Balloon Drop Data Collection" width="600" length="400" style="display: block; margin: auto;"/>
+
+
+
+## Background 
+
+:::{.panel-tabset}
+
+
+### Introduction & Methods
+
+We randomized our data. Each balloon was dropped from the Ricks Stairs 5 times bringing a total of 30 drops from our 6 balloons. 
+
+Our Two Factors are 3 balloons blown up with 5 breaths of air and 3 balloons blown up with 2 breaths (less air). One of each balloon was weighted either with no weight, a penny taped to the bottom or a quarter taped to the bottom making this a 2 by 3 design. There are 6 total factor combinations. Thus the second factor is weight, nothing, penny, or quarter. 
+
+Stephanie dropped all of the balloons from the balcony and Cali and I each had a stop watch at the bottom. We started the time when Stephanie let go of the balloon and stopped the time when any part of the balloon touched the ground. The y variable is the average of the two stop watch times. 
+
+
+
+### Data
+
+
+```{r message=FALSE, warning=FALSE}
+library(dplyr)
+
+balloon <- balloon %>%
+  select(airmass, weight, avgtime, observation_num)
+```
+
+```{r, warning=FALSE, message=FALSE}
+datatable(balloon, options=list(lengthMenu = c(5,10,30)))
+```
+
+:::
+
+## Analysis
+
+:::{.panel-tabset}
+
+### Hypotheses
+
+EFFECT HYPOTHESES
+
+$$
+H_0: \text{Air Mass} (\alpha_\text{i}) = 0 \text{ for all } i
+$$
+
+$$
+H_a:  \text{Air Mass} (\alpha_\text{i}) \ne 0 \text{ for some } i
+$$
+
+
+$$
+H_0: \text{Weight}(\beta_\text{j}) = 0 \text{ for all } j
+$$
+
+$$
+H_a: \text{Weight}(\beta_\text{j}) \ne 0 \text{ for some } j
+$$
+
+
+$$
+H_0: \text{Air Mass x Weight}((\alpha\beta)_\text{ij}) = 0 \text{ for all } ij
+$$
+
+$$
+H_a: \text{Air Mass x Weight}((\alpha\beta)_\text{ij}) \ne 0 \text{ for some } ij
+$$
+
+-----------
+
+**Basic Factorial 2 Mathematical Model**
+
+$$
+y_{ijk} = \mu + \alpha_i + \beta_j + (\alpha\beta)_\text{ij} \epsilon_{ijk}
+$$
+
+**Significance level is**
+
+$$
+\alpha = 0.05
+$$ 
+
+------
+
+### ANOVA (BF[2])
+
+```{r, warning=FALSE, message=FALSE}
+balloon.aov <- aov(avgtime ~ weight*airmass, data=balloon)
+summary(balloon.aov) %>% 
+  pander()
+```
+
+The ANOVA test tells us that there is significance in comparing the 3 groups and then the interaction between the groups. We see that weight and airmass are significant on their own and the interaction is significant. We need to take a closer look to actually see that difference. We will run some graphs and then a post hoc comparison test to see which groups are different and more different than the others.
+
+
+
+--------
+
+### Graphs
+
+**Weight Graph**
+
+```{r, warning=FALSE, message=FALSE}
+## lets go a ggplot that's real sexy like
+
+library(ggplot2)
+library(dplyr)
+
+ggplot(balloon, aes(x=weight, y=avgtime)) +
+  geom_boxplot(aes(fill = weight)) +
+  theme_bw() +
+  scale_fill_manual(values = c("cadetblue1", "brown", "gray")) +
+  labs(title = "Time That Balloon Takes to Get to the Floor in Seconds ",
+       fill = "Weighted Measure",
+       x = "Weights",
+       y = "Distance to Floor (seconds)")
+
+```
+
+**Weight Numerical Summary**
+
+```{r, warning=FALSE, message=FALSE}
+balloon %>%
+  group_by(weight) %>%
+  summarise(
+    Average = mean(avgtime, na.rm = TRUE),
+    Min = min(avgtime, na.rm = TRUE), 
+    Med = median(avgtime, na.rm = TRUE), 
+    Max = max(avgtime, na.rm = TRUE),
+    StDev = sd(avgtime, na.rm = TRUE), 
+    SampleSize = n()
+  ) %>%
+  pander()
+```
+
+Just looking at the nothing weight category we can see that the average is so much greater than the other two weights. The quarter is even greater than the penny but we will have to run comparisons to see the difference. 
+
+
+-------------------
+
+**Air Mass Graph**
+
+```{r, warning=FALSE, message=FALSE}
+## lets go a ggplot that's real sexy like
+
+library(ggplot2)
+library(dplyr)
+
+ggplot(balloon, aes(x=airmass, y=avgtime)) +
+  geom_boxplot(aes(fill = airmass)) +
+  theme_bw() +
+  scale_fill_manual(values = c("skyblue2", "chartreuse3")) +
+  labs(title = "Time That Balloon Takes to Get to the Floor in Seconds ",
+       fill = "Air Mass",
+       x = "Air Mass",
+       y = "Distance to Floor (seconds)")
+
+```
+
+The graphs are displaying the significant difference we saw in the anova test for air mass. The colors represent the color of balloons that we dropped. 
+
+**Airmass Numerical Summary**
+
+```{r, warning=FALSE, message=FALSE}
+balloon %>%
+  group_by(airmass) %>%
+  summarise(
+    Average = mean(avgtime, na.rm = TRUE),
+    Min = min(avgtime, na.rm = TRUE), 
+    Med = median(avgtime, na.rm = TRUE), 
+    Max = max(avgtime, na.rm = TRUE),
+    StDev = sd(avgtime, na.rm = TRUE), 
+    SampleSize = n()
+  ) %>%
+  pander()
+```
+
+This numerical summary is showing a 0.7 second difference between the large and small balloons. When the max is only 3.14 seconds for large that 60th of a second is a big difference as shown to be significant in the anova test. 
+
+------------
+
+**Interaction Graph**
+
+```{r, warning=FALSE, message=FALSE}
+
+xyplot(as.numeric(avgtime) ~ as.factor(weight), data = balloon, groups=airmass, type=c("p","a"), auto.key=TRUE, 
+        main="How Weight and Airmass Affect Balloon Drop Rate", 
+        ylab="Distance to Drop (Seconds)", 
+        xlab="Weight")
+```
+
+**Interaction Numerical Summary**
+
+```{r, message=FALSE, warning=FALSE}
+balloon %>%
+  group_by(airmass, weight) %>%
+  summarise(
+    Average = mean(avgtime, na.rm = TRUE),
+    Min = min(avgtime, na.rm = TRUE), 
+    Med = median(avgtime, na.rm = TRUE), 
+    Max = max(avgtime, na.rm = TRUE),
+    StDev = sd(avgtime, na.rm = TRUE), 
+    SampleSize = n()
+  ) %>%
+  pander()
+```
+This is so cool. I love that we see the most variation in the Large Quarter stdev = 0.081 and see the least in the small quarter stdev = 0.009. Obviously the large nothing is much greater than the small quarter. 
+
+----------
+
+### Diagnostics
+
+
+```{r, warning=FALSE, message=FALSE}
+
+par(mfrow=c(1,3))
+qqPlot(balloon.aov$residuals, id=FALSE)
+plot(balloon.aov$fitted.values, balloon.aov$residuals, pch=16)
+plot(balloon.aov$residuals, id=FALSE)
+
+```
+
+The QQ plot shows the normality of the data within the bounds so we can assume that normality assumptions are met.
+
+There is not a megaphone pattern in the residuals vs fitted plot, there is constant variance.
+
+The 3rd plot depicts independance, there are no obvious trends in the data so we can conclude that independance requirements have been met. 
+
+We can conclude that all requirements have been met and that we can continue with the interpretation and post hoc tests of the experiment.
+
+------------
+
+### Post Hoc Tests
+
+#### Individual Comparisons Between the 6 Balloons
+
+**Tukey**
+```{r, warning=FALSE, message=FALSE}
+balloon.aov <- aov(avgtime ~ airmass * weight, data = balloon)
+
+tukey.aov.balloon <- TukeyHSD(balloon.aov, "airmass:weight")
+
+par(mar = c(4, 8, 3, 1))
+plot(tukey.aov.balloon, las = 1)
+
+```
+
+This Tukey chart is crazy and I'm not sure what to make of it. One of the groups overlaps on the 0 line but I'm not confident in what that means.  
+
+#### Grouping Comparions
+
+**Interaction Groupings**
+
+```{r, warning=FALSE, message=FALSE}
+library(emmeans)
+
+balloon.means <- emmeans(balloon.aov, ~ airmass * weight, infer = c(TRUE, TRUE))
+
+myContrasts <- contrast(
+  balloon.means,
+  list(
+    LargeNothingvsOthers = c(1, -0.2, -0.2, -0.2, -0.2, -0.2),
+    SmallNothingvsOthers   = c(-0.2, 1, -0.2, -0.2, -0.2, -0.2),
+    LargePennyvsOthers = c(-0.2, -0.2, 1, -0.2, -0.2, -0.2),
+    SmallPennyvsOthers = c(-0.2, -0.2, -0.2, 1, -0.2, -0.2),
+    LargeQuartervsOthers   = c(-0.2, -0.2, -0.2, -0.2, 1, -0.2),
+    SmallQuartervsOthers = c(-0.2, -0.2, -0.2, -0.2, -0.2, 1)
+  ),
+  adjust = "scheffe"
+)
+
+myContrasts
+
+```
+
+Again like the numerical summary, the nerd in me is so excited. This shows that none of the balloons are the same as the others. I want to run another scheffe that shows the a, b, cs to check. 
+
+```{r, warning=FALSE, message=FALSE}
+library(agricolae)
+
+balloon$Group <- with(balloon, interaction(airmass, weight))
+balloon.aov2 <- aov(avgtime ~ Group, data = balloon)
+scheffe.test(balloon.aov2, "Group", console = TRUE)
+```
+Wait this is crazy, small nothing is not different than large penny. Their means are 2.165 (large penny) and 2.215 (small nothing). That is only a .05 of a second difference. I need to take a closer look. Let me run another comparison to check closer. 
+
+```{r, message=FALSE, warning=FALSE}
+library(emmeans)
+
+balloon2.means <- emmeans(balloon.aov, ~ airmass * weight, infer = c(TRUE, TRUE))
+
+myContrasts2 <- contrast(
+  balloon2.means,
+  list(
+    SmallNothingvsLargePenny = c(0, 1, -1, 0, 0, 0)
+  ),
+  adjust = "scheffe"
+)
+
+myContrasts2
+```
+The p-value is not significant! This is the finding I was looking for. With 6 distinctive balloons it's almost more interesting to find that one or more of the groups are not significant with each other. So cool to see. 
+
+### Index (weight)
+
+**Each Weight Vs Other**
+
+```{r, warning=FALSE, message=FALSE}
+library(emmeans)
+
+balloonw.means <- emmeans(balloon.aov, "weight", infer=c(TRUE,TRUE))
+
+myContrastsw <- contrast(balloonw.means, list(`NothingvsOthers`=c(1,-0.5,-0.5),
+                                      `PennyvsOthers`=c(-0.5, 1, -0.5), 
+                                      `QuartervsOthers`=c(-0.5, -0.5, 1)),adjust="scheffe")
+myContrastsw
+```
+This shows that each group is unique but that's not that interesting to me. I want to directly compare penny and quarter times since they were closer than the nothing group. I am going to run another contrast.
+
+
+**Penny vs Quarter**
+
+```{r, message=FALSE, warning=FALSE}
+library(emmeans)
+
+balloonw2.means <- emmeans(balloon.aov, "weight", infer=c(TRUE,TRUE))
+
+myContrastsw2 <- contrast(balloonw2.means, list(`PennyvsQuarter`=c(0, 1, -1) 
+                                      ),adjust="scheffe")
+myContrastsw2 
+```
+Still very significant. Nice I like it. 
+
+There is no reason for me to run a contrast for Air Mass since that factor only has 2 levels unlike the weight that has 3. 
+
+
+(I ran all the different post hocs and didn't want to straight up delete them)
+
+**Fisher's LSD**
+```{r, warning=FALSE, message=FALSE}
+ball.fish <- pairwise.t.test(balloon$avgtime, balloon$weight, "none")
+ball.fish
+```
+
+**Bonferonni**
+```{r, warning=FALSE, message=FALSE}
+ball.bon <- pairwise.t.test(balloon$avgtime, balloon$weight, "bonferroni")
+ball.bon
+```
+**Tukey**
+```{r, warning=FALSE, message=FALSE}
+tukey.aov.balloon <- TukeyHSD(balloon.aov, "weight")
+par(mar=c(4,8,3,1))
+plot(tukey.aov.balloon, las=1)
+```
+
+In this Tukey chart we see that none of the groups overlap on the 0 line so they are all different from eachother. I chose the Tukey test because I want to keep my Type 1 error low. I also want to see the confidence intervals. 
+
+**Scheffé**
+```{r, warning=FALSE, message=FALSE}
+library(agricolae)
+
+scheffe.test(balloon.aov, "weight", console=TRUE)
+```
+
+------------
+
+:::
+
+## Interpretation
+
+It would appear that each balloon is different but when I ran and interaction Sheffé test on the individual balloons I found that Small Nothing and Large Penny were not found to be different than each other. This is very interesting data because it felt like each balloon was totally different. This is the most interesting finding in this analysis. $p$-value = .1462 > $\alpha$
+
+All other interaction groups were significantly different than each other. $p$-value = 0.001 < $\alpha$
+
+-------
+: )
+

@@ -81,30 +81,16 @@ website:
           id: "experimental-design"
           collapsed: true
           contents:
-             - text: "Project 1: Randomized Blocks"
+             - text: "Project 1: Basic Factorial 1"
                href: Statistics_Projects/Experimental_Design/project1.qmd
-        #     - text: "Project 2: Factorial ANOVA"
-        #       href: Statistics_Projects/Experimental_Design/project2.qmd
-        #     - text: "Project 3"
-        #       href: Statistics_Projects/Experimental_Design/project3.qmd
-        #     - text: "Project 4"
-        #       href: Statistics_Projects/Experimental_Design/project4.qmd
-        #     - text: "Project 5"
-        #       href: Statistics_Projects/Experimental_Design/project5.qmd
-        #     - text: "Project 6"
-        #       href: Statistics_Projects/Experimental_Design/project6.qmd
-        #     - text: "Project 7"
-        #       href: Statistics_Projects/Experimental_Design/project7.qmd
-        #     - text: "Project 8"
-        #       href: Statistics_Projects/Experimental_Design/project8.qmd
-        #     - text: "Project 9"
-        #       href: Statistics_Projects/Experimental_Design/project9.qmd
-        #     - text: "Project 10"
-        #       href: Statistics_Projects/Experimental_Design/project10.qmd
-        #     - text: "Project 11"
-        #       href: Statistics_Projects/Experimental_Design/project11.qmd
-        #     - text: "Project 12"
-        #       href: Statistics_Projects/Experimental_Design/project12.qmd
+             - text: "Project 2: Basic Factorial 2"
+               href: Statistics_Projects/Experimental_Design/project2.qmd
+             - text: "Project 3: Complete Block Design"
+               href: Statistics_Projects/Experimental_Design/project3.qmd
+             - text: "Project 4: Split Plot"
+               href: Statistics_Projects/Experimental_Design/project4.qmd
+             - text: "Project 5: Semester Project"
+               href: Statistics_Projects/Experimental_Design/project5.qmd
         - text: "---"
         
         # --- SECTION 3: APPLIED LINEAR REGRESSION ---
@@ -135,31 +121,31 @@ website:
           id: "data-wrangling"
           collapsed: true
           contents:
-        #     - text: "Project 1: Tidyverse Cleaning"
-        #       href: Statistics_Projects/Data_Wrangling/project1.qmd
-        #     - text: "Project 2: ggplot2 Dashboards"
-        #       href: Statistics_Projects/Data_Wrangling/project2.qmd
-        #     - text: "Project 3"
-        #       href: Statistics_Projects/Data_Wrangling/project3.qmd
-        #     - text: "Project 4"
-        #       href: Statistics_Projects/Data_Wrangling/project4.qmd
-        #     - text: "Project 5"
-        #       href: Statistics_Projects/Data_Wrangling/project5.qmd
-        #     - text: "Project 6"
-        #       href: Statistics_Projects/Data_Wrangling/project6.qmd
-        #     - text: "Project 7"
-        #       href: Statistics_Projects/Data_Wrangling/project7.qmd
-        #     - text: "Project 8"
-        #       href: Statistics_Projects/Data_Wrangling/project8.qmd
-        #     - text: "Project 9"
-        #       href: Statistics_Projects/Data_Wrangling/project9.qmd
+             - text: "Project 1: Tidyverse Cleaning"
+               href: Statistics_Projects/Data_Wrangling/project1.qmd
+             - text: "Project 2: ggplot2 Dashboards"
+               href: Statistics_Projects/Data_Wrangling/project2.qmd
+             - text: "Project 3"
+               href: Statistics_Projects/Data_Wrangling/project3.qmd
+             - text: "Project 4"
+               href: Statistics_Projects/Data_Wrangling/project4.qmd
+             - text: "Project 5"
+               href: Statistics_Projects/Data_Wrangling/project5.qmd
+             - text: "Project 6"
+               href: Statistics_Projects/Data_Wrangling/project6.qmd
+             - text: "Project 7"
+               href: Statistics_Projects/Data_Wrangling/project7.qmd
+             - text: "Project 8"
+               href: Statistics_Projects/Data_Wrangling/project8.qmd
+             - text: "Project 9"
+               href: Statistics_Projects/Data_Wrangling/project9.qmd
         #     - text: "Project 10"
         #       href: Statistics_Projects/Data_Wrangling/project10.qmd
         #     - text: "Project 11"
         #       href: Statistics_Projects/Data_Wrangling/project11.qmd
         #     - text: "Project 12"
         #       href: Statistics_Projects/Data_Wrangling/project12.qmd
-              - text: "---"
+        #       - text: "---"
               
     - title: "Research Papers"
       style: "docked"
@@ -188,10 +174,10 @@ website:
         - text: "Poster Presentation"
           href: Temporal_Envy/poster1.qmd
         - text: "---"
-        - text: "Abstract"
+        - text: "Annotated Bibliography"
           href: Temporal_Envy/abstract1.qmd
         - text: "---"
-        - text: "Index"
+        - text: "Data Index"
           href: Temporal_Envy/index1.qmd
         - text: "---"
 
@@ -208,7 +194,7 @@ website:
         - text: "Abstract"
           href: Married_Differences/abstract2.qmd
         - text: "---"
-        - text: "Index"
+        - text: "Data Index"
           href: Married_Differences/index2.qmd
         - text: "---"
 
