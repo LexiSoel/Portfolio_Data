@@ -154,14 +154,23 @@ website:
         - text: "Research Papers"
           href: Research_Papers.qmd
         - text: "---"
-        - text: "Project 1"
+        - text: "Christ-like Leadership Literature Review"
           href: Research_Papers/project1.qmd
         - text: "---"
-        - text: "Project 2"
+        - text: "Sexual Practices in Marriage that Increase Relational Satisfaction: Literature Review"
           href: Research_Papers/project2.qmd
         - text: "---"
-        - text: "Project 3"
+        - text: "Generational Interviews"
           href: Research_Papers/project3.qmd
+        - text: "---"
+        - text: "Intergroup Interaction in Overcoming Prejudice"
+          href: Research_Papers/project4.qmd
+        - text: "---"
+        - text: "Project 5"
+          href: Research_Papers/project5.qmd
+        - text: "---"
+        - text: "Project 6"
+          href: Research_Papers/project6.qmd
         - text: "---"
 
     - title: "Temporal Envy"
