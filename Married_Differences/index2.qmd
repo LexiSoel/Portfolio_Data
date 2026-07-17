@@ -1,7 +1,6 @@
 ---
-title: "Client Report - [Insert Project Title]"
-subtitle: "Course DS 250"
-author: "[STUDENT NAME]"
+title: "Married but lonely: Data Index (building results and graphs)"
+author: "Lexi Soelberg"
 format:
   html:
     self-contained: true
@@ -25,4 +24,546 @@ execute:
     
 ---
 
-### Paste in a template
+
+```{r}
+pacman::p_load(tidyverse, dplyr, lattice, readr, readxl, downloader, rio, plotly, knitr, pander, ggthemes, ggrepel, directlabels, gapminder, wesanderson, patchwork, mosaic, ggplot2, DT, scales, rnaturalearth, rnaturalearthdata, sf, magick, ggdist, ggrain, tidyquant, ggtext)
+```
+
+
+```{r, warning=FALSE, message=FALSE}
+
+viva <- read_csv("../data/VIVA February 3, 2026_.csv") %>%
+  filter(row_number() > 2) %>%  
+  filter(!is.na(Sex), Sex != "#NULL!", Sex != "NULL") %>%
+  
+  select(
+    Sex, Age, Race, Children_1, Job, LengthMarriage_1,
+    LSavg, ANXavg, CESDsum, MOODnegavg, MOODposavg, 
+    WICSavg, SWLSavg, SMDailyTimeCont
+  ) %>%
+  
+  mutate(across(c(Age, Children_1, LengthMarriage_1, LSavg, ANXavg, CESDsum, 
+                  MOODnegavg, MOODposavg, WICSavg, SWLSavg, SMDailyTimeCont), 
+                ~as.numeric(gsub("[^0-9.-]", "", .)))) %>%
+  
+  
+  filter(!is.na(Age), Age <= 30, (LengthMarriage_1 <= 4 | is.na(LengthMarriage_1))) %>%
+  mutate(Sex = factor(Sex, levels = c(1, 2), labels = c("Men", "Women"))) %>%
+  drop_na(Sex) %>%
+  slice(-c(1, 2))
+```
+
+## Demographics
+
+```{r}
+# Race breakdown
+viva %>%
+  group_by(Race) %>%
+  summarise(n = n(), .groups = 'drop') %>%
+  mutate(Percentage = (n / sum(n)) * 100) %>%
+  pander(caption = "Participant Race Distribution")
+
+# Job breakdown
+viva %>%
+  group_by(Job) %>%
+  summarise(n = n(), .groups = 'drop') %>%
+  mutate(Percentage = (n / sum(n)) * 100) %>%
+  pander(caption = "Participant Employment Distribution")
+```
+```{r}
+cat("### Frequency Distribution of Age")
+viva %>%
+  count(Age) %>%
+  mutate(
+    Percentage = (n / sum(n)) * 100
+  ) %>%
+  arrange(Age) %>% # Keeps ages in order (18, 19, 20...)
+  pander()
+
+cat("### Overall Age Summary Statistics")
+viva %>%
+  summarise(
+    Mean_Age = mean(Age, na.rm = TRUE),
+    SD_Age = sd(Age, na.rm = TRUE),
+    Total_N = n()
+  ) %>%
+  pander()
+
+# 2. Children_1 Count and Percentage
+cat("### Parenting Distribution (Children_1)")
+viva %>%
+  count(Children_1) %>%
+  mutate(
+    Percentage = (n / sum(n)) * 100,
+    Children_1 = case_when(
+      Children_1 == 1 ~ "Yes", # Adjust these numbers if your coding is different
+      Children_1 == 2 ~ "No",
+      is.na(Children_1) ~ "Missing/NULL",
+      TRUE ~ as.character(Children_1)
+    )
+  ) %>%
+  pander()
+```
+
+```{r}
+cat("### Frequency Distribution of Marriage Length")
+viva %>%
+  count(LengthMarriage_1) %>%
+  mutate(
+    Percentage = (n / sum(n)) * 100
+  ) %>%
+  arrange(LengthMarriage_1) %>% # Keeps ages in order (18, 19, 20...)
+  pander()
+
+cat("### Overall Marriage Length Summary Statistics")
+viva %>%
+  summarise(
+    Mean_Marriage = mean(LengthMarriage_1, na.rm = TRUE),
+    SD_Marriage = sd(LengthMarriage_1, na.rm = TRUE),
+    Total_N = n()
+  ) %>%
+  pander()
+```
+
+
+
+
+## descriptive stats
+
+```{r}
+vars_to_analyze <- c("LSavg", "ANXavg", "CESDsum", "MOODnegavg", 
+                     "MOODposavg", "WICSavg", "SWLSavg", "SMDailyTimeCont")
+
+# Loop to create Descriptive Tables
+for (var in vars_to_analyze) {
+  cat("\n### Descriptives for:", var, "\n")
+  
+  viva %>%
+    group_by(Sex) %>%
+    summarise(
+      Min = min(.data[[var]], na.rm = TRUE), 
+      Q1 = quantile(.data[[var]], 0.25, na.rm = TRUE), 
+      Med = median(.data[[var]], na.rm = TRUE), 
+      Q3 = quantile(.data[[var]], 0.75, na.rm = TRUE), 
+      Max = max(.data[[var]], na.rm = TRUE),
+      Average = mean(.data[[var]], na.rm = TRUE),
+      StDev = sd(.data[[var]], na.rm = TRUE),
+      SampleSize = sum(!is.na(.data[[var]])) # Actual count of non-missing values
+    ) %>%
+    pander()
+}
+```
+ 
+ 
+## t.tests
+
+```{r}
+
+
+vars_to_analyze <- c("LSavg", "ANXavg", "CESDsum", "MOODnegavg", 
+                     "MOODposavg", "WICSavg", "SWLSavg", "SMDailyTimeCont")
+
+for (var in vars_to_analyze) {
+  cat("\n### T-Test for:", var, "\n")
+  
+  form <- as.formula(paste(var, "~ Sex"))
+  
+  t.test(form, data = viva, mu = 0) %>%
+    pander()
+}
+```
+
+```{r}
+ library(lsr)
+
+vars_to_analyze <- c("LSavg", "ANXavg", "CESDsum", "MOODnegavg", 
+                     "MOODposavg", "WICSavg", "SWLSavg", "SMDailyTimeCont")
+
+for (var in vars_to_analyze) {
+  form <- as.formula(paste(var, "~ Sex"))
+  
+  # Calculate d
+  d_val <- cohensD(form, data = viva)
+  
+  # Simple print
+  cat(var, ": d =", round(d_val, 3), "\n")
+}
+```
+
+
+##Plots
+
+
+```{r}
+make_final_rainplot <- function(df, var_name, full_label) {
+  
+  ggplot(df, aes(x = Sex, y = !!sym(var_name), fill = Sex)) +
+    stat_halfeye(
+      adjust = .5, width = .7, .width = 0, 
+      justification = -.2, point_colour = NA
+    ) +
+    geom_boxplot(width = .15, outlier.shape = NA, alpha = 0.5, size = 0.8) +
+
+    geom_jitter(aes(color = Sex), alpha = 0.3, width = 0.1, size = 1.2) +
+    
+    scale_fill_manual(values = c("Men" = "steelblue4", "Women" = "thistle")) +
+    scale_color_manual(values = c("Men" = "steelblue4", "Women" = "thistle")) +
+
+    scale_x_discrete(expand = c(0, 0.2)) + 
+    
+    coord_flip() +
+    labs(x = NULL, y = full_label) +
+    theme_minimal() +
+    theme(
+      legend.position = "none",
+      panel.grid.minor = element_blank(),
+      axis.title.x = element_text(size = 12, margin = margin(t = 10)),
+      axis.text = element_text(size = 11),
+      # Removing extra plot margin at the bottom
+      plot.margin = margin(t = 10, r = 10, b = 0, l = 10) 
+    )
+}
+```
+
+
+
+
+```{r}
+make_final_rainplot(viva, "LSavg", "Average Loneliness Score")
+make_final_rainplot(viva, "ANXavg", "Average Anxiety Score")
+make_final_rainplot(viva, "CESDsum", "Total Depressive Symptoms")
+make_final_rainplot(viva, "MOODnegavg", "Negative Affect Score")
+make_final_rainplot(viva, "MOODposavg", "Positive Affect Score")
+make_final_rainplot(viva, "WICSavg", "Interpersonal Conflict Score")
+make_final_rainplot(viva, "SWLSavg", "Life Satisfaction Score")
+make_final_rainplot(viva, "SMDailyTimeCont", "Daily Social Media Use (Minutes)")
+```
+
+
+
+
+
+
+#flipped axis
+
+```{r}
+make_final_rainplot <- function(df, var_name, full_label) {
+  
+  ggplot(df, aes(x = !!sym(var_name), y = Sex, fill = Sex)) +
+    stat_halfeye(
+      adjust = .6, width = 1.2, .width = 0, 
+      justification = -.2, point_colour = NA
+    ) +
+    geom_boxplot(width = .1, outlier.shape = NA, alpha = 0.5, size = 0.8) +
+
+    geom_jitter(aes(color = Sex), alpha = 0.4, width = 0.1, size = 1.2) +
+    
+    scale_fill_manual(values = c("Men" = "steelblue4", "Women" = "thistle")) +
+    scale_color_manual(values = c("Men" = "steelblue4", "Women" = "thistle")) +
+
+    scale_y_discrete(expand = c(0, 0.2)) + 
+    
+    coord_flip() +
+    labs(x = full_label, y = "Sex") +
+    theme_minimal() +
+    theme(
+      legend.position = "none",
+      panel.grid.minor = element_blank(),
+      axis.title.x = element_blank(),
+      axis.title.y = element_text(size = 12, margin = margin(r = 15)),
+      axis.text = element_text(size = 14),
+      axis.text.y = element_text(size = 13),
+      plot.margin = margin(t = 10, r = 10, b = 0, l = 10)
+    )
+}
+```
+
+
+
+```{r}
+#| warning: false
+make_final_rainplot(viva, "LSavg", "Average Loneliness Score")
+make_final_rainplot(viva, "ANXavg", "Average Anxiety Score")
+make_final_rainplot(viva, "CESDsum", "Total Depressive Symptoms")
+make_final_rainplot(viva, "MOODposavg", "Positive Affect Score")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+viva_mood_layered <- viva %>%
+  # Select only the columns needed for the comparison
+  select(Sex, MOODposavg, MOODnegavg) %>%
+  
+  # Stack the variables into a "Long" format
+  pivot_longer(
+    cols = c(MOODposavg, MOODnegavg), 
+    names_to = "Mood_Type", 
+    values_to = "Score"
+  ) %>%
+  
+  # Clean up the names and add the numeric position for the tight plot
+  mutate(
+    Mood_Type = recode(Mood_Type, 
+                       "MOODposavg" = "Positive Affect", 
+                       "MOODnegavg" = "Negative Affect"),
+    Sex_Num = ifelse(Sex == "Men", 1, 1.4)
+  )
+```
+
+
+
+```{r}
+# Re-establishing the tight but stable numeric positions
+viva_mood_layered <- viva_mood_layered %>%
+  mutate(Sex_Num = ifelse(Sex == "Men", 1, 1.4)) 
+
+ggplot(viva_mood_layered, aes(x = Sex_Num, y = Score, fill = interaction(Sex, Mood_Type))) +
+  # 1. The Clouds
+  stat_halfeye(
+    adjust = .5, width = .6, .width = 0, 
+    justification = 0, point_colour = NA, alpha = 0.6,
+    position = position_dodge(width = .15) 
+  ) +
+  # 2. The Boxplots
+  geom_boxplot(
+    width = .08, outlier.shape = NA, alpha = 0.6,
+    position = position_dodge(width = .15) 
+  ) +
+  # 3. The Rain
+  geom_jitter(
+    aes(color = interaction(Sex, Mood_Type)),
+    alpha = 0.2, size = 0.7,
+    position = position_jitterdodge(jitter.width = 0.05, dodge.width = 0.15)
+  ) +
+  
+  # Colors
+  scale_fill_manual(values = c(
+    "Men.Negative Affect" = "steelblue4",   
+    "Men.Positive Affect" = "lightsteelblue3", 
+    "Women.Negative Affect" = "maroon4",    
+    "Women.Positive Affect" = "thistle"     
+  )) +
+  scale_color_manual(values = c(
+    "Men.Negative Affect" = "steelblue4", 
+    "Men.Positive Affect" = "lightsteelblue3",
+    "Women.Negative Affect" = "maroon4", 
+    "Women.Positive Affect" = "thistle"
+  )) +
+  
+  # 4. INTERNAL LABEL: This puts the text inside the plot at the bottom
+  annotate("text", x = 0.75, y = 3, 
+           label = "Negative Affect <——————————> Positive Affect", 
+           size = 5, fontface = "bold", color = "black") +
+
+  # Using coord_cartesian to crop while coord_flip handles the orientation
+  coord_flip(ylim = c(1, 5), xlim = c(0.7, 1.7), clip = "off") +
+  
+  scale_x_continuous(
+    breaks = c(1, 1.4), 
+    labels = c("Men", "Women"),
+    expand = c(0, 0)
+  ) + 
+  
+  # Set titles to NULL since we used annotate()
+  labs(x = NULL, y = NULL) +
+  
+  theme_minimal() +
+  theme(
+    legend.position = "none",
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.text.y = element_text(face = "bold", size = 12),
+    axis.text.x = element_text(size = 12),
+    # Extra tight margins since label is inside
+    plot.margin = margin(t = 5, r = 10, b = 15, l = 5) 
+  )
+```
+
+```{r}
+viva_anx_ls_layered <- viva %>%
+  select(Sex, ANXavg, LSavg) %>%
+  pivot_longer(
+    cols = c(ANXavg, LSavg), 
+    names_to = "Var_Type", 
+    values_to = "Score"
+  ) %>%
+  mutate(Var_Type = recode(Var_Type, 
+                            "ANXavg" = "Anxiety", 
+                            "LSavg" = "Loneliness"),
+         Sex_Num = ifelse(Sex == "Men", 1, 1.4))
+```
+
+
+
+```{r}
+# Re-running the pivot if needed
+viva_anx_ls_layered <- viva %>%
+  select(Sex, ANXavg, LSavg) %>%
+  pivot_longer(
+    cols = c(ANXavg, LSavg), 
+    names_to = "Var_Type", 
+    values_to = "Score"
+  ) %>%
+  mutate(Var_Type = recode(Var_Type, "ANXavg" = "Anxiety", "LSavg" = "Loneliness"),
+         Sex_Num = ifelse(Sex == "Men", 1, 1.4))
+
+ggplot(viva_anx_ls_layered, aes(x = Sex_Num, y = Score, fill = interaction(Sex, Var_Type))) +
+  # 1. The Clouds
+  stat_halfeye(
+    adjust = .5, width = .6, .width = 0, 
+    justification = 0, point_colour = NA, alpha = 0.6,
+    position = position_dodge(width = .15) 
+  ) +
+  # 2. The Boxplots
+  geom_boxplot(
+    width = .08, outlier.shape = NA, alpha = 0.6,
+    position = position_dodge(width = .15) 
+  ) +
+  # 3. The Rain
+  geom_jitter(
+    aes(color = interaction(Sex, Var_Type)),
+    alpha = 0.2, size = 0.7,
+    position = position_jitterdodge(jitter.width = 0.05, dodge.width = 0.15)
+  ) +
+  
+  # Colors
+  scale_fill_manual(values = c(
+    "Men.Anxiety" = "steelblue4", "Men.Loneliness" = "lightsteelblue3", 
+    "Women.Anxiety" = "maroon4", "Women.Loneliness" = "thistle"     
+  )) +
+  scale_color_manual(values = c(
+    "Men.Anxiety" = "steelblue4", "Men.Loneliness" = "lightsteelblue3",
+    "Women.Anxiety" = "maroon4", "Women.Loneliness" = "thistle"
+  )) +
+  
+  annotate("text", x = 1.65, y = 4.3, label = "— Anxiety (W)", color = "maroon4", fontface = "bold", size = 4.4, hjust = 0) +
+  annotate("text", x = 1.58, y = 4.3, label = "— Loneliness (W)", color = "thistle4", fontface = "bold", size = 4.4, hjust = 0) +
+  # Men's Legend
+  annotate("text", x = 1.25, y = 4.3, label = "— Anxiety (M)", color = "steelblue4", fontface = "bold", size = 4.4, hjust = 0) +
+  annotate("text", x = 1.18, y = 4.3, label = "— Loneliness (M)", color = "lightsteelblue4", fontface = "bold", size = 4.4, hjust = 0) +
+
+  # THE SQUEEZE: xlim starts at 0.9 to cut off space below Men (who are at 1.0)
+  coord_flip(ylim = c(1, 5), xlim = c(0.9, 1.75), clip = "off") +
+  
+  scale_x_continuous(
+    breaks = c(1, 1.4), 
+    labels = c("Men", "Women"),
+    expand = c(0, 0)
+  ) + 
+  
+  labs(x = NULL, y = NULL) +
+  
+  theme_minimal() +
+  theme(
+    legend.position = "none",
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.text.y = element_text(face = "bold", size = 12),
+    axis.text.x = element_text(size = 12),
+    plot.margin = margin(t = 2, r = 10, b = 2, l = 5) 
+  )
+```
+
+
+
+```{r}
+viva_wisc_ls_layered <- viva %>%
+  select(Sex, WICSavg, ANXavg) %>%
+  pivot_longer(
+    cols = c(WICSavg, ANXavg), 
+    names_to = "Var_Type", 
+    values_to = "Score"
+  ) %>%
+  mutate(Var_Type = recode(Var_Type, 
+                            "WISCavg" = "Interpersonal Conflict", 
+                            "ANXavg" = "Anxiety"),
+         Sex_Num = ifelse(Sex == "Men", 1, 1.4))
+```
+
+
+
+```{r}
+# Re-running the pivot if needed
+viva_anx_ls_layered <- viva %>%
+  select(Sex, WICSavg, ANXavg) %>%
+  pivot_longer(
+    cols = c(WICSavg, ANXavg), 
+    names_to = "Var_Type", 
+    values_to = "Score"
+  ) %>%
+  mutate(Var_Type = recode(Var_Type, "WICSavg" = "Interpersonal Conflict", "ANXavg" = "Anxiety"),
+         Sex_Num = ifelse(Sex == "Men", 1, 1.4))
+
+ggplot(viva_anx_ls_layered, aes(x = Sex_Num, y = Score, fill = interaction(Sex, Var_Type))) +
+  # 1. The Clouds
+  stat_halfeye(
+    adjust = .5, width = .6, .width = 0, 
+    justification = 0, point_colour = NA, alpha = 0.6,
+    position = position_dodge(width = .15) 
+  ) +
+  # 2. The Boxplots
+  geom_boxplot(
+    width = .08, outlier.shape = NA, alpha = 0.6,
+    position = position_dodge(width = .15) 
+  ) +
+  # 3. The Rain
+  geom_jitter(
+    aes(color = interaction(Sex, Var_Type)),
+    alpha = 0.2, size = 0.7,
+    position = position_jitterdodge(jitter.width = 0.05, dodge.width = 0.15)
+  ) +
+  
+  # Colors
+  scale_fill_manual(values = c(
+    "Men.Interpersonal Conflict" = "steelblue4", "Men.Anxiety" = "lightsteelblue3", 
+    "Women.Interpersonal Conflict" = "maroon4", "Women.Anxiety" = "thistle"     
+  )) +
+  scale_color_manual(values = c(
+    "Men.Interpersonal Conflict" = "steelblue4", "Men.Anxiety" = "lightsteelblue3",
+    "Women.Interpersonal Conflict" = "maroon4", "Women.Anxiety" = "thistle"
+  )) +
+  
+  annotate("text", x = 1.65, y = 4.3, label = "— Conflict (W)", color = "maroon4", fontface = "bold", size = 4.4, hjust = 0) +
+  annotate("text", x = 1.58, y = 4.3, label = "— Anxiety (W)", color = "thistle4", fontface = "bold", size = 4.4, hjust = 0) +
+  # Men's Legend
+  annotate("text", x = 1.25, y = 4.3, label = "— Conflict (M)", color = "steelblue4", fontface = "bold", size = 4.4, hjust = 0) +
+  annotate("text", x = 1.18, y = 4.3, label = "— Anxiety (M)", color = "lightsteelblue4", fontface = "bold", size = 4.4, hjust = 0) +
+
+  # THE SQUEEZE: xlim starts at 0.9 to cut off space below Men (who are at 1.0)
+  coord_flip(ylim = c(1, 5), xlim = c(0.9, 1.75), clip = "off") +
+  
+  scale_x_continuous(
+    breaks = c(1, 1.4), 
+    labels = c("Men", "Women"),
+    expand = c(0, 0)
+  ) + 
+  
+  labs(x = NULL, y = NULL) +
+  
+  theme_minimal() +
+  theme(
+    legend.position = "none",
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.text.y = element_text(face = "bold", size = 12),
+    axis.text.x = element_text(size = 12),
+    plot.margin = margin(t = 2, r = 10, b = 2, l = 5) 
+  )
+```
+
+
