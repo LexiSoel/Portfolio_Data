@@ -1,7 +1,6 @@
 ---
-title: "Client Report - [Insert Project Title]"
-subtitle: "Course DS 250"
-author: "[STUDENT NAME]"
+title: "I/O Dataset"
+author: "Lexi Soelberg"
 format:
   html:
     self-contained: true
@@ -25,4 +24,119 @@ execute:
     
 ---
 
-### Paste in a template
+```{r}
+pacman::p_load(
+  rio,         
+  tidyverse,   
+  janitor,     
+  lubridate,   
+  openxlsx,    
+  psych, 
+  readr, 
+  lubridate, 
+  pander, 
+  car
+)
+```
+
+
+
+```{r}
+pre_raw  <- read_csv(
+  "../data/io_pre.csv", 
+  col_types = cols(.default = "c"),
+  na = c("", "NA", "#DIV/0!", "#VALUE!") # <--- Turns Excel errors into blank NAs!
+) %>% 
+  slice(-c(1, 2)) %>% 
+  type_convert()
+
+post_raw <- read_csv(
+  "../data/io_post.csv", 
+  col_types = cols(.default = "c"),
+  na = c("", "NA", "#DIV/0!", "#VALUE!")
+) %>% 
+  slice(-c(1, 2)) %>% 
+  type_convert()
+
+```
+```{r}
+
+
+pre_clean <- pre_raw %>%
+  filter(!is.na(Q14), Q14 != "") %>%
+  mutate(
+    name_key = str_to_lower(str_squish(str_remove_all(Q14, "[[:punct:]]"))),
+
+    StartDate = parse_date_time(StartDate, orders = c("ymd HMS", "mdy HMS", "ymd HM", "mdy HM"))
+  ) %>%
+  arrange(name_key, StartDate) %>%
+  distinct(name_key, .keep_all = TRUE)
+
+
+post_clean <- post_raw %>%
+  filter(!is.na(Q14), Q14 != "") %>%
+  mutate(
+    name_key = str_to_lower(str_squish(str_remove_all(Q14, "[[:punct:]]"))),
+
+    StartDate = parse_date_time(StartDate, orders = c("ymd HMS", "mdy HMS", "ymd HM", "mdy HM"))
+  ) %>%
+  arrange(name_key, StartDate) %>%
+  distinct(name_key, .keep_all = TRUE)
+
+
+scale_names <- pre_clean %>% 
+  select(starts_with("Pre_")) %>% 
+  names() %>% 
+  str_remove("^Pre_")
+
+paired_cols <- c(rbind(paste0("Pre_", scale_names), paste0("Post_", scale_names)))
+
+
+demo_cols <- c("Q14", "Q20_1", "Q22", "Q24", "Q26", "Q28", "Which class?", "Q34", "Q32_1", "Q100_1", "Q104", "Q102")
+
+final_io_data <- inner_join(
+  pre_clean, 
+  post_clean, 
+  by = "name_key", 
+  suffix = c("_pre", "_post")
+) %>%
+  mutate(participant_id = paste0("P", sprintf("%03d", row_number()))) %>%
+  
+  mutate(across(
+    c(starts_with("Pre_"), starts_with("Post_")), 
+    ~ na_if(as.numeric(.x), 8)
+  )) %>%
+  
+  # FIX: Only filter on Pre-class, and safely preserve students who left it blank (NA)
+  filter(is.na(`Which class?_pre`) | `Which class?_pre` != 1) %>% 
+  
+  select(
+    participant_id,
+    any_of(paired_cols), 
+    any_of(c(demo_cols, paste0(demo_cols, "_pre"), paste0(demo_cols, "_post")))
+  ) %>%
+  relocate(Q14_pre, Q14_post, .after = participant_id)
+
+```
+
+
+```{r}
+write_csv(final_io_data, "../data/bwo_check_io_data.csv")
+```
+
+
+
+
+```{r}
+anxiety_diff <- final_io_data$Pre_Happiness - final_io_data$Post_Happiness
+
+
+qqPlot(anxiety_diff, main = "Q-Q Plot of Happiness Differences")
+```
+
+```{r}
+t.test(final_io_data$Pre_Happiness, final_io_data$Post_Happiness, paired = TRUE) |> 
+  pander()
+
+```
+

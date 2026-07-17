@@ -22,7 +22,7 @@ website:
     right:
       - text: "Home"
         href: index.qmd
-      - text: "Resume"
+      - text: "Curriculum Vitae"
         href: resume.qmd
       - text: "Statistics Projects"
         href: Statistics_Projects.qmd

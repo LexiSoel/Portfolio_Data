@@ -1,6 +1,5 @@
 ---
 layout: cv
-title: Lexi Soelberg's CV
 ---
 # Lexi Soelberg
 Psychology (Health) Student, Statistics Student
@@ -16,47 +15,108 @@ Attending Brigham Young University - Idaho
 
 ### Specialized in
 
-Research, Psychology, Social Psychology, Health Psychology, data visualizations, graphing data, cleaning data, presenting research
+Research, Psychology, Social Psychology, Health Psychology, Industrial Organizational Psychology, data visualizations, graphing data, cleaning data, presenting and publishing research.
 
 ### Research interests
 
-Women's health & mental health, hormones & behavior, biopsychosocial model of behavior, theories of behavior, systems theories, social psychology, gender differences. 
+Health and social psychology, gender differences, woman's endocrinology, biological pathways & social health, biopsychosocial model of behavior, family systems theories, marital dynamics and health, organizational leadership, workplace attitudes and job satisfaction, post-traumatic growth.
 
 ## Education
 
-`Sept 2021 - now`
-__Brigham Young University - Idaho__
+`September 2021 - Present`
+__B.S. Psychology__
+*Brigham Young University - Idaho*, Rexburg, ID
+Major: Psychology
+Minor: Statistics
 
-## Awards
+## Awards & Scholarships
 
-`2025 - Now`
+`April 2022 - Present`
+__Academic Scholarship__, *Brigham Young University - Idaho*, Rexburg, ID
+  *For recognition of exceptional academic achievement*
+
+## Research Experience
+
+`January 2025 - Present`
+__Social/Health Psychology Research Assistant__ 
+**Department of Psychology**
+_Brigham Young University - Idaho_, Rexburg, ID
+
+  **Responsibilities:** I worked with Dr Robert Wright to analyze data and perform statistical analyses. I presented research at RMPA in 2026. I helped write a manuscript publication that was published in April of 2026. 
+  
+## Teaching Experience
+
+`September 2024 - April 2025` 
+__Research Methods Teaching Assistant__,
+*Department of Psychology*
+_Brigham Young University - Idaho_, Rexburg, ID
+
+  **Responsibilities:** I assisted Alan Whitehead and Rachel Jensen with grading various assignments for over 50 online students at a time. I coordinated teaching sessions for exam preparation. I also helped with the structure of the class using the academic software Canvas on Instructure.  
+  
+`September 2025 - December 2025`
+__Special Topics in Psychology: BioPsychoSocial Health Psych Teaching Assistant__,
+*Department of Psychology*
+_Brigham Young University - Idaho_, Rexburg, ID
+
+  **Responsibilities:** I assisted Dr. Robert Wright in grading over 90 assignments every week. 
+
+`September 2025 - July 2026`
+__Health Psychology Teaching Assistant__,
+*Department of Psychology*
+_Brigham Young University - Idaho_, Rexburg, ID
+
+  **Responsibilities:** I assisted Dr. Robert Wright in grading many assignments including outlines and health behavior reports for up to 85 students at a time. 
+  
+`September 2025 - July 2026`
+__Experiencing Research Teaching Assistant__,
+*Department of Psychology*
+_Brigham Young University - Idaho_, Rexburg, ID
+
+  **Responsibilities:** I assisted Dr. Robert Wright in grading many assignments including outlines and grading research projects for over 60 students. I attended the Research and Creative Works Conference to support the students presenting their research posters. 
+
+
+## Campus Involvement
+
+`September 2025 - April 2027`
 President, *Health Psych Society*, Rexburg, ID
+  
+  **Responsibilities:**
+
+`April 2024 - Present`
+Member, *Women in Science & Health Society*, Rexburg, ID
+
+`September 2024 - Present`
+Member, *Mathematics Society*, Rexburg, ID
+
+`September 2025 - Present`
+Member, *Business Management Society*, Rexburg, ID
+
+`April 2026 - Present`
+Member, *Students Promoting Ind Org Psychology (SPIOP)*, Rexburg, ID
 
 ## Publications
 
-### Journals
-
-`2026`
-College Student Influenza and COVID-19 Vaccination Attitudes and Uptake Behavior: Prevalence, Correlates, and Promoting Improvement
+Wright, R. R., Bunnell, M., Chatelain, G., McCulloch, E., **Soelberg, A, L.**, & Marrott, D. (2026). College student influenza and COVID-19 vaccination attitudes and uptake behavior: Prevalence, correlates, and promoting improvement.*COVID 2026, 6*(4), 62. https://doi.org/10.3390/covid6040062
 
 [COVID](https://www.mdpi.com/journal/covid/sections/COVID_Public_Health_and_Epidemiology) | [Article](https://www.preprints.org/manuscript/202603.0059)
 
-## Occupation
+## Presentations
 
-`2024 - 2025` 
-__Research Methods Teaching Assistant__, _Brigham Young University - Idaho_, Rexburg, ID
+**Soelberg, A. L.**, Chamberlain, A., Snell, K., & Hopkins, A. (December 2024). *From anticipation to reflection: How time alters perceptions of enviable experiences: a direct replica of Kristal el al., 2019* Poster presented at Research and Creative Works Conference at Brigham Young University - Idaho, Rexburg, ID.
 
-`2025`
-__For the Strength of Youth Counselor__, _For The Strength of Youth Conferences_, Provo, UT
-[About FSY](https://www.churchofjesuschrist.org/events/fsy/?lang=eng) | [FSY Counselor](https://fsyemployment.byu.edu/us)
+**Soelberg, A. L.**, Abegglen, K. H., Johnson, S. E., DeClerk, H. J., Gee, C. G., & Wright, R. R. (March 2026). *Married but lonely: An examination of gender within married religious students* Poster presented at Rocky Mountain Psychological Association, Boise, ID.
 
-`2025 - Now`
-__Health Psych Teaching Assistant__, _Brigham Young University - Idaho_, Rexburg, ID
 
-`2025 - Now`
-__Psychology Research Assistant__, _Brigham Young University - Idaho_, Rexburg, ID
+## Professional Affiliations
+
+`March 2026 - Present`
+Student Member, *PsiChi, Rocky Mountain Psychological Association*
 
 ## Voluntary Service
 
 `Sept 2022 - March 2024`
 __Full-Time Missionary__, _The Church of Jesus Christ of Latter-day Saints_, Bakersfield, CA
+
+
+## References
+
