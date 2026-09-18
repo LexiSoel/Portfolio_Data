@@ -35,11 +35,15 @@ pacman::p_load(
   readr, 
   lubridate, 
   pander, 
-  car
+  car, 
+  lsr, 
+  plotly
 )
 ```
 
+# Data
 
+::: {.panel-tabset}
 
 ```{r}
 pre_raw  <- read_csv(
@@ -124,19 +128,1085 @@ final_io_data <- inner_join(
 write_csv(final_io_data, "../data/bwo_check_io_data.csv")
 ```
 
+:::
 
+## Individual Variables
 
+All the variables we are looking at in this dataset. 
+
+::: {.panel-tabset}
+
+### Human Nature
+
+#### Human Nature Normality
 
 ```{r}
-anxiety_diff <- final_io_data$Pre_Happiness - final_io_data$Post_Happiness
+hn_diff <- final_io_data$`Pre_Human Nature` - final_io_data$`Post_Human Nature`
 
 
-qqPlot(anxiety_diff, main = "Q-Q Plot of Happiness Differences")
+qqPlot(hn_diff, main = "Q-Q Plot of Human Nature Differences")
 ```
+
+#### Human Nature Test
+
+```{r}
+t.test(final_io_data$`Pre_Human Nature`, final_io_data$`Post_Human Nature`, paired = TRUE) |> 
+  pander()
+
+cohensD(final_io_data$`Pre_Human Nature`, final_io_data$`Post_Human Nature`, method = "paired") 
+
+```
+
+#### Human Nature Graph
+
+```{r}
+#| warning: false
+
+long_data <- stack(final_io_data[c("Pre_Human Nature", "Post_Human Nature")])
+names(long_data) <- c("Human_Nature", "Timepoint")
+
+long_data$Timepoint <- factor(
+  long_data$Timepoint, 
+  levels = c("Pre_Human Nature", "Post_Human Nature"),
+  labels = c("Pre", "Post")
+)
+
+plot_ly(
+  data = long_data, 
+  y = ~Human_Nature,
+  x = ~Timepoint,
+  type = "box", 
+  color = ~Timepoint,
+  colors = c("steelblue2", "steelblue4")
+) %>%
+  layout(
+    title = "Human Nature Changes Across Semester", 
+    yaxis = list(title = "Total Average Human Nature"),
+    xaxis = list(title = "Timepoint")
+  )
+
+```
+
+
+### Locus of Control
+
+#### Locus of Control Normality
+
+```{r}
+
+loc_diff <- final_io_data$`Pre_L of C` - final_io_data$`Post_L of C`
+
+
+qqPlot(loc_diff, main = "Q-Q Plot of Locus of Control Differences", col = "darkgreen", col.lines = "palegreen3")
+
+```
+
+#### Locus of Control Test
+
+```{r}
+t.test(final_io_data$`Pre_L of C`, final_io_data$`Post_L of C`, paired = TRUE) |> 
+  pander()
+
+cohensD(final_io_data$`Pre_L of C`, final_io_data$`Post_L of C`, method = "paired") 
+```
+
+#### Locus of Control Graph
+
+```{r}
+#| warning: false
+
+long_data <- stack(final_io_data[c("Pre_L of C", "Post_L of C")])
+names(long_data) <- c("Locus_of_Control", "Timepoint")
+
+long_data$Timepoint <- factor(
+  long_data$Timepoint, 
+  levels = c("Pre_L of C", "Post_L of C"),
+  labels = c("Pre", "Post")
+)
+
+plot_ly(
+  data = long_data, 
+  y = ~Locus_of_Control,
+  x = ~Timepoint,
+  type = "box", 
+  color = ~Timepoint,
+  colors = c("palegreen3", "darkgreen")
+) %>%
+  layout(
+    title = "Locus of Control Changes Across Semester", 
+    yaxis = list(title = "Total Average Locus of Control"),
+    xaxis = list(title = "Timepoint")
+  )
+```
+
+### Efficacy
+
+#### Efficacy Normality
+
+```{r}
+eff_diff <- final_io_data$`Pre_Efficacy` - final_io_data$`Post_Efficacy`
+
+qqPlot(eff_diff, main = "Q-Q Plot of Efficacy Differences", col = "firebrick3", col.lines = "coral1")
+```
+
+#### Efficacy Test
+
+```{r}
+t.test(final_io_data$`Pre_Efficacy`, final_io_data$`Post_Efficacy`, paired = TRUE) |> 
+  pander()
+
+cohensD(final_io_data$`Pre_Efficacy`, final_io_data$`Post_Efficacy`, method = "paired") 
+```
+
+#### Efficacy Graph
+
+```{r}
+#| warning: false
+
+long_data <- stack(final_io_data[c("Pre_Efficacy", "Post_Efficacy")])
+names(long_data) <- c("Efficacy", "Timepoint")
+
+long_data$Timepoint <- factor(
+  long_data$Timepoint, 
+  levels = c("Pre_Efficacy", "Post_Efficacy"),
+  labels = c("Pre", "Post")
+)
+
+plot_ly(
+  data = long_data, 
+  y = ~Efficacy,
+  x = ~Timepoint,
+  type = "box", 
+  color = ~Timepoint,
+  colors = c("coral1", "firebrick3")
+) %>%
+  layout(
+    title = "Efficacy Changes Across Semester", 
+    yaxis = list(title = "Total Average Efficacy"),
+    xaxis = list(title = "Timepoint")
+  )
+```
+
+### Challenge
+
+#### Challenge Normality
+
+```{r}
+chal_diff <- final_io_data$`Pre_Challenge` - final_io_data$`Post_Challenge`
+
+qqPlot(chal_diff, main = "Q-Q Plot of Challenge Differences", col = "purple4", col.lines = "mediumpurple2")
+```
+
+#### Challenge Test
+
+```{r}
+t.test(final_io_data$`Pre_Challenge`, final_io_data$`Post_Challenge`, paired = TRUE) |> 
+  pander()
+
+cohensD(final_io_data$`Pre_Challenge`, final_io_data$`Post_Challenge`, method = "paired") 
+```
+
+#### Challenge Graph
+
+```{r}
+#| warning: false
+
+long_data <- stack(final_io_data[c("Pre_Challenge", "Post_Challenge")])
+names(long_data) <- c("Challenge", "Timepoint")
+
+long_data$Timepoint <- factor(
+  long_data$Timepoint, 
+  levels = c("Pre_Challenge", "Post_Challenge"),
+  labels = c("Pre", "Post")
+)
+
+plot_ly(
+  data = long_data, 
+  y = ~Challenge,
+  x = ~Timepoint,
+  type = "box", 
+  color = ~Timepoint,
+  colors = c("mediumpurple2", "purple4")
+) %>%
+  layout(
+    title = "Challenge Changes Across Semester", 
+    yaxis = list(title = "Total Average Challenge"),
+    xaxis = list(title = "Timepoint")
+  )
+```
+
+### Barriers
+
+#### Barriers Normality
+
+```{r}
+bar_diff <- final_io_data$`Pre_Barriers` - final_io_data$`Post_Barriers`
+
+qqPlot(bar_diff, main = "Q-Q Plot of Barriers Differences", col = "darkorange2", col.lines = "goldenrod1")
+```
+
+#### Barriers Test
+
+```{r}
+t.test(final_io_data$`Pre_Barriers`, final_io_data$`Post_Barriers`, paired = TRUE) |> 
+  pander()
+
+cohensD(final_io_data$`Pre_Barriers`, final_io_data$`Post_Barriers`, method = "paired") 
+```
+
+#### Barriers Graph
+
+```{r}
+#| warning: false
+
+long_data <- stack(final_io_data[c("Pre_Barriers", "Post_Barriers")])
+names(long_data) <- c("Barriers", "Timepoint")
+
+long_data$Timepoint <- factor(
+  long_data$Timepoint, 
+  levels = c("Pre_Barriers", "Post_Barriers"),
+  labels = c("Pre", "Post")
+)
+
+plot_ly(
+  data = long_data, 
+  y = ~Barriers,
+  x = ~Timepoint,
+  type = "box", 
+  color = ~Timepoint,
+  colors = c("goldenrod1", "darkorange2")
+) %>%
+  layout(
+    title = "Barriers Changes Across Semester", 
+    yaxis = list(title = "Total Average Barriers"),
+    xaxis = list(title = "Timepoint")
+  )
+```
+
+### Social Integration
+
+#### Social Integration Normality
+
+```{r}
+si_diff <- final_io_data$`Pre_Social Integration` - final_io_data$`Post_Social Integration`
+
+qqPlot(si_diff, main = "Q-Q Plot of Social Integration Differences", col = "darkslategrey", col.lines = "turquoise3")
+```
+
+#### Social Integration Test
+
+```{r}
+t.test(final_io_data$`Pre_Social Integration`, final_io_data$`Post_Social Integration`, paired = TRUE) |> 
+  pander()
+
+cohensD(final_io_data$`Pre_Social Integration`, final_io_data$`Post_Social Integration`, method = "paired") 
+```
+
+#### Social Integration Graph
+
+```{r}
+#| warning: false
+
+long_data <- stack(final_io_data[c("Pre_Social Integration", "Post_Social Integration")])
+names(long_data) <- c("Social_Integration", "Timepoint")
+
+long_data$Timepoint <- factor(
+  long_data$Timepoint, 
+  levels = c("Pre_Social Integration", "Post_Social Integration"),
+  labels = c("Pre", "Post")
+)
+
+plot_ly(
+  data = long_data, 
+  y = ~Social_Integration,
+  x = ~Timepoint,
+  type = "box", 
+  color = ~Timepoint,
+  colors = c("turquoise3", "darkslategrey")
+) %>%
+  layout(
+    title = "Social Integration Changes Across Semester", 
+    yaxis = list(title = "Total Average Social Integration"),
+    xaxis = list(title = "Timepoint")
+  )
+```
+
+### Tech
+
+#### Tech Normality
+
+```{r}
+tech_diff <- final_io_data$`Pre_Tech` - final_io_data$`Post_Tech`
+
+qqPlot(tech_diff, main = "Q-Q Plot of Tech Differences", col = "darkorchid4", col.lines = "mediumorchid2")
+```
+
+#### Tech Test
+
+```{r}
+t.test(final_io_data$`Pre_Tech`, final_io_data$`Post_Tech`, paired = TRUE) |> 
+  pander()
+
+cohensD(final_io_data$`Pre_Tech`, final_io_data$`Post_Tech`, method = "paired") 
+```
+
+#### Tech Graph
+
+```{r}
+#| warning: false
+
+long_data <- stack(final_io_data[c("Pre_Tech", "Post_Tech")])
+names(long_data) <- c("Tech", "Timepoint")
+
+long_data$Timepoint <- factor(
+  long_data$Timepoint, 
+  levels = c("Pre_Tech", "Post_Tech"),
+  labels = c("Pre", "Post")
+)
+
+plot_ly(
+  data = long_data, 
+  y = ~Tech,
+  x = ~Timepoint,
+  type = "box", 
+  color = ~Timepoint,
+  colors = c("mediumorchid2", "darkorchid4")
+) %>%
+  layout(
+    title = "Tech Changes Across Semester", 
+    yaxis = list(title = "Total Average Tech"),
+    xaxis = list(title = "Timepoint")
+  )
+```
+
+### Screen
+
+#### Screen Normality
+
+```{r}
+screen_diff <- final_io_data$`Pre_Screen` - final_io_data$`Post_Screen`
+
+qqPlot(screen_diff, main = "Q-Q Plot of Screen Differences", col = "deepskyblue4", col.lines = "skyblue2")
+```
+
+#### Screen Test
+
+```{r}
+t.test(final_io_data$`Pre_Screen`, final_io_data$`Post_Screen`, paired = TRUE) |> 
+  pander()
+
+cohensD(final_io_data$`Pre_Screen`, final_io_data$`Post_Screen`, method = "paired") 
+```
+
+#### Screen Graph
+
+```{r}
+#| warning: false
+
+long_data <- stack(final_io_data[c("Pre_Screen", "Post_Screen")])
+names(long_data) <- c("Screen", "Timepoint")
+
+long_data$Timepoint <- factor(
+  long_data$Timepoint, 
+  levels = c("Pre_Screen", "Post_Screen"),
+  labels = c("Pre", "Post")
+)
+
+plot_ly(
+  data = long_data, 
+  y = ~Screen,
+  x = ~Timepoint,
+  type = "box", 
+  color = ~Timepoint,
+  colors = c("skyblue2", "deepskyblue4")
+) %>%
+  layout(
+    title = "Screen Changes Across Semester", 
+    yaxis = list(title = "Total Average Screen"),
+    xaxis = list(title = "Timepoint")
+  )
+```
+
+### Job Satisfaction
+
+#### Job Satisfaction Normality
+
+```{r}
+js_diff <- final_io_data$`Pre_Job Satisfaction` - final_io_data$`Post_Job Satisfaction`
+
+qqPlot(js_diff, main = "Q-Q Plot of Job Satisfaction Differences", col = "darkolivegreen", col.lines = "chartreuse3")
+```
+
+#### Job Satisfaction Test
+
+```{r}
+t.test(final_io_data$`Pre_Job Satisfaction`, final_io_data$`Post_Job Satisfaction`, paired = TRUE) |> 
+  pander()
+
+cohensD(final_io_data$`Pre_Job Satisfaction`, final_io_data$`Post_Job Satisfaction`, method = "paired") 
+```
+
+#### Job Satisfaction Graph
+
+```{r}
+#| warning: false
+
+long_data <- stack(final_io_data[c("Pre_Job Satisfaction", "Post_Job Satisfaction")])
+names(long_data) <- c("Job_Satisfaction", "Timepoint")
+
+long_data$Timepoint <- factor(
+  long_data$Timepoint, 
+  levels = c("Pre_Job Satisfaction", "Post_Job Satisfaction"),
+  labels = c("Pre", "Post")
+)
+
+plot_ly(
+  data = long_data, 
+  y = ~Job_Satisfaction,
+  x = ~Timepoint,
+  type = "box", 
+  color = ~Timepoint,
+  colors = c("chartreuse3", "darkolivegreen")
+) %>%
+  layout(
+    title = "Job Satisfaction Changes Across Semester", 
+    yaxis = list(title = "Total Average Job Satisfaction"),
+    xaxis = list(title = "Timepoint")
+  )
+```
+
+### Affective Committment
+
+#### Affective Committment Normality
+
+```{r}
+ac_diff <- final_io_data$Pre_Affective - final_io_data$Post_Affective
+
+qqPlot(ac_diff, main = "Q-Q Plot of Affective Committment Differences", col = "darkred", col.lines = "indianred1")
+```
+
+#### Affective Committment Test
+
+```{r}
+t.test(final_io_data$Pre_Affective, final_io_data$Post_Affective, paired = TRUE) |> 
+  pander()
+
+cohensD(final_io_data$Pre_Affective, final_io_data$Post_Affective, method = "paired") 
+```
+
+#### Affective Committment Graph
+
+```{r}
+#| warning: false
+
+long_data <- stack(final_io_data[c("Pre_Affective", "Post_Affective")])
+names(long_data) <- c("Affective_Committment", "Timepoint")
+
+long_data$Timepoint <- factor(
+  long_data$Timepoint, 
+  levels = c("Pre_Affective", "Post_Affective"),
+  labels = c("Pre", "Post")
+)
+
+plot_ly(
+  data = long_data, 
+  y = ~Affective_Committment,
+  x = ~Timepoint,
+  type = "box", 
+  color = ~Timepoint,
+  colors = c("indianred1", "darkred")
+) %>%
+  layout(
+    title = "Affective Committment Changes Across Semester", 
+    yaxis = list(title = "Total Average Affective Committment"),
+    xaxis = list(title = "Timepoint")
+  )
+```
+
+### Normative Committment
+
+#### Normative Committment Normality
+
+```{r}
+nc_diff <- final_io_data$Pre_Normative - final_io_data$Post_Normative
+
+qqPlot(nc_diff, main = "Q-Q Plot of Normative Committment Differences", col = "violetred4", col.lines = "plum2")
+```
+
+#### Normative Committment Test
+
+```{r}
+t.test(final_io_data$Pre_Normative, final_io_data$Post_Normative, paired = TRUE) |> 
+  pander()
+
+cohensD(final_io_data$Pre_Normative, final_io_data$Post_Normative, method = "paired") 
+```
+
+#### Normative Committment Graph
+
+```{r}
+#| warning: false
+
+long_data <- stack(final_io_data[c("Pre_Normative", "Post_Normative")])
+names(long_data) <- c("Normative_Committment", "Timepoint")
+
+long_data$Timepoint <- factor(
+  long_data$Timepoint, 
+  levels = c("Pre_Normative", "Post_Normative"),
+  labels = c("Pre", "Post")
+)
+
+plot_ly(
+  data = long_data, 
+  y = ~Normative_Committment,
+  x = ~Timepoint,
+  type = "box", 
+  color = ~Timepoint,
+  colors = c("plum2", "violetred4")
+) %>%
+  layout(
+    title = "Normative Committment Changes Across Semester", 
+    yaxis = list(title = "Total Average Normative Committment"),
+    xaxis = list(title = "Timepoint")
+  )
+```
+
+### Continuance Committment
+
+#### Continuance Committment Normality
+
+```{r}
+cc_diff <- final_io_data$Pre_Continuance - final_io_data$Post_Continuance
+
+qqPlot(cc_diff, main = "Q-Q Plot of Continuance Committment Differences", col = "sienna3", col.lines = "sandybrown")
+```
+
+#### Continuance Committment Test
+
+```{r}
+t.test(final_io_data$Pre_Continuance, final_io_data$Post_Continuance, paired = TRUE) |> 
+  pander()
+
+cohensD(final_io_data$Pre_Continuance, final_io_data$Post_Continuance, method = "paired") 
+```
+
+#### Continuance Committment Graph
+
+```{r}
+#| warning: false
+
+long_data <- stack(final_io_data[c("Pre_Continuance", "Post_Continuance")])
+names(long_data) <- c("Continuance_Committment", "Timepoint")
+
+long_data$Timepoint <- factor(
+  long_data$Timepoint, 
+  levels = c("Pre_Continuance", "Post_Continuance"),
+  labels = c("Pre", "Post")
+)
+
+plot_ly(
+  data = long_data, 
+  y = ~Continuance_Committment,
+  x = ~Timepoint,
+  type = "box", 
+  color = ~Timepoint,
+  colors = c("sandybrown", "sienna3")
+) %>%
+  layout(
+    title = "Continuance Committment Changes Across Semester", 
+    yaxis = list(title = "Total Average Continuance Committment"),
+    xaxis = list(title = "Timepoint")
+  )
+```
+
+### Engagement
+
+#### Engagement Normality
+
+```{r}
+eng_diff <- final_io_data$`Pre_Engagement` - final_io_data$`Post_Engagement`
+
+qqPlot(eng_diff, main = "Q-Q Plot of Engagement Differences", col = "darkcyan", col.lines = "lightseagreen")
+```
+
+#### Engagement Test
+
+```{r}
+t.test(final_io_data$`Pre_Engagement`, final_io_data$`Post_Engagement`, paired = TRUE) |> 
+  pander()
+
+cohensD(final_io_data$`Pre_Engagement`, final_io_data$`Post_Engagement`, method = "paired") 
+```
+
+#### Engagement Graph
+
+```{r}
+#| warning: false
+
+long_data <- stack(final_io_data[c("Pre_Engagement", "Post_Engagement")])
+names(long_data) <- c("Engagement", "Timepoint")
+
+long_data$Timepoint <- factor(
+  long_data$Timepoint, 
+  levels = c("Pre_Engagement", "Post_Engagement"),
+  labels = c("Pre", "Post")
+)
+
+plot_ly(
+  data = long_data, 
+  y = ~Engagement,
+  x = ~Timepoint,
+  type = "box", 
+  color = ~Timepoint,
+  colors = c("lightseagreen", "darkcyan")
+) %>%
+  layout(
+    title = "Engagement Changes Across Semester", 
+    yaxis = list(title = "Total Average Engagement"),
+    xaxis = list(title = "Timepoint")
+  )
+```
+
+### Safety
+
+#### Safety Normality
+
+```{r}
+safety_diff <- final_io_data$`Pre_Safety` - final_io_data$`Post_Safety`
+
+qqPlot(safety_diff, main = "Q-Q Plot of Safety Differences", col = "cadetblue4", col.lines = "cadetblue2")
+```
+
+#### Safety Test
+
+```{r}
+t.test(final_io_data$`Pre_Safety`, final_io_data$`Post_Safety`, paired = TRUE) |> 
+  pander()
+
+cohensD(final_io_data$`Pre_Safety`, final_io_data$`Post_Safety`, method = "paired") 
+```
+
+#### Safety Graph
+
+```{r}
+#| warning: false
+
+long_data <- stack(final_io_data[c("Pre_Safety", "Post_Safety")])
+names(long_data) <- c("Safety", "Timepoint")
+
+long_data$Timepoint <- factor(
+  long_data$Timepoint, 
+  levels = c("Pre_Safety", "Post_Safety"),
+  labels = c("Pre", "Post")
+)
+
+plot_ly(
+  data = long_data, 
+  y = ~Safety,
+  x = ~Timepoint,
+  type = "box", 
+  color = ~Timepoint,
+  colors = c("cadetblue2", "cadetblue4")
+) %>%
+  layout(
+    title = "Safety Changes Across Semester", 
+    yaxis = list(title = "Total Average Safety"),
+    xaxis = list(title = "Timepoint")
+  )
+```
+
+### CWB
+
+#### CWB Normality
+
+```{r}
+cwb_diff <- final_io_data$`Pre_CWB` - final_io_data$`Post_CWB`
+
+qqPlot(cwb_diff, main = "Q-Q Plot of CWB Differences", col = "rosybrown4", col.lines = "rosybrown2")
+```
+
+#### CWB Test
+
+```{r}
+t.test(final_io_data$`Pre_CWB`, final_io_data$`Post_CWB`, paired = TRUE) |> 
+  pander()
+
+cohensD(final_io_data$`Pre_CWB`, final_io_data$`Post_CWB`, method = "paired") 
+```
+
+#### CWB Graph
+
+```{r}
+#| warning: false
+
+long_data <- stack(final_io_data[c("Pre_CWB", "Post_CWB")])
+names(long_data) <- c("CWB", "Timepoint")
+
+long_data$Timepoint <- factor(
+  long_data$Timepoint, 
+  levels = c("Pre_CWB", "Post_CWB"),
+  labels = c("Pre", "Post")
+)
+
+plot_ly(
+  data = long_data, 
+  y = ~CWB,
+  x = ~Timepoint,
+  type = "box", 
+  color = ~Timepoint,
+  colors = c("rosybrown2", "rosybrown4")
+) %>%
+  layout(
+    title = "CWB Changes Across Semester", 
+    yaxis = list(title = "Total Average CWB"),
+    xaxis = list(title = "Timepoint")
+  )
+```
+
+### Job Search
+
+#### Job Search Normality
+
+```{r}
+jobsearch_diff <- final_io_data$`Pre_Job Search` - final_io_data$`Post_Job Search`
+
+qqPlot(jobsearch_diff, main = "Q-Q Plot of Job Search Differences", col = "darkgoldenrod3", col.lines = "khaki3")
+```
+
+#### Job Search Test
+
+```{r}
+t.test(final_io_data$`Pre_Job Search`, final_io_data$`Post_Job Search`, paired = TRUE) |> 
+  pander()
+
+cohensD(final_io_data$`Pre_Job Search`, final_io_data$`Post_Job Search`, method = "paired") 
+```
+
+#### Job Search Graph
+
+```{r}
+#| warning: false
+
+long_data <- stack(final_io_data[c("Pre_Job Search", "Post_Job Search")])
+names(long_data) <- c("Job_Search", "Timepoint")
+
+long_data$Timepoint <- factor(
+  long_data$Timepoint, 
+  levels = c("Pre_Job Search", "Post_Job Search"),
+  labels = c("Pre", "Post")
+)
+
+plot_ly(
+  data = long_data, 
+  y = ~Job_Search,
+  x = ~Timepoint,
+  type = "box", 
+  color = ~Timepoint,
+  colors = c("khaki3", "darkgoldenrod3")
+) %>%
+  layout(
+    title = "Job Search Changes Across Semester", 
+    yaxis = list(title = "Total Average Job Search"),
+    xaxis = list(title = "Timepoint")
+  )
+```
+
+:::
+## Appendix
+
+::: {.panel-tabset}
+
+### Depressive Symptoms
+
+#### Depressive Symptoms Normality
+
+```{r}
+cesd_diff <- final_io_data$`Pre_CESD` - final_io_data$`Post_CESD`
+
+qqPlot(na.omit(cesd_diff), main = "Q-Q Plot of CESD Differences", col = "midnightblue", col.lines = "lightslateblue")
+```
+
+#### Depressive Symptoms Test
+
+```{r}
+t.test(final_io_data$`Pre_CESD`, final_io_data$`Post_CESD`, paired = TRUE) |> 
+  pander()
+
+cohensD(final_io_data$`Pre_CESD`, final_io_data$`Post_CESD`, method = "paired") 
+```
+
+#### Depressive Symptoms Graph
+
+```{r}
+#| warning: false
+
+long_data <- stack(final_io_data[c("Pre_CESD", "Post_CESD")])
+names(long_data) <- c("CESD", "Timepoint")
+
+long_data$Timepoint <- factor(
+  long_data$Timepoint, 
+  levels = c("Pre_CESD", "Post_CESD"),
+  labels = c("Pre", "Post")
+)
+
+plot_ly(
+  data = long_data, 
+  y = ~CESD,
+  x = ~Timepoint,
+  type = "box", 
+  color = ~Timepoint,
+  colors = c("lightslateblue", "midnightblue")
+) %>%
+  layout(
+    title = "CESD Changes Across Semester", 
+    yaxis = list(title = "Total Average CESD"),
+    xaxis = list(title = "Timepoint")
+  )
+```
+
+
+### Happiness
+
+#### Happiness Normality
+
+```{r}
+happiness_diff <- final_io_data$Pre_Happiness - final_io_data$Post_Happiness
+
+
+qqPlot(happiness_diff, main = "Q-Q Plot of Happiness Differences")
+```
+
+#### Happiness Test
 
 ```{r}
 t.test(final_io_data$Pre_Happiness, final_io_data$Post_Happiness, paired = TRUE) |> 
   pander()
 
+cohensD(final_io_data$Pre_Happiness, final_io_data$Post_Happiness, method = "paired") 
+
 ```
+
+#### Happiness Graph
+
+```{r}
+
+long_data <- stack(final_io_data[c("Pre_Happiness", "Post_Happiness")])
+names(long_data) <- c("Happiness", "Timepoint")
+
+long_data$Timepoint <- factor(
+  long_data$Timepoint, 
+  levels = c("Pre_Happiness", "Post_Happiness"),
+  labels = c("Pre", "Post")
+)
+
+plot_ly(
+  data = long_data, 
+  y = ~Happiness,
+  x = ~Timepoint,
+  type = "box", 
+  color = ~Timepoint,
+  colors = c("olivedrab3", "olivedrab4")
+) %>%
+  layout(
+    title = "Happiness Changes Across Semester", 
+    yaxis = list(title = "Total Average Happiness"),
+    xaxis = list(title = "Timepoint")
+  )
+
+```
+
+
+### Differential
+
+#### Differential Normality
+
+```{r}
+diff_var_diff <- final_io_data$`Pre_Differential` - final_io_data$`Post_Differential`
+
+qqPlot(na.omit(diff_var_diff), main = "Q-Q Plot of Differential Differences", col = "darkmagenta", col.lines = "plum3")
+```
+
+#### Differential Test
+
+```{r}
+t.test(final_io_data$`Pre_Differential`, final_io_data$`Post_Differential`, paired = TRUE) |> 
+  pander()
+
+cohensD(final_io_data$`Pre_Differential`, final_io_data$`Post_Differential`, method = "paired") 
+```
+
+#### Differential Graph
+
+```{r}
+#| warning: false
+
+long_data <- stack(final_io_data[c("Pre_Differential", "Post_Differential")])
+names(long_data) <- c("Differential", "Timepoint")
+
+long_data$Timepoint <- factor(
+  long_data$Timepoint, 
+  levels = c("Pre_Differential", "Post_Differential"),
+  labels = c("Pre", "Post")
+)
+
+plot_ly(
+  data = long_data, 
+  y = ~Differential,
+  x = ~Timepoint,
+  type = "box", 
+  color = ~Timepoint,
+  colors = c("plum3", "darkmagenta")
+) %>%
+  layout(
+    title = "Differential Changes Across Semester", 
+    yaxis = list(title = "Total Average Differential"),
+    xaxis = list(title = "Timepoint")
+  )
+```
+
+### Life Satisfaction
+
+#### SWLS Normality
+
+```{r}
+swls_diff <- final_io_data$`Pre_SWLS` - final_io_data$`Post_SWLS`
+
+qqPlot(na.omit(swls_diff), main = "Q-Q Plot of SWLS Differences", col = "seagreen", col.lines = "palegreen")
+```
+
+#### SWLS Test
+
+```{r}
+t.test(final_io_data$`Pre_SWLS`, final_io_data$`Post_SWLS`, paired = TRUE) |> 
+  pander()
+
+cohensD(final_io_data$`Pre_SWLS`, final_io_data$`Post_SWLS`, method = "paired") 
+```
+
+#### SWLS Graph
+
+```{r}
+#| warning: false
+
+long_data <- stack(final_io_data[c("Pre_SWLS", "Post_SWLS")])
+names(long_data) <- c("SWLS", "Timepoint")
+
+long_data$Timepoint <- factor(
+  long_data$Timepoint, 
+  levels = c("Pre_SWLS", "Post_SWLS"),
+  labels = c("Pre", "Post")
+)
+
+plot_ly(
+  data = long_data, 
+  y = ~SWLS,
+  x = ~Timepoint,
+  type = "box", 
+  color = ~Timepoint,
+  colors = c("palegreen", "seagreen")
+) %>%
+  layout(
+    title = "SWLS Changes Across Semester", 
+    yaxis = list(title = "Total Average SWLS"),
+    xaxis = list(title = "Timepoint")
+  )
+```
+
+### Stress
+
+#### Stress Normality
+
+```{r}
+stress_diff <- final_io_data$`Pre_Stress` - final_io_data$`Post_Stress`
+
+qqPlot(na.omit(stress_diff), main = "Q-Q Plot of Stress Differences", col = "firebrick4", col.lines = "lightcoral")
+```
+
+#### Stress Test
+
+```{r}
+t.test(final_io_data$`Pre_Stress`, final_io_data$`Post_Stress`, paired = TRUE) |> 
+  pander()
+
+cohensD(final_io_data$`Pre_Stress`, final_io_data$`Post_Stress`, method = "paired") 
+```
+
+#### Stress Graph
+
+```{r}
+#| warning: false
+
+long_data <- stack(final_io_data[c("Pre_Stress", "Post_Stress")])
+names(long_data) <- c("Stress", "Timepoint")
+
+long_data$Timepoint <- factor(
+  long_data$Timepoint, 
+  levels = c("Pre_Stress", "Post_Stress"),
+  labels = c("Pre", "Post")
+)
+
+plot_ly(
+  data = long_data, 
+  y = ~Stress,
+  x = ~Timepoint,
+  type = "box", 
+  color = ~Timepoint,
+  colors = c("lightcoral", "firebrick4")
+) %>%
+  layout(
+    title = "Stress Changes Across Semester", 
+    yaxis = list(title = "Total Average Stress"),
+    xaxis = list(title = "Timepoint")
+  )
+```
+
+### Anxiety
+
+#### Anxiety Normality
+
+```{r}
+anx_diff <- final_io_data$`Pre_Anxiety` - final_io_data$`Post_Anxiety`
+
+qqPlot(na.omit(anx_diff), main = "Q-Q Plot of Anxiety Differences", col = "darkorange3", col.lines = "moccasin")
+```
+
+#### Anxiety Test
+
+```{r}
+t.test(final_io_data$`Pre_Anxiety`, final_io_data$`Post_Anxiety`, paired = TRUE) |> 
+  pander()
+
+cohensD(final_io_data$`Pre_Anxiety`, final_io_data$`Post_Anxiety`, method = "paired") 
+```
+
+#### Anxiety Graph
+
+```{r}
+#| warning: false
+
+long_data <- stack(final_io_data[c("Pre_Anxiety", "Post_Anxiety")])
+names(long_data) <- c("Anxiety", "Timepoint")
+
+long_data$Timepoint <- factor(
+  long_data$Timepoint, 
+  levels = c("Pre_Anxiety", "Post_Anxiety"),
+  labels = c("Pre", "Post")
+)
+
+plot_ly(
+  data = long_data, 
+  y = ~Anxiety,
+  x = ~Timepoint,
+  type = "box", 
+  color = ~Timepoint,
+  colors = c("moccasin", "darkorange3")
+) %>%
+  layout(
+    title = "Anxiety Changes Across Semester", 
+    yaxis = list(title = "Total Average Anxiety"),
+    xaxis = list(title = "Timepoint")
+  )
+```
+
+:::
 
